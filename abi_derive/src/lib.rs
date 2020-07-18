@@ -44,8 +44,8 @@ use syn::{parse_quote, Expr};
 pub fn enum_from_primitive(token: TokenStream) -> TokenStream {
     #![allow(unused_variables)]
     let ast: syn::DeriveInput = syn::parse(token).unwrap();
-    let name = ast.ident;
-    let (variant, mut disc): (Vec<_>, Vec<_>) = match ast.data {
+    let enum_name_ident = ast.ident;
+    let (variant, mut discriminant): (Vec<_>, Vec<_>) = match ast.data {
         syn::Data::Enum(ref v) => v
             .variants
             .iter()
@@ -64,7 +64,7 @@ pub fn enum_from_primitive(token: TokenStream) -> TokenStream {
         _ => panic!("EnumFromPrimitive must be used with enum"),
     };
     let mut base: Expr = parse_quote!(0);
-    for v in disc.iter_mut() {
+    for v in discriminant.iter_mut() {
         match v {
             Some(x) => {
                 base = x.clone();
@@ -76,22 +76,26 @@ pub fn enum_from_primitive(token: TokenStream) -> TokenStream {
             }
         }
     }
-    let enum_u64 = vec![name.clone(); variant.len()];
+    let enum_name_ident_str =
+        syn::LitStr::new(&enum_name_ident.to_string(), enum_name_ident.span());
+
+    let enum_path = vec![enum_name_ident.clone(); variant.len()];
     let gen = quote! {
-        impl TryFrom<u8> for #name {
-        type Error = String;
+        impl TryFrom<u8> for #enum_name_ident {
+            type Error = String;
             fn try_from(v: u8) -> Result<Self, Self::Error> {
-                #(if v == #disc {return Ok(#enum_u64::#variant);})*
-                return Err(String::from("Invalid discriminant for enum"));
+                #(if v == #discriminant {return Ok(#enum_path::#variant);})*
+                return Err(format!("Invalid discriminant for enum {}, the value is {}", #enum_name_ident_str, v));
             }
         }
-        impl TryFrom<u32> for #name {
-        type Error = String;
+        impl TryFrom<u32> for #enum_name_ident {
+            type Error = String;
             fn try_from(v: u32) -> Result<Self, Self::Error> {
-                #(if v == #disc {return Ok(#enum_u64::#variant);})*
-                return Err(String::from("Invalid discriminant for enum"));
+                #(if v == #discriminant {return Ok(#enum_path::#variant);})*
+                return Err(format!("Invalid discriminant for enum {}, the value is {}", #enum_name_ident_str, v));
             }
         }
     };
+    // println!("{}", gen);
     gen.into()
 }
