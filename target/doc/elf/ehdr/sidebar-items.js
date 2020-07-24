@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Ehdr",""],["Elf32IdentIdx",""],["Elf64IdentIdx",""]],"mod":[["eident",""],["emachine_value",""],["etype_value",""]],"struct":[["EhdrGeneral",""]],"type":[["Ehdr32",""],["Ehdr64",""]]});
