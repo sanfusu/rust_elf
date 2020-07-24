@@ -1,0 +1,3 @@
+[build]
+# # rustdocflags = ["--output", "doc"]
+# target-dir="./doc"

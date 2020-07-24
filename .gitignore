@@ -1,4 +1,4 @@
 **/target/*
 **/abi_derive
-!**/target/doc
+# !**/target/doc
 Cargo.lock

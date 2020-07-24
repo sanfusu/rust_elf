@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ShFlagsValue","用作 [`ShdrGeneral::sh_flags`] 的可用值。"],["ShTypeValue","用作 [`ShdrGeneral::sh_type`] 字段的值。"],["Shdr",""],["SpSecIndices",""]],"struct":[["ShdrGeneral",""]],"type":[["Shdr32",""],["Shdr64",""]]});

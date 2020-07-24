@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["EI_NIDENT",""]],"enum":[["EIClassValue","用于为 [`PreEIdent::class`] 指定值"],["EIDataValue","用于为 [`PreEIdent::data`] 指定值"],["EIOsAbiValue","该枚举类型只用与 elf64 用于标识字段 [`EIdent64::osabi`]"],["EIVersionValue","用于为 [`PreEIdent::version`] 指定值"]],"struct":[["EIdent32",""],["EIdent64",""],["PreEIdent","通过预读 PreEIdent 来识别文件类型，以便进一步操作。"]]});
