@@ -14,6 +14,9 @@
 <span id="14">14</span>
 <span id="15">15</span>
 <span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ehdr</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">shdr</span>;
@@ -21,7 +24,10 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">symtable</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">gabi41</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Elf</span> {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Elf</span> {
+    <span class="kw">pub</span> <span class="ident">elf_header</span>: <span class="ident">ehdr</span>::<span class="ident">Ehdr</span>,
+}
+
 <span class="kw">impl</span> <span class="ident">gabi41</span>::<span class="ident">ElfBasicType</span> <span class="kw">for</span> <span class="ident">Elf</span> {
     <span class="kw">type</span> <span class="ident">Addr</span> <span class="op">=</span> <span class="ident">u64</span>;
     <span class="kw">type</span> <span class="ident">Half</span> <span class="op">=</span> <span class="ident">u16</span>;
