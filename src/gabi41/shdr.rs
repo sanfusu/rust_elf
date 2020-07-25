@@ -72,7 +72,8 @@ pub enum ShFlagsValue {
 }
 
 use super::ElfBasicType;
-pub struct ShdrGeneral<T: ElfBasicType> {
+#[derive(Default)]
+pub struct ShdrGen<T: ElfBasicType> {
     /// section 的名字，值为字符串表 section 的索引
     pub sh_name: T::Word,
     /// 用于对 section 的内容和语义进行分类，可用值为 [`ShTypeValue`]
@@ -108,4 +109,29 @@ pub struct ShdrGeneral<T: ElfBasicType> {
     /// 部分 section 如符号表，具有固定大小的条目，本字段给出这些条目的大小。
     /// 如果本字段值为 0，则该 section 不具有这种固定大小的条目。
     pub sh_entsize: T::Xword,
+}
+
+use std::convert::TryInto;
+
+use std::io::{Read, Seek, SeekFrom};
+impl<T: ElfBasicType> ShdrGen<T> {
+    #[allow(dead_code)]
+    fn read_section_data(&self, mut f: &std::fs::File) -> Box<Vec<u8>> {
+        let mut buf = Box::new(vec![
+            0u8;
+            self.sh_size.try_into().unwrap_or_else(|e| {
+                panic!(
+                    concat!(
+                        "Error:{}, cannot process 64 bit under 32 bit architecture,",
+                        " if the section's size is larger than u32::MAX"
+                    ),
+                    e
+                )
+            })
+        ]);
+        if let Ok(_) = f.seek(SeekFrom::Start(self.sh_addr.into())) {
+            if let Ok(_) = f.read(buf.as_mut()) {}
+        }
+        buf
+    }
 }

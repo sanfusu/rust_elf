@@ -4,6 +4,7 @@ pub mod spsec;
 pub mod symtable;
 use super::gabi41;
 
+#[derive(Default, Debug)]
 pub struct Elf {}
 impl gabi41::ElfBasicType for Elf {
     type Addr = u32;

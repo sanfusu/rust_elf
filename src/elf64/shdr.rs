@@ -1,3 +1,3 @@
-use super::{gabi41::shdr::ShdrGeneral, Elf};
+use super::{gabi41::shdr::ShdrGen, Elf};
 
-pub type Shdr = ShdrGeneral<Elf>;
+pub type Shdr = ShdrGen<Elf>;

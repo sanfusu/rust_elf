@@ -4,6 +4,7 @@ pub mod spsec;
 pub mod symtable;
 use super::gabi41;
 
+#[derive(Default)]
 pub struct Elf {
     pub elf_header: ehdr::Ehdr,
 }
