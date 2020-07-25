@@ -5,6 +5,7 @@ use super::{
 
 /// 特殊的 section header
 #[allow(non_camel_case_types)]
+#[non_exhaustive]
 pub enum SpSecShdrGeneral<T: ElfBasicType + Sized> {
     bss(ShdrGeneral<T>),
     comment(ShdrGeneral<T>),

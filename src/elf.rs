@@ -2,11 +2,13 @@ use super::{
     elf32::{ehdr::Ehdr as Ehdr32, shdr::Shdr as Shdr32, symtable::Sym as Sym32},
     elf64::{ehdr::Ehdr as Ehdr64, shdr::Shdr as Shdr64, symtable::Sym as Sym64},
 };
+#[non_exhaustive]
 pub enum Shdr {
     Header32(Shdr32),
     Header64(Shdr64),
 }
 
+#[non_exhaustive]
 pub enum Ehdr {
     Header64(Ehdr64),
     Header32(Ehdr32),
@@ -20,6 +22,7 @@ impl Default for Ehdr {
     }
 }
 
+#[non_exhaustive]
 pub enum Sym {
     Symbol32(Sym32),
     Symbol64(Sym64),

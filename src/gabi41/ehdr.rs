@@ -3,6 +3,7 @@ use super::ElfBasicType;
 pub const EI_NIDENT: usize = 16;
 
 #[deprecated = "use the struct field instead"]
+#[non_exhaustive]
 pub enum Elf64IdentIdx {
     MAG0 = 0,
     MAG1,
@@ -17,6 +18,7 @@ pub enum Elf64IdentIdx {
     NIDENT = 16,
 }
 #[deprecated = "use the struct field instead"]
+#[non_exhaustive]
 pub enum Elf32IdentIdx {
     MAG0 = 0,
     MAG1,
@@ -31,6 +33,7 @@ pub enum Elf32IdentIdx {
 
 #[derive(Ordinalize, Debug)]
 #[repr(u8)]
+#[non_exhaustive]
 /// 用于为 [`PreEIdent::class`] 指定值
 pub enum EIClassValue {
     /// Elf32
@@ -41,6 +44,7 @@ pub enum EIClassValue {
 
 #[derive(Ordinalize, Debug)]
 #[repr(u8)]
+#[non_exhaustive]
 /// 用于为 [`PreEIdent::data`] 指定值
 pub enum EIDataValue {
     /// 小端法
@@ -51,6 +55,7 @@ pub enum EIDataValue {
 
 #[derive(Ordinalize, Debug)]
 #[repr(u8)]
+#[non_exhaustive]
 /// 用于为 [`PreEIdent::version`] 指定值
 pub enum EIVersionValue {
     Current = 1,
@@ -58,6 +63,7 @@ pub enum EIVersionValue {
 
 #[derive(Ordinalize)]
 #[repr(C)]
+#[non_exhaustive]
 pub enum ETypeValue {
     NONE = 0,
     /// 可重定位对象文件
@@ -79,6 +85,7 @@ pub enum ETypeValue {
 }
 #[derive(Ordinalize, Debug)]
 #[repr(u8)]
+#[non_exhaustive]
 pub enum EMachineValue {
     EmNone = 0,
     EmM32 = 1,

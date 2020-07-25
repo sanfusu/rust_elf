@@ -1,5 +1,6 @@
 #[derive(Ordinalize, Debug)]
 #[repr(u32)]
+#[non_exhaustive]
 /// 用作 [`ShdrGeneral::sh_type`] 字段的值。
 pub enum ShTypeValue {
     NULL = 0,
@@ -40,6 +41,7 @@ pub enum ShTypeValue {
 }
 #[derive(Ordinalize, Debug)]
 #[repr(u16)]
+#[non_exhaustive]
 pub enum SpSecIndices {
     UNDEF = 0,
     LOPROC = 0xFF00,
@@ -52,6 +54,7 @@ pub enum SpSecIndices {
 
 #[derive(Ordinalize, Debug)]
 #[repr(u32)]
+#[non_exhaustive]
 /// 用作 [`ShdrGeneral::sh_flags`] 的可用值。
 pub enum ShFlagsValue {
     /// 具有 WRITE 属性标签的 section 在进程执行时应当是可写的。   

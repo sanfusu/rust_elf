@@ -5,6 +5,7 @@ use super::{
 
 #[derive(Ordinalize, Debug)]
 #[repr(u8)]
+#[non_exhaustive]
 /// 该枚举类型只用与 elf64 用于标识字段 [`EIdent::osabi`]
 pub enum EIOsAbiValue {
     /// System V ABI
