@@ -32,120 +32,107 @@ pub enum SpSecShdrGen<T: ElfBasicType> {
     text(ShdrGen<T>),
 }
 
-pub struct BssShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> BssShdrGen<T> {
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::NOBITS.ordinal().into(),
-            sh_flags: (ShFlagsValue::ALLOC.ordinal() + ShFlagsValue::WRITE.ordinal()).into(),
-            ..Default::default()
-        })
-    }
-}
-impl<T: ElfBasicType + std::default::Default> Default for BssShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct CommentShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> CommentShdrGen<T> {
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::PROGBITS.ordinal().into(),
-            ..Default::default()
-        })
-    }
-}
-impl<T: ElfBasicType + std::default::Default> Default for CommentShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct DataShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> DataShdrGen<T> {
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::PROGBITS.ordinal().into(),
-            sh_flags: (ShFlagsValue::ALLOC.ordinal() + ShFlagsValue::WRITE.ordinal()).into(),
-            ..Default::default()
-        })
-    }
-}
-impl<T: ElfBasicType + std::default::Default> Default for DataShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct Data1ShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> Data1ShdrGen<T> {
-    pub fn new() -> Self {
-        Self(DataShdrGen::new().0)
-    }
-}
-impl<T: ElfBasicType + std::default::Default> Default for Data1ShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct DebugShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> DebugShdrGen<T> {
-    pub fn new() -> Self {
-        Self(CommentShdrGen::new().0)
-    }
-}
-impl<T: ElfBasicType + std::default::Default> Default for DebugShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
+macro_rules! define_spsecshdr {
+    ($name:ident, $st:path, {$($sf:path),*}, $doc:expr) => {
+        #[doc=$doc]
+        #[derive(Debug)]
+        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
+        impl<T: ElfBasicType + std::default::Default> $name<T> {
+            pub fn new() -> Self {
+                Self(ShdrGen {
+                    sh_type: $st.ordinal().into(),
+                    sh_flags: ($($sf.ordinal()+)*0).into(),
+                    ..Default::default()
+                })
+            }
+        }
+        impl<T: ElfBasicType + std::default::Default> Default for $name<T> {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+    };
+    ($name:ident, $st:path, {$($sf:path),*}) => {
+        define_spsecshdr!($name, $st, {$($sf),*},
+            concat!(
+                "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
+                "+ sh_flags:\n\n",
+                $("\t+ ", stringify!(
+                    [$sf]
+                ),"\n\n"),*
+            )
+        );
+    };
+    ($name:ident, $st:path) => {
+        define_spsecshdr!($name, $st, {},
+            concat!(
+                "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
+                "+ sh_flags: unknown",
+            )
+        );
+    };
+    ($name:ident, $st:path, {$($sf:path),*}, new, $doc:expr) => {
+        #[doc=$doc]
+        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
+        impl<T: ElfBasicType + std::default::Default> $name<T> {
+            pub fn new() -> Self {
+                Self(ShdrGen {
+                    sh_type: $st.ordinal().into(),
+                    sh_flags: ($($sf.ordinal()+)*0).into(),
+                    ..Default::default()
+                })
+            }
+        }
+    };
+    ($name:ident, $st:path, new) => {
+        define_spsecshdr!($name, $st, {},new,
+            concat!(
+                "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
+                "+ sh_flags: unknown",
+            )
+        );
+    };
+    ($name:ident)=>{
+        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
+    };
 }
 
-// NOTE: DynamicShdrGen 中的 sh_flags 值和处理器相关，这里不给予实现
-pub struct DynamicShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> DynamicShdrGen<T> {
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::DYNAMIC.ordinal().into(),
-            ..Default::default()
-        })
-    }
-}
+define_spsecshdr!(BssShdrGen, ShTypeValue::NOBITS,{ShFlagsValue::ALLOC, ShFlagsValue::WRITE});
+define_spsecshdr!(CommentShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(DataShdrGen,ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::WRITE});
+define_spsecshdr!(Data1ShdrGen,ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::WRITE});
+define_spsecshdr!(DebugShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(DynamicShdrGen, ShTypeValue::DYNAMIC, new);
+define_spsecshdr!(DynStrShdrGen, ShTypeValue::STRTAB, { ShFlagsValue::ALLOC });
+define_spsecshdr!(DynSymShdrGen, ShTypeValue::DYNSYM, { ShFlagsValue::ALLOC });
+define_spsecshdr!(FiniShdrGen, ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::EXECINSTR});
+define_spsecshdr!(GotShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(HashShdrGen, ShTypeValue::HASH, { ShFlagsValue::ALLOC });
+define_spsecshdr!(InitShdrGen, ShTypeValue::PROGBITS, { ShFlagsValue::ALLOC });
+define_spsecshdr!(InterpShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(LineShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(NoteShdrGen, ShTypeValue::NOTE);
+define_spsecshdr!(PltShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(RelShdrGen, ShTypeValue::REL);
+define_spsecshdr!(RelaShdrGen, ShTypeValue::RELA);
+define_spsecshdr!(RodataShdrGen, ShTypeValue::PROGBITS, {
+    ShFlagsValue::ALLOC
+});
+define_spsecshdr!(Rodata1ShdrGen, ShTypeValue::PROGBITS, {
+    ShFlagsValue::ALLOC
+});
+define_spsecshdr!(ShStrTabShdrGen, ShTypeValue::STRTAB);
+define_spsecshdr!(StrTabShdrGen, ShTypeValue::STRTAB);
+define_spsecshdr!(SymTabShdrGen, ShTypeValue::SYMTAB);
+define_spsecshdr!(TextShdrGen,ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::EXECINSTR});
 
-pub struct HashShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> HashShdrGen<T> {
-    /// 创建一个新的 HASH section header，只对 sh_type 和 sh_flags 初始化
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::HASH.ordinal().into(),
-            sh_flags: ShFlagsValue::ALLOC.ordinal().into(),
-            ..Default::default()
-        })
-    }
-}
-
-impl<T: ElfBasicType + std::default::Default> Default for HashShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct TextShdrGen<T: ElfBasicType>(ShdrGen<T>);
-impl<T: ElfBasicType + std::default::Default> TextShdrGen<T> {
-    /// 创建一个新的 HASH section header，只对 sh_type 和 sh_flags 初始化
-    pub fn new() -> Self {
-        Self(ShdrGen {
-            sh_type: ShTypeValue::PROGBITS.ordinal().into(),
-            sh_flags: (ShFlagsValue::ALLOC.ordinal() + ShFlagsValue::EXECINSTR.ordinal()).into(),
-            ..Default::default()
-        })
-    }
-}
-
-impl<T: ElfBasicType + std::default::Default> Default for TextShdrGen<T> {
-    fn default() -> Self {
-        Self::new()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::elf64::Elf as Elf64;
+    #[test]
+    fn test() {
+        let a = BssShdrGen::<Elf64>::new();
+        println!("{:?}", a);
     }
 }
