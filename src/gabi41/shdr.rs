@@ -1,7 +1,7 @@
 #[derive(Ordinalize, Debug)]
 #[repr(u32)]
 #[non_exhaustive]
-/// 用作 [`ShdrGeneral::sh_type`] 字段的值。
+/// 用作 [`ShdrGen::sh_type`] 字段的值。
 pub enum ShTypeValue {
     NULL = 0,
     /// 包含程序定义的信息
@@ -55,7 +55,7 @@ pub enum SpSecIndices {
 #[derive(Ordinalize, Debug)]
 #[repr(u32)]
 #[non_exhaustive]
-/// 用作 [`ShdrGeneral::sh_flags`] 的可用值。
+/// 用作 [`ShdrGen::sh_flags`] 的可用值。
 pub enum ShFlagsValue {
     /// 具有 WRITE 属性标签的 section 在进程执行时应当是可写的。   
     WRITE = 0x1,
@@ -72,7 +72,7 @@ pub enum ShFlagsValue {
 }
 
 use super::ElfBasicType;
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ShdrGen<T: ElfBasicType> {
     /// section 的名字，值为字符串表 section 的索引
     pub sh_name: T::Word,
