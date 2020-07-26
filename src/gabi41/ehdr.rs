@@ -100,6 +100,7 @@ pub enum EMachineValue {
 
 /// 通过预读 PreEIdent 来识别文件类型，以便进一步操作。
 #[repr(C)]
+#[derive(Debug)]
 pub struct PreEIdent {
     /// 值只能为 `{0x7f, 'E', 'L', 'F'}`。用来识别 Elf 对象文件
     pub magic: [u8; 4],
@@ -127,6 +128,7 @@ impl Default for PreEIdent {
 }
 
 #[repr(C)]
+#[derive(Debug)]
 pub struct EhdrGeneral<T: ElfBasicType, EI> {
     pub e_ident: EI,
     /// 用于表示对象文件的类型，可用值 [`ETypeValue`]

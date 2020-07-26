@@ -17,6 +17,7 @@ pub enum EIOsAbiValue {
 }
 
 #[repr(packed)]
+#[derive(Debug)]
 pub struct EIdent {
     pub preident: PreEIdent,
     /// 操作系统和 ABI 标识
