@@ -52,19 +52,19 @@ macro_rules! define_spsecshdr {
             }
         }
     };
+    (:ident, $name:ident, $docvalue:expr $(,$docmain:expr)? )=>{
+       $(#[doc=$docmain])?
+        #[doc=$docvalue]
+        #[derive(Debug)]
+        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
+    };
     (:doconly, $name:ident, $st:path, {$($sf:path),*} $(,$docmain:expr)?)=>{
-        define_spsecshdr!(ident:$name, concat!(
+        define_spsecshdr!(:ident, $name, concat!(
                 "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
                 "+ sh_flags: \n\n"
                 ,$("\t+ ", stringify!([$sf]),"\n\n"),*
             ) $(,concat!($docmain,"\n\n"))?
         );
-    };
-    (ident:$name:ident, $docvalue:expr $(,$docmain:expr)? )=>{
-       $(#[doc=$docmain])?
-        #[doc=$docvalue]
-        #[derive(Debug)]
-        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
     };
     ($name:ident, $st:path, {$($sf:path),*}, new $(,$docmain:expr)?) => {
         define_spsecshdr!(:doconly, $name, $st ,{$($sf),*} $(,$docmain)?);
