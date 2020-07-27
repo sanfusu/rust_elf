@@ -33,10 +33,8 @@ pub enum SpSecShdrGen<T: ElfBasicType> {
 }
 
 macro_rules! define_spsecshdr {
-    ($name:ident, $st:path, {$($sf:path),*}, $doc:expr) => {
-        #[doc=$doc]
-        #[derive(Debug)]
-        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
+    (:,$name:ident, $st:path ,{$($sf:path),*}) => {};
+    (:new, $name:ident, $st:path ,{$($sf:path),*}) => {
         impl<T: ElfBasicType + std::default::Default> $name<T> {
             pub fn new() -> Self {
                 Self(ShdrGen {
@@ -46,62 +44,79 @@ macro_rules! define_spsecshdr {
                 })
             }
         }
-        impl<T: ElfBasicType + std::default::Default> Default for $name<T> {
+    };
+    (:default, $name:ident)=>{
+         impl<T: ElfBasicType + std::default::Default> Default for $name<T> {
             fn default() -> Self {
                 Self::new()
             }
         }
     };
-    ($name:ident, $st:path, {$($sf:path),*}) => {
-        define_spsecshdr!($name, $st, {$($sf),*},
-            concat!(
+    (:doconly, $name:ident, $st:path, {$($sf:path),*} $(,$docmain:expr)?)=>{
+        define_spsecshdr!(ident:$name, concat!(
                 "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
-                "+ sh_flags:\n\n",
-                $("\t+ ", stringify!(
-                    [$sf]
-                ),"\n\n"),*
-            )
+                "+ sh_flags: \n\n"
+                ,$("\t+ ", stringify!([$sf]),"\n\n"),*
+            ) $(,concat!($docmain,"\n\n"))?
         );
     };
-    ($name:ident, $st:path) => {
-        define_spsecshdr!($name, $st, {},
-            concat!(
-                "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
-                "+ sh_flags: unknown",
-            )
-        );
-    };
-    ($name:ident, $st:path, {$($sf:path),*}, new, $doc:expr) => {
-        #[doc=$doc]
-        pub struct $name<T: ElfBasicType>(ShdrGen<T>);
-        impl<T: ElfBasicType + std::default::Default> $name<T> {
-            pub fn new() -> Self {
-                Self(ShdrGen {
-                    sh_type: $st.ordinal().into(),
-                    sh_flags: ($($sf.ordinal()+)*0).into(),
-                    ..Default::default()
-                })
-            }
-        }
-    };
-    ($name:ident, $st:path, new) => {
-        define_spsecshdr!($name, $st, {},new,
-            concat!(
-                "+ sh_type:\n\n\t + ", stringify!([$st]),"\n\n",
-                "+ sh_flags: unknown",
-            )
-        );
-    };
-    ($name:ident)=>{
+    (ident:$name:ident, $docvalue:expr $(,$docmain:expr)? )=>{
+       $(#[doc=$docmain])?
+        #[doc=$docvalue]
+        #[derive(Debug)]
         pub struct $name<T: ElfBasicType>(ShdrGen<T>);
     };
+    ($name:ident, $st:path, {$($sf:path),*}, new $(,$docmain:expr)?) => {
+        define_spsecshdr!(:doconly, $name, $st ,{$($sf),*} $(,$docmain)?);
+        define_spsecshdr!(:new, $name, $st ,{$($sf),*});
+    };
+    ($name:ident, $st:path, {$($sf:path),*} $(,$docmain:expr)?) => {
+        define_spsecshdr!(:doconly, $name, $st ,{$($sf),*} $(,$docmain)?);
+        define_spsecshdr!(:new, $name, $st ,{$($sf),*});
+        define_spsecshdr!(:default, $name);
+    };
+    ($name:ident, $st:path, new $(,$docmain:expr)?) => {
+        define_spsecshdr!(:doconly, $name, $st ,{} $(,$docmain)?);
+        define_spsecshdr!(:new, $name, $st, {});
+    };
+    ($name:ident, $st:path $(,$docmain:expr)?) => {
+        define_spsecshdr!(:doconly, $name, $st ,{} $(,$docmain)?);
+        define_spsecshdr!(:new, $name, $st, {});
+        define_spsecshdr!(:default, $name);
+    };
+
 }
 
-define_spsecshdr!(BssShdrGen, ShTypeValue::NOBITS,{ShFlagsValue::ALLOC, ShFlagsValue::WRITE});
-define_spsecshdr!(CommentShdrGen, ShTypeValue::PROGBITS);
-define_spsecshdr!(DataShdrGen,ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::WRITE});
-define_spsecshdr!(Data1ShdrGen,ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::WRITE});
-define_spsecshdr!(DebugShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(
+    BssShdrGen,
+    ShTypeValue::NOBITS,
+    {ShFlagsValue::ALLOC, ShFlagsValue::WRITE},
+    "该 section 保存未初始化的数据，不占用文件空间"
+);
+define_spsecshdr!(
+    CommentShdrGen,
+    ShTypeValue::PROGBITS,
+    {},
+    "用于保存版本控制信息"
+);
+define_spsecshdr!(
+    DataShdrGen,
+    ShTypeValue::PROGBITS,
+    {ShFlagsValue::ALLOC,ShFlagsValue::WRITE},
+    "用于保存初始化的数据"
+);
+define_spsecshdr!(
+    Data1ShdrGen,
+    ShTypeValue::PROGBITS,
+    {ShFlagsValue::ALLOC,ShFlagsValue::WRITE},
+    "和 [DataShdrGen] 一样"
+);
+define_spsecshdr!(
+    DebugShdrGen,
+    ShTypeValue::PROGBITS,
+    {},
+    "用于保存符号化调式的相关信息"
+);
 define_spsecshdr!(DynamicShdrGen, ShTypeValue::DYNAMIC, new);
 define_spsecshdr!(DynStrShdrGen, ShTypeValue::STRTAB, { ShFlagsValue::ALLOC });
 define_spsecshdr!(DynSymShdrGen, ShTypeValue::DYNSYM, { ShFlagsValue::ALLOC });
