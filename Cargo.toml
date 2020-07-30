@@ -6,6 +6,4 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-abi_trait = { path = "./abi_derive/trait" }
-abi_derive = { path = "./abi_derive" }
 enum-ordinalize = "3.1.7"
