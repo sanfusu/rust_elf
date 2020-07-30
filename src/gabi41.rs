@@ -2,6 +2,7 @@ pub mod ehdr;
 pub mod shdr;
 pub mod spsec;
 pub mod symtable;
+pub mod strtable;
 use std::convert::TryInto;
 use std::fmt::Debug;
 pub trait ElfBasicType {
