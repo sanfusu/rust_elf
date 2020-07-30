@@ -11,8 +11,8 @@ pub struct Sym {
     /// 符号相关联的大小。如果是 0，表示没有大小，或者大小未知。
     pub size: <Elf as ElfBasicType>::Word,
     /// 用来表示符号类型和绑定的属性，
-    /// 可用值见 [`StBind`](StBind)
-    /// 和 [`StType`](StType)
+    /// 可用值见 [`InfoBind`](super::gabi41::symtable::st_bind::Bind)
+    /// 和 [`InfoType`](super::gabi41::symtable::st_type::Type)
     info: u8,
     /// 当前值为 0，属于保留字段
     pub other: u8,
