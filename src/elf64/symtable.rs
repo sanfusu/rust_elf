@@ -4,7 +4,7 @@ use crate::sym_info_accessor;
 #[repr(packed)]
 pub struct Sym {
     pub name: <Elf as ElfBasicType>::Word,
-    pub info: u8,
+    info: u8,
     pub other: u8,
     pub shndx: <Elf as ElfBasicType>::Half,
     pub value: <Elf as ElfBasicType>::Addr,
