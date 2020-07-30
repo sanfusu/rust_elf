@@ -114,25 +114,69 @@ define_spsecshdr!(
 define_spsecshdr!(
     DebugShdrGen,
     ShTypeValue::PROGBITS,
-    {},
     "用于保存符号化调式的相关信息"
 );
-define_spsecshdr!(DynamicShdrGen, ShTypeValue::DYNAMIC, new);
-define_spsecshdr!(DynStrShdrGen, ShTypeValue::STRTAB, { ShFlagsValue::ALLOC });
-define_spsecshdr!(DynSymShdrGen, ShTypeValue::DYNSYM, { ShFlagsValue::ALLOC });
-define_spsecshdr!(FiniShdrGen, ShTypeValue::PROGBITS,{ShFlagsValue::ALLOC,ShFlagsValue::EXECINSTR});
-define_spsecshdr!(GotShdrGen, ShTypeValue::PROGBITS);
-define_spsecshdr!(HashShdrGen, ShTypeValue::HASH, { ShFlagsValue::ALLOC });
-define_spsecshdr!(InitShdrGen, ShTypeValue::PROGBITS, { ShFlagsValue::ALLOC });
-define_spsecshdr!(InterpShdrGen, ShTypeValue::PROGBITS);
-define_spsecshdr!(LineShdrGen, ShTypeValue::PROGBITS);
+define_spsecshdr!(
+    DynamicShdrGen,
+    ShTypeValue::DYNAMIC,
+    new,
+    "用于保存动态链接信息"
+);
+define_spsecshdr!(
+    DynStrShdrGen,
+    ShTypeValue::STRTAB,
+    { ShFlagsValue::ALLOC },
+    "用于保存动态链接所需要得字符串，这些字符串通常和符号表条目的名字相关"
+);
+define_spsecshdr!(
+    DynSymShdrGen,
+    ShTypeValue::DYNSYM,
+    { ShFlagsValue::ALLOC },
+    "用于保存动态链接符号表"
+);
+define_spsecshdr!(
+    FiniShdrGen,
+    ShTypeValue::PROGBITS,
+    { ShFlagsValue::ALLOC, ShFlagsValue::EXECINSTR },
+    "用于保存程序终止时的可执行指令"
+);
+define_spsecshdr!(GotShdrGen, ShTypeValue::PROGBITS, "保存全局偏移表");
+define_spsecshdr!(
+    HashShdrGen,
+    ShTypeValue::HASH,
+    { ShFlagsValue::ALLOC },
+    "用于保存 hash 表"
+);
+define_spsecshdr!(
+    InitShdrGen,
+    ShTypeValue::PROGBITS,
+    { ShFlagsValue::ALLOC },
+    "用于保存程序初始化时的可执行指令"
+);
+define_spsecshdr!(
+    InterpShdrGen,
+    ShTypeValue::PROGBITS,
+    "用于保存程序解释器的路径名，如果文件包含可加载段，该 section 将包含[`ShFlagsValue::ALLOC`] 字段，否则该 bit 位关闭"
+);
+define_spsecshdr!(
+    LineShdrGen,
+    ShTypeValue::PROGBITS,
+    "用于保存行号信息（用于符号调试）"
+);
 define_spsecshdr!(NoteShdrGen, ShTypeValue::NOTE);
-define_spsecshdr!(PltShdrGen, ShTypeValue::PROGBITS);
-define_spsecshdr!(RelShdrGen, ShTypeValue::REL);
+define_spsecshdr!(PltShdrGen, ShTypeValue::PROGBITS, "用于保存过程链接表");
+define_spsecshdr!(
+    RelShdrGen,
+    ShTypeValue::REL,
+    "保存重定位信息。如果文件包含可加载段，该 section 将包含[`ShFlagsValue::ALLOC`] 字段，否则该 bit 位关闭。"
+);
 define_spsecshdr!(RelaShdrGen, ShTypeValue::RELA);
-define_spsecshdr!(RodataShdrGen, ShTypeValue::PROGBITS, {
-    ShFlagsValue::ALLOC
-});
+define_spsecshdr!(
+    RodataShdrGen,
+    ShTypeValue::PROGBITS,
+    { ShFlagsValue::ALLOC },
+    ""
+);
 define_spsecshdr!(Rodata1ShdrGen, ShTypeValue::PROGBITS, {
     ShFlagsValue::ALLOC
 });
