@@ -11,3 +11,10 @@ pub struct Header {
     pub memsz: <Elf as crate::BasicType>::Xword,
     pub align: <Elf as crate::BasicType>::Xword,
 }
+
+pub mod p_type {
+    crate::define_p_flags_basic_const!(<super::Elf as crate::BasicType>::Word);
+}
+pub mod p_flags {
+    crate::define_p_flags_basic_const!(<super::Elf as crate::BasicType>::Word);
+}

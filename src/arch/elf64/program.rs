@@ -14,12 +14,12 @@ pub struct Header {
 }
 
 pub mod p_type {
-    pub use crate::arch::gabi::program::p_type::*;
-    pub const LOOS: u32 = 0x6000_0000;
-    pub const HIOS: u32 = 0x6fff_ffff;
+    crate::define_p_type_basic_const!(<super::Elf as crate::BasicType>::Word);
+    pub const LOOS: <super::Elf as crate::BasicType>::Word = 0x6000_0000;
+    pub const HIOS: <super::Elf as crate::BasicType>::Word = 0x6fff_ffff;
 }
 
 pub mod p_flags {
-    pub use crate::arch::gabi::program::p_flags::*;
-    pub const MASKOS: u32 = 0x00ff_0000;
+    crate::define_p_flags_basic_const!(<super::Elf as crate::BasicType>::Word);
+    pub const MASKOS: <super::Elf as crate::BasicType>::Word = 0x00ff_0000;
 }
