@@ -84,32 +84,32 @@ pub struct Ident {
 #[repr(C)]
 #[derive(Debug)]
 pub struct Header<T: crate::BasicType, EI> {
-    pub e_ident: EI,
+    pub ident: EI,
     /// 用于表示对象文件的类型，可用值 [`ETypeValue`](e_type)
-    pub e_type: T::Half,
+    pub r#type: T::Half,
     /// 用于表示目标架构，可用值 [`EMachineValue`](e_machine)
-    pub e_machine: T::Half,
+    pub machine: T::Half,
     /// 用于表示对象文件格式的版本，当前值只能为 [`Current`](e_ident::ei_version::EV_CURRENT)
-    pub e_version: T::Word,
+    pub version: T::Word,
     /// 包含程序入口的虚拟地址。如果没有入口点，则值为 0。
-    pub e_entry: T::Addr,
+    pub entry: T::Addr,
     /// 包含 program header table 的文件偏移地址，以字节为单位。
-    pub e_phoff: T::Off,
+    pub phoff: T::Off,
     /// 包含 section header table 的文件偏移地址，以字节为单位。
-    pub e_shoff: T::Off,
+    pub shoff: T::Off,
     /// 包含特定处理器的 flag
-    pub e_flags: T::Word,
+    pub flags: T::Word,
     /// 包含 ELF header 的大小，以字节为单位。
-    pub e_ehsize: T::Half,
+    pub ehsize: T::Half,
     /// 包含 program header table 条目的大小，以字节为单位。
-    pub e_phentsize: T::Half,
+    pub phentsize: T::Half,
     /// 包含 program header table 中条目的数量。
-    pub e_phnum: T::Half,
+    pub phnum: T::Half,
     /// 包含 section header table 条目的大小，以字节为单位。
-    pub e_shentsize: T::Half,
+    pub shentsize: T::Half,
     /// 包含 section header table 中条目的数量。
-    pub e_shnum: T::Half,
+    pub shnum: T::Half,
     /// 包含 section 名称字符串表的 section 在 section header table 中的索引。
     /// 如果没有 section 名称字符串表，该字段的值为 `SHN_UNDEF`
-    pub e_shstrndx: T::Half,
+    pub shstrndx: T::Half,
 }
