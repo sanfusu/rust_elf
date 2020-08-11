@@ -1,3 +1,4 @@
+#[repr(C)]
 #[derive(Default, Debug)]
 pub struct Header<T: crate::BasicType> {
     /// section 的名字，值为字符串表 section 的索引

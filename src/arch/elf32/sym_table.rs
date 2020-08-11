@@ -2,7 +2,7 @@ use crate::arch::elf32::Elf;
 pub use crate::arch::gabi::sym_table::*;
 use crate::BasicType;
 
-#[repr(packed)]
+#[repr(C)]
 pub struct Entry {
     pub name: <Elf as BasicType>::Word,
     pub value: <Elf as BasicType>::Addr,

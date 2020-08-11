@@ -3,6 +3,7 @@ pub union Du<T: crate::BasicType> {
     pub ptr: T::Addr,
 }
 
+#[repr(C)]
 pub struct Dyn<T: crate::BasicType> {
     pub tag: T::Sxword,
     pub un: Du<T>,

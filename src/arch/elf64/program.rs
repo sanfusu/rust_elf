@@ -1,7 +1,7 @@
 use super::Elf;
 pub use crate::arch::gabi::program::*;
 
-#[repr(packed)]
+#[repr(C)]
 pub struct Header {
     pub r#type: <Elf as crate::BasicType>::Word,
     pub flags: <Elf as crate::BasicType>::Word,

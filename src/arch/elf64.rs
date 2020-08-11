@@ -4,8 +4,10 @@ pub mod program;
 pub mod relocation;
 pub mod section;
 pub mod sym_table;
+#[repr(C)]
 #[derive(Default, Debug)]
 pub struct Elf {}
+#[repr(C)]
 pub struct Ident {
     pub magic: [u8; 4],
     pub class: u8,

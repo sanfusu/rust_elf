@@ -10,6 +10,7 @@ pub mod e_ident {
         pub const EI_PAD: u8 = 7;
     }
 }
+#[repr(C)]
 pub struct Ident {
     pub mag: [u8; 4],
     pub class: u8,
@@ -17,6 +18,7 @@ pub struct Ident {
     pub version: u8,
     pub pad: [u8; (e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD) as usize],
 }
+#[repr(C)]
 #[derive(Default, Debug)]
 pub struct Elf {}
 impl crate::BasicType for Elf {
