@@ -35,20 +35,29 @@ pub mod e_ident {
         pub const EV_CURRENT: u32 = 1;
     }
 }
+
+/// You should not use these constant directly.
+/// Use the arch specified constant instead.
 pub mod e_type {
-    pub const ET_NONE: u16 = 0;
-    /// 可重定位对象文件
-    pub const ET_REL: u16 = 1;
-    /// 可执行文件
-    pub const ET_EXEC: u16 = 2;
-    /// 共享的对象文件
-    pub const ET_DYN: u16 = 3;
-    /// 核心文件
-    pub const ET_CORE: u16 = 4;
-    /// 特定处理器使用的下限
-    pub const ET_LOPROC: u16 = 0xFF00;
-    /// 特定处理器使用的上限
-    pub const ET_HIPROC: u16 = 0xFFFF;
+    #[macro_export]
+    macro_rules! define_e_type_basic_const {
+        ($elf:ty) => {
+            pub const ET_NONE: $elf = 0;
+            /// 可重定位对象文件
+            pub const ET_REL: $elf = 1;
+            /// 可执行文件
+            pub const ET_EXEC: $elf = 2;
+            /// 共享的对象文件
+            pub const ET_DYN: $elf = 3;
+            /// 核心文件
+            pub const ET_CORE: $elf = 4;
+            /// 特定处理器使用的下限
+            pub const ET_LOPROC: $elf = 0xFF00;
+            /// 特定处理器使用的上限
+            pub const ET_HIPROC: $elf = 0xFFFF;
+        };
+    }
+    define_e_type_basic_const!(u16);
 }
 
 pub mod e_machine {
@@ -64,25 +73,9 @@ pub mod e_machine {
     pub const RESERVED_LO: u16 = 11;
     pub const RESERVED_HI: u16 = 16;
 }
-/// 通过预读 PreEIdent 来识别文件类型，以便进一步操作。
+
 #[repr(C)]
-#[derive(Debug)]
-pub struct Ident {
-    /// 值只能为 `{0x7f, 'E', 'L', 'F'}`。用来识别 Elf 对象文件
-    pub magic: [u8; 4],
-    /// 用来识别文件类别，可用值为 [`ei_class`](e_ident::ei_class)。
-    ///
-    ///  架构的[基本类型](crate::BasicType)大小不同。
-    pub class: u8,
-    /// 用来指定特定处理器在对象文件的编码，可用值为 [`ei_data`](e_ident::ei_data)
-    ///
-    /// 小端编码和大端编码，一般默认小端编码。
-    pub data: u8,
-    /// 用来表示 ELF 头部版本号，目前值必须是 [`EV_CURRENT`](e_ident::ei_version::EV_CURRENT)
-    pub version: u8,
-}
-#[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Header<T: crate::BasicType, EI> {
     pub ident: EI,
     /// 用于表示对象文件的类型，可用值 [`ETypeValue`](e_type)

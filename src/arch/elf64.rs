@@ -43,13 +43,11 @@ pub mod e_ident {
     pub use crate::arch::gabi::e_ident::*;
 }
 
+/// 可用作 [`Ehdr::r#type`](crate::arch::gabi::Header::type) 的值
 pub mod e_type {
-    pub use crate::arch::gabi::e_type::*;
+    crate::define_e_type_basic_const!(<super::Elf as crate::BasicType>::Half);
     /// 特定环境使用的下限
-    pub const ET_LOOS: u16 = 0xFE00;
+    pub const ET_LOOS: <super::Elf as crate::BasicType>::Half = 0xFE00;
     /// 特定环境使用的上限
-    pub const ET_HIOS: u16 = 0xFEFF;
+    pub const ET_HIOS: <super::Elf as crate::BasicType>::Half = 0xFEFF;
 }
-
-#[test]
-pub fn test1() {}

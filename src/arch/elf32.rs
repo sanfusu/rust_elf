@@ -32,3 +32,7 @@ impl crate::BasicType for Elf {
 }
 
 pub type Header = crate::arch::gabi::Header<Elf, Ident>;
+
+pub mod e_type {
+    crate::define_e_type_basic_const!(<super::Elf as crate::BasicType>::Half);
+}
