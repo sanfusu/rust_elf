@@ -1,6 +1,8 @@
 use super::Elf;
 pub use crate::arch::gabi::program::*;
+use derive::AsSlice;
 #[repr(C)]
+#[derive(AsSlice)]
 pub struct Header {
     pub r#type: <Elf as crate::BasicType>::Word,
     pub offset: <Elf as crate::BasicType>::Off,

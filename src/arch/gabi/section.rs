@@ -1,5 +1,6 @@
+use derive::AsSlice;
+#[derive(AsSlice, Default, Debug)]
 #[repr(C)]
-#[derive(Default, Debug)]
 pub struct Header<T: crate::BasicType> {
     /// section 的名字，值为字符串表 section 的索引
     pub name: T::Word,
@@ -111,4 +112,15 @@ pub mod sh_type {
         };
     }
     define_sh_type_basic_const!(u32);
+}
+
+#[test]
+fn as_slices_test() {
+    let mut var = crate::arch::elf32::section::Header {
+        ..Default::default()
+    };
+    let b = var.as_mut_slice();
+    b[1] = 1;
+    println!("{:?}", var.as_mut_slice());
+    println!("{:?}", var.as_mut_slice().len());
 }

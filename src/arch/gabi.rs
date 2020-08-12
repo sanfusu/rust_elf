@@ -73,10 +73,10 @@ pub mod e_machine {
     pub const RESERVED_LO: u16 = 11;
     pub const RESERVED_HI: u16 = 16;
 }
-
+use derive::AsSlice;
 #[repr(C)]
-#[derive(Debug, Default)]
-pub struct Header<T: crate::BasicType, EI> {
+#[derive(Debug, Default, AsSlice)]
+pub struct Header<T: crate::BasicType + ?Sized, EI: Sized> {
     pub ident: EI,
     /// 用于表示对象文件的类型，可用值 [`ETypeValue`](e_type)
     pub r#type: T::Half,

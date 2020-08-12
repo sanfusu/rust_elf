@@ -3,6 +3,8 @@ pub union Du<T: crate::BasicType> {
     pub ptr: T::Addr,
 }
 
+use derive::AsSlice;
+#[derive(AsSlice)]
 #[repr(C)]
 pub struct Dyn<T: crate::BasicType> {
     pub tag: T::Sxword,
