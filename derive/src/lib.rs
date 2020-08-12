@@ -11,6 +11,7 @@ pub fn as_slice_derive(input: TokenStream) -> TokenStream {
     let gen = quote! {
         impl #impl_generics #name #ty_generics #where_clause{
             #[doc="类型转换"]
+            #[inline]
             pub fn as_slice<'a>(&'a self)->&'a [u8]{
                 unsafe {
                     std::slice::from_raw_parts(
@@ -19,6 +20,7 @@ pub fn as_slice_derive(input: TokenStream) -> TokenStream {
                 }
             }
             #[doc="类型转换"]
+            #[inline]
             pub fn as_mut_slice<'a>(&'a mut self)->&'a mut [u8]{
                 unsafe {
                     std::slice::from_raw_parts_mut(
