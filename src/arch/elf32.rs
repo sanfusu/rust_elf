@@ -11,6 +11,7 @@ pub mod e_ident {
     }
 }
 #[repr(C)]
+#[derive(Default, Debug)]
 pub struct Ident {
     pub mag: [u8; 4],
     pub class: u8,
@@ -20,8 +21,44 @@ pub struct Ident {
 }
 #[repr(C)]
 #[derive(Default, Debug)]
-pub struct Elf {}
-impl crate::BasicType for Elf {
+pub struct ElfBasicType {}
+
+#[derive(Default)]
+pub struct Elf<'a> {
+    pub writer: Option<Box<(dyn std::io::Write + 'a)>>,
+    pub reader: Option<Box<(dyn std::io::Read + 'a)>>,
+    pub seeker: Option<Box<(dyn std::io::Read + 'a)>>,
+    pub file: Option<&'a mut std::fs::File>,
+    pub ehdr: Box<Header>,
+}
+impl<'a> Elf<'a> {
+    pub fn new(file: &'a mut std::fs::File) -> Elf {
+        let mut ret = Elf {
+            ..Default::default()
+        };
+        ret.reader = Some(Box::new(file.try_clone().unwrap()));
+        ret.writer = Some(Box::new(file.try_clone().unwrap()));
+        ret.seeker = Some(Box::new(file.try_clone().unwrap()));
+        ret.file = Some(file);
+        ret
+    }
+
+    pub fn set_reader(&'a mut self, r: &'a mut (dyn std::io::Read + 'a)) {
+        self.reader = Some(Box::new(r));
+    }
+
+    pub fn read_ehdr(&mut self) -> &Box<Header> {
+        match self.reader.as_mut() {
+            Some(r) => {
+                r.read(self.ehdr.as_bytes_mut()).unwrap();
+            }
+            None => {}
+        }
+        &self.ehdr
+    }
+}
+
+impl crate::BasicType for ElfBasicType {
     type Addr = u32;
     type Half = u16;
     type Off = u32;
@@ -31,8 +68,15 @@ impl crate::BasicType for Elf {
     type Sxword = Self::Sword;
 }
 
-pub type Header = crate::arch::gabi::Header<Elf, Ident>;
+pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
 
 pub mod e_type {
-    crate::define_e_type_basic_const!(<super::Elf as crate::BasicType>::Half);
+    crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
+}
+
+#[test]
+fn test_file_open() {
+    let mut file = std::fs::File::open("./elf").unwrap();
+    let mut elf = Elf::new(&mut file);
+    println!("{:?}", elf.read_ehdr());
 }
