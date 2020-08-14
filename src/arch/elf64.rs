@@ -4,6 +4,7 @@ pub mod program;
 pub mod relocation;
 pub mod section;
 pub mod sym_table;
+
 #[repr(C)]
 #[derive(Default, Debug)]
 pub struct ElfBasicType {}
@@ -52,41 +53,7 @@ pub mod e_type {
     /// 特定环境使用的上限
     pub const ET_HIOS: <super::ElfBasicType as crate::BasicType>::Half = 0xFEFF;
 }
-
-#[derive(Default)]
-pub struct Elf<'a> {
-    pub writer: Option<Box<(dyn std::io::Write + 'a)>>,
-    pub reader: Option<Box<(dyn std::io::Read + 'a)>>,
-    pub seeker: Option<Box<(dyn std::io::Read + 'a)>>,
-    pub file: Option<&'a mut std::fs::File>,
-    pub ehdr: Box<Header>,
-}
-impl<'a> Elf<'a> {
-    pub fn new(file: &'a mut std::fs::File) -> Elf {
-        let mut ret = Elf {
-            ..Default::default()
-        };
-        ret.reader = Some(Box::new(file.try_clone().unwrap()));
-        ret.writer = Some(Box::new(file.try_clone().unwrap()));
-        ret.seeker = Some(Box::new(file.try_clone().unwrap()));
-        ret.file = Some(file);
-        ret
-    }
-
-    pub fn set_reader(&'a mut self, r: &'a mut (dyn std::io::Read + 'a)) {
-        self.reader = Some(Box::new(r));
-    }
-
-    pub fn read_ehdr(&mut self) -> &Box<Header> {
-        match self.reader.as_mut() {
-            Some(r) => {
-                r.read(self.ehdr.as_bytes_mut()).unwrap();
-            }
-            None => {}
-        }
-        &self.ehdr
-    }
-}
+pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
 
 #[test]
 fn test_file_open() {

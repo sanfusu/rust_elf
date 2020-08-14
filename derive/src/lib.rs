@@ -10,17 +10,17 @@ pub fn as_slice_derive(input: TokenStream) -> TokenStream {
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     let mut gen = quote! {
-        impl #impl_generics #name #ty_generics #where_clause {
+        impl #impl_generics crate::AsBytes for #name #ty_generics #where_clause {
             #[doc="类型转换"]
             #[inline]
-            pub fn as_bytes<'a>(&'a self)->&'a [u8] {
+            fn as_bytes<'a>(&'a self)->&'a [u8] {
                 self.as_ref()
             }
 
             #[doc="类型转换"]
             #[inline]
-                pub fn as_bytes_mut<'a>(&'a mut self)->&'a mut [u8] {
-                    self.as_mut()
+            fn as_bytes_mut<'a>(&'a mut self)->&'a mut [u8] {
+                self.as_mut()
             }
         }
     };

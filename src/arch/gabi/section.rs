@@ -113,9 +113,9 @@ pub mod sh_type {
     }
     define_sh_type_basic_const!(u32);
 }
-
 #[test]
 fn as_slices_test() {
+    use crate::AsBytes;
     let mut var = crate::arch::elf32::section::Header {
         ..Default::default()
     };

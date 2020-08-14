@@ -1,6 +1,10 @@
 pub mod arch;
 
 use std::{cmp, convert::TryInto, fmt::Debug, ops};
+pub trait AsBytes {
+    fn as_bytes_mut<'a>(&'a mut self) -> &'a mut [u8];
+    fn as_bytes<'a>(&'a self) -> &'a [u8];
+}
 pub trait BasicType {
     type Xword: Debug
         + Default
