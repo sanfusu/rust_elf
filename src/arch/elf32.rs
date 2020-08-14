@@ -76,7 +76,7 @@ pub mod e_type {
 
 #[test]
 fn test_file_open() {
-    let mut file = std::fs::File::open("./elf").unwrap();
+    let mut file = std::fs::File::open("./test/elf_example").unwrap();
     let mut elf = Elf::new(&mut file);
     println!("{:?}", elf.read_ehdr());
 }
