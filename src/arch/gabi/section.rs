@@ -119,8 +119,9 @@ fn as_slices_test() {
     let mut var = crate::arch::elf32::section::Header {
         ..Default::default()
     };
-    let b = var.as_mut_slice();
-    b[1] = 1;
-    println!("{:?}", var.as_mut_slice());
-    println!("{:?}", var.as_mut_slice().len());
+    let b = var.as_mut();
+    b[1] = 1u8;
+    assert_eq!(b.len(), std::mem::size_of_val(b));
+    println!("{:?}", var.as_bytes_mut());
+    println!("{:?}", var.as_bytes_mut().len());
 }
