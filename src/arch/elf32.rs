@@ -7,7 +7,7 @@ pub mod sym_table;
 pub mod e_ident {
     pub mod idx {
         pub use crate::arch::gabi::e_ident::idx::*;
-        pub const EI_PAD: u8 = 7;
+        pub const EI_PAD: usize = 7;
     }
 }
 #[repr(C)]
@@ -17,7 +17,7 @@ pub struct Ident {
     pub class: u8,
     pub data: u8,
     pub version: u8,
-    pub pad: [u8; (e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD) as usize],
+    pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
 }
 #[repr(C)]
 #[derive(Default, Debug)]
@@ -43,7 +43,7 @@ pub mod e_type {
 
 #[test]
 fn test_file_open() {
-    let mut file = std::fs::File::open("./test/elf_example").unwrap();
+    let mut file = std::fs::File::open("./test/elf64_example").unwrap();
     let mut elf = Elf::new(&mut file);
     println!("{:?}", elf.read_ehdr());
 }

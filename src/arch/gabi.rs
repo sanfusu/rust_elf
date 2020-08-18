@@ -4,16 +4,16 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 // use crate::AsBytes;
-pub mod e_ident {
+pub(crate) mod e_ident {
     pub mod idx {
-        pub const EI_MAG0: u8 = 0;
-        pub const EI_MAG1: u8 = 1;
-        pub const EI_MAG2: u8 = 2;
-        pub const EI_MAG3: u8 = 3;
-        pub const EI_CLASS: u8 = 4;
-        pub const EI_DATA: u8 = 5;
-        pub const EI_VERSION: u8 = 6;
-        pub const EI_NIDENT: u8 = 16;
+        pub const EI_MAG0: usize = 0;
+        pub const EI_MAG1: usize = 1;
+        pub const EI_MAG2: usize = 2;
+        pub const EI_MAG3: usize = 3;
+        pub const EI_CLASS: usize = 4;
+        pub const EI_DATA: usize = 5;
+        pub const EI_VERSION: usize = 6;
+        pub const EI_NIDENT: usize = 16;
     }
     pub mod ei_mag {
         pub const ELFMAG0: u8 = 0x7f;
@@ -108,39 +108,24 @@ pub struct Header<T: crate::BasicType, EI: Sized> {
     pub shstrndx: T::Half,
 }
 
-#[derive(Default)]
+#[derive(Debug)]
 pub struct Elf<'a, Header: crate::AsBytes> {
-    pub writer: Option<Box<(dyn std::io::Write + 'a)>>,
-    pub reader: Option<Box<(dyn std::io::Read + 'a)>>,
-    pub seeker: Option<Box<(dyn std::io::Read + 'a)>>,
-    pub file: Option<&'a mut std::fs::File>,
+    pub file: &'a mut std::fs::File,
     pub ehdr: Box<Header>,
 }
 use crate::AsBytes;
+use std::io::Read;
 
 impl<'a, Header: std::default::Default + AsBytes> Elf<'a, Header> {
     pub fn new(file: &'a mut std::fs::File) -> Elf<Header> {
-        let mut ret = Elf {
-            ..Default::default()
-        };
-        ret.reader = Some(Box::new(file.try_clone().unwrap()));
-        ret.writer = Some(Box::new(file.try_clone().unwrap()));
-        ret.seeker = Some(Box::new(file.try_clone().unwrap()));
-        ret.file = Some(file);
-        ret
-    }
-
-    pub fn set_reader(&'a mut self, r: &'a mut (dyn std::io::Read + 'a)) {
-        self.reader = Some(Box::new(r));
+        Elf {
+            file,
+            ehdr: Default::default(),
+        }
     }
 
     pub fn read_ehdr(&mut self) -> &Box<Header> {
-        match self.reader.as_mut() {
-            Some(r) => {
-                r.read(self.ehdr.as_bytes_mut()).unwrap();
-            }
-            None => {}
-        }
+        self.file.read(self.ehdr.as_bytes_mut()).unwrap();
         &self.ehdr
     }
 }

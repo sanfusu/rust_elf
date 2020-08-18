@@ -17,7 +17,7 @@ pub struct Ident {
     pub version: u8,
     pub os_abi: u8,
     pub abi_version: u8,
-    pub pad: [u8; (e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD) as usize],
+    pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
 }
 pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
 
@@ -33,9 +33,9 @@ impl crate::BasicType for ElfBasicType {
 pub mod e_ident {
     pub mod idx {
         pub use crate::arch::gabi::e_ident::idx::*;
-        pub const EI_OSABI: u8 = 7;
-        pub const EI_ABIVERSION: u8 = 8;
-        pub const EI_PAD: u8 = 9;
+        pub const EI_OSABI: usize = 7;
+        pub const EI_ABIVERSION: usize = 8;
+        pub const EI_PAD: usize = 9;
     }
     pub mod ei_osabi {
         pub const ELFOSABI_SYSV: u8 = 0;
@@ -57,7 +57,7 @@ pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
 
 #[test]
 fn test_file_open() {
-    let mut file = std::fs::File::open("./test/elf_example").unwrap();
+    let mut file = std::fs::File::open("./test/elf64_example").unwrap();
     let mut elf = Elf::new(&mut file);
     println!("{:?}", elf.read_ehdr());
 }
