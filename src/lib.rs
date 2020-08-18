@@ -28,6 +28,7 @@ pub trait BasicType {
         + TryInto<usize, Error = std::num::TryFromIntError>;
 }
 
+#[non_exhaustive]
 pub enum Elf<'a> {
     Elf64(elf64::Elf<'a>),
     Elf32(elf32::Elf<'a>),
