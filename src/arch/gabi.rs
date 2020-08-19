@@ -5,7 +5,7 @@ pub mod section;
 pub mod sym_table;
 // use crate::AsBytes;
 pub(crate) mod e_ident {
-    pub mod idx {
+    pub(crate) mod idx {
         pub const EI_MAG0: usize = 0;
         pub const EI_MAG1: usize = 1;
         pub const EI_MAG2: usize = 2;
