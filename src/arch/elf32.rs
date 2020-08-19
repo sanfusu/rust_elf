@@ -1,3 +1,5 @@
+use std::io;
+
 pub use crate::arch::gabi::*;
 pub mod dynamic;
 pub mod program;
@@ -5,6 +7,7 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 pub mod e_ident {
+    pub use crate::arch::gabi::e_ident::*;
     pub mod idx {
         pub use crate::arch::gabi::e_ident::idx::*;
         pub const EI_PAD: usize = 7;
@@ -37,6 +40,18 @@ impl crate::BasicType for ElfBasicType {
 
 pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
 
+impl crate::Validity for Header {
+    fn is_valid(&self) -> io::Result<()> {
+        if self.ident.class == e_ident::ei_class::ELFCLASS32 {
+            Ok(())
+        } else {
+            Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                crate::Error::InvalidClass,
+            ))
+        }
+    }
+}
 pub mod e_type {
     crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
 }
@@ -44,6 +59,5 @@ pub mod e_type {
 #[test]
 fn test_file_open() {
     let mut file = std::fs::File::open("./test/elf64_example").unwrap();
-    let mut elf = Elf::new(&mut file);
-    println!("{:?}", elf.read_ehdr());
+    let _elf = Elf::new(&mut file).expect_err("elf64_example 应当是 elf64 文件");
 }

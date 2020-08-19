@@ -54,10 +54,22 @@ pub mod e_type {
     pub const ET_HIOS: <super::ElfBasicType as crate::BasicType>::Half = 0xFEFF;
 }
 pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
-
+use std::io;
+impl crate::Validity for Header {
+    fn is_valid(&self) -> io::Result<()> {
+        if self.ident.class == e_ident::ei_class::ELFCLASS64 {
+            Ok(())
+        } else {
+            Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                crate::Error::InvalidClass,
+            ))
+        }
+    }
+}
 #[test]
 fn test_file_open() {
     let mut file = std::fs::File::open("./test/elf64_example").unwrap();
-    let mut elf = Elf::new(&mut file);
+    let mut elf = Elf::new(&mut file).unwrap();
     println!("{:?}", elf.read_ehdr());
 }
