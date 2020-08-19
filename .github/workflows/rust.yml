@@ -25,7 +25,7 @@ jobs:
     -
       name: Gen dummy page
       run: |
-        cat > ./target/doc/index.html <<EOL
+        cat > ./target/doc/index.html << EOL
         <!DOCTYPE html>
         <head>
         <script language="javascript" type="text/javascript">
