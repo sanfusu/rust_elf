@@ -110,24 +110,15 @@ pub struct Header<T: crate::BasicType, EI: Sized> {
 
 #[derive(Debug)]
 pub struct Elf<'a, Header: crate::AsBytes> {
-    pub file: &'a mut std::fs::File,
-    pub ehdr: Option<Box<Header>>,
+    file: &'a mut std::fs::File,
+    ehdr: Option<Box<Header>>,
 }
+
 use crate::AsBytes;
 use std::io::Read;
 use std::io::{self, Seek, SeekFrom};
-impl<'a, Header: std::default::Default + AsBytes + crate::Validity> Elf<'a, Header> {
-    pub fn new(file: &'a mut std::fs::File) -> io::Result<Elf<'a, Header>> {
-        let mut ret: Elf<Header> = Elf {
-            file,
-            ehdr: Default::default(),
-        };
-        let var_name = ret.read_ehdr()?;
-        let x: &[u8] = var_name.as_bytes();
-        crate::is_elf(x)?;
-        ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
-    }
 
+impl<'a, Header: std::default::Default + AsBytes + crate::Validity> Elf<'a, Header> {
     /// crate 内部使用，避免过度的有效性检查
     pub(crate) fn new_without_validity_check(file: &'a mut std::fs::File) -> Elf<Header> {
         Elf {
@@ -135,19 +126,23 @@ impl<'a, Header: std::default::Default + AsBytes + crate::Validity> Elf<'a, Head
             ehdr: Default::default(),
         }
     }
+    pub fn new(file: &'a mut std::fs::File) -> io::Result<Elf<'a, Header>> {
+        let mut ret: Elf<Header> = Elf::new_without_validity_check(file);
+        let var_name = ret.read_ehdr()?;
+        let x: &[u8] = var_name.as_bytes();
+        crate::is_elf(x)?;
+        ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
+    }
 
     pub fn read_ehdr(&mut self) -> io::Result<&Box<Header>> {
-        self.file.seek(SeekFrom::Start(0))?;
         match self.ehdr {
             Some(ref v) => Ok(v),
             None => {
                 let mut ehdr: Box<Header> = Box::new(Default::default());
+                self.file.seek(SeekFrom::Start(0))?;
                 let len = self.file.read(ehdr.as_bytes_mut())?;
                 if len < std::mem::size_of_val(&self.ehdr) {
-                    Err(io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        crate::Error::DataLoss,
-                    ))
+                    Err(crate::Error::DataLoss.into())
                 } else {
                     self.ehdr = Some(ehdr);
                     Ok(self.ehdr.as_ref().unwrap())

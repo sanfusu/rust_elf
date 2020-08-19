@@ -10,6 +10,17 @@ pub enum Error {
     InvalidMagic,
     InvalidClass,
 }
+
+impl std::convert::Into<io::Error> for Error {
+    fn into(self) -> io::Error {
+        let x = match self {
+            Error::DataLoss => (io::ErrorKind::InvalidInput, Error::DataLoss),
+            Error::InvalidMagic => (io::ErrorKind::InvalidInput, Error::DataLoss),
+            Error::InvalidClass => (io::ErrorKind::InvalidInput, Error::DataLoss),
+        };
+        io::Error::new(x.0, x.1)
+    }
+}
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self)
@@ -64,7 +75,7 @@ use Elf::{Elf32, Elf64};
 
 pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
     if ident.len() < e_ident::idx::EI_MAG3 {
-        Err(io::Error::new(io::ErrorKind::InvalidData, Error::DataLoss))
+        Err(Error::DataLoss.into())
     } else if [
         e_ident::ei_mag::ELFMAG0,
         e_ident::ei_mag::ELFMAG1,
@@ -74,26 +85,20 @@ pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
     {
         Ok(true)
     } else {
-        Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            Error::InvalidMagic,
-        ))
+        Err(Error::InvalidMagic.into())
     }
 }
 use std::io::{self, Seek};
 pub fn new<'a>(file: &'a mut std::fs::File) -> io::Result<Option<Elf<'a>>> {
     let mut ident: [u8; e_ident::idx::EI_NIDENT] = [0; e_ident::idx::EI_NIDENT];
-    file.seek(io::SeekFrom::Start(0)).unwrap();
-    file.read(&mut ident).unwrap();
+    file.seek(io::SeekFrom::Start(0))?;
+    file.read(&mut ident)?;
 
     is_elf(&ident)?;
     match ident[e_ident::idx::EI_CLASS] {
         ELFCLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_validity_check(file)))),
         ELFCLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_validity_check(file)))),
-        _ => Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            Error::InvalidClass,
-        )),
+        _ => Err(Error::InvalidClass.into()),
     }
 }
 
@@ -101,9 +106,9 @@ pub fn new<'a>(file: &'a mut std::fs::File) -> io::Result<Option<Elf<'a>>> {
 mod test {
     use super::*;
     #[test]
-    fn test_new() -> Result<(), ()> {
-        let mut file = std::fs::File::open("./test/elf64_example").unwrap();
-        match self::new(&mut file).unwrap() {
+    fn test_new() -> io::Result<()> {
+        let mut file = std::fs::File::open("./test/elf64_example")?;
+        match self::new(&mut file)? {
             Some(elf) => match elf {
                 Elf64(mut v) => {
                     println!("Elf64: {:?}", v.read_ehdr());
@@ -114,12 +119,13 @@ mod test {
                     Ok(())
                 }
             },
-            None => Err(()),
+            None => Err(Error::InvalidClass.into()),
         }
     }
     #[test]
     fn test_is_elf_with_err_data() -> io::Result<()> {
         let err_data = [0x7f, 'e' as u8];
-        is_elf(&err_data).map(|_| ())
+        is_elf(&err_data).expect_err("msg");
+        Ok(())
     }
 }

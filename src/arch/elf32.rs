@@ -57,7 +57,8 @@ pub mod e_type {
 }
 
 #[test]
-fn test_file_open() {
-    let mut file = std::fs::File::open("./test/elf64_example").unwrap();
+fn test_file_open() -> io::Result<()> {
+    let mut file = std::fs::File::open("./test/elf64_example")?;
     let _elf = Elf::new(&mut file).expect_err("elf64_example 应当是 elf64 文件");
+    Ok(())
 }

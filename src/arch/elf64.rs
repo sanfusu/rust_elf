@@ -68,8 +68,9 @@ impl crate::Validity for Header {
     }
 }
 #[test]
-fn test_file_open() {
-    let mut file = std::fs::File::open("./test/elf64_example").unwrap();
-    let mut elf = Elf::new(&mut file).unwrap();
-    println!("{:?}", elf.read_ehdr());
+fn test_file_open() -> io::Result<()> {
+    let mut file = std::fs::File::open("./test/elf64_example")?;
+    let mut elf = Elf::new(&mut file)?;
+    println!("{:?}", elf.read_ehdr()?);
+    Ok(())
 }
