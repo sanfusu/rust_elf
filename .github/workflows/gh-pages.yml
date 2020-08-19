@@ -15,7 +15,7 @@ jobs:
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
-
+      - run: mdbook init
       - run: mdbook build
 
       - name: Deploy
