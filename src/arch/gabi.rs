@@ -124,12 +124,12 @@ impl<'a, Header: std::default::Default + AsBytes + crate::Validity> Elf<'a, Head
         };
         let var_name = ret.read_ehdr()?;
         let x: &[u8] = var_name.as_bytes();
-        crate::is_elf(x);
+        crate::is_elf(x)?;
         ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
     }
 
     /// crate 内部使用，避免过度的有效性检查
-    pub(crate) fn new_without_class_check(file: &'a mut std::fs::File) -> Elf<Header> {
+    pub(crate) fn new_without_validity_check(file: &'a mut std::fs::File) -> Elf<Header> {
         Elf {
             file,
             ehdr: Default::default(),

@@ -62,9 +62,9 @@ use arch::{
 use std::io::Read;
 use Elf::{Elf32, Elf64};
 
-pub(crate) fn is_elf(ident: &[u8]) -> bool {
+pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
     if ident.len() < e_ident::idx::EI_MAG3 {
-        false
+        Err(io::Error::new(io::ErrorKind::InvalidData, Error::DataLoss))
     } else if [
         e_ident::ei_mag::ELFMAG0,
         e_ident::ei_mag::ELFMAG1,
@@ -72,9 +72,12 @@ pub(crate) fn is_elf(ident: &[u8]) -> bool {
         e_ident::ei_mag::ELFMAG3,
     ] == ident[e_ident::idx::EI_MAG0..=e_ident::idx::EI_MAG3]
     {
-        true
+        Ok(true)
     } else {
-        false
+        Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            Error::InvalidMagic,
+        ))
     }
 }
 use std::io::{self, Seek};
@@ -83,20 +86,14 @@ pub fn new<'a>(file: &'a mut std::fs::File) -> io::Result<Option<Elf<'a>>> {
     file.seek(io::SeekFrom::Start(0)).unwrap();
     file.read(&mut ident).unwrap();
 
-    if is_elf(&ident) {
-        match ident[e_ident::idx::EI_CLASS] {
-            ELFCLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_class_check(file)))),
-            ELFCLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_class_check(file)))),
-            _ => Err(io::Error::new(
-                io::ErrorKind::InvalidData,
-                Error::InvalidClass,
-            )),
-        }
-    } else {
-        Err(io::Error::new(
+    is_elf(&ident)?;
+    match ident[e_ident::idx::EI_CLASS] {
+        ELFCLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_validity_check(file)))),
+        ELFCLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_validity_check(file)))),
+        _ => Err(io::Error::new(
             io::ErrorKind::InvalidData,
-            Error::InvalidMagic,
-        ))
+            Error::InvalidClass,
+        )),
     }
 }
 
@@ -121,12 +118,8 @@ mod test {
         }
     }
     #[test]
-    fn test_is_elf_with_err_data() -> Result<(), ()> {
+    fn test_is_elf_with_err_data() -> io::Result<()> {
         let err_data = [0x7f, 'e' as u8];
-        if is_elf(&err_data) {
-            Err(())
-        } else {
-            Ok(())
-        }
+        is_elf(&err_data).map(|_| ())
     }
 }
