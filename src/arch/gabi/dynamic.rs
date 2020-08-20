@@ -10,7 +10,7 @@ pub struct Dyn<T: crate::BasicType> {
     pub tag: T::Sxword,
     pub un: Du<T>,
 }
-pub mod d_tag {
+pub(crate) mod d_tag {
     #[macro_export]
     macro_rules! define_d_tag_basic_const {
         ($elf:ty) => {

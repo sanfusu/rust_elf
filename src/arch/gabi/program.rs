@@ -1,4 +1,4 @@
-pub mod p_type {
+pub(crate) mod p_type {
     #[macro_export]
     macro_rules! define_p_type_basic_const {
         ($elf:ty) => {
@@ -15,7 +15,7 @@ pub mod p_type {
     }
 }
 
-pub mod p_flags {
+pub(crate) mod p_flags {
     #[macro_export]
     macro_rules! define_p_flags_basic_const {
         ($elf:ty) => {

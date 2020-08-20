@@ -1,5 +1,5 @@
 pub mod dynamic;
-pub mod program;
+pub(crate) mod program;
 pub mod relocation;
 pub mod section;
 pub mod sym_table;
