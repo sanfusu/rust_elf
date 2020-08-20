@@ -77,20 +77,20 @@ mod header {
 
 mod elf {
     use super::e_ident;
-    use super::Header;
+    use super::{section, Header};
     use std::io;
 
-    pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
-    
+    pub type Elf<'a> = crate::arch::gabi::Elf<'a, super::ElfBasicType, Header, section::Header>;
+
     impl crate::Validity for Header {
         fn is_valid(&self) -> io::Result<()> {
+            if usize::from(self.shentsize) != std::mem::size_of::<section::Header>() {
+                return Err(crate::Error::InvalidShentSize.into());
+            }
             if self.ident.class == e_ident::ei_class::ELFCLASS64 {
                 Ok(())
             } else {
-                Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    crate::Error::InvalidClass,
-                ))
+                Err(crate::Error::InvalidClass.into())
             }
         }
     }
@@ -104,7 +104,11 @@ mod test {
     fn test_file_open() -> io::Result<()> {
         let mut file = std::fs::File::open("./test/elf64_example")?;
         let mut elf = Elf::new(&mut file)?;
-        println!("{:?}", elf.read_ehdr()?);
+        println!("{:#x?}", elf.read_ehdr()?);
+        let shdr = elf.read_shdr_table()?;
+        for sec in shdr.iter() {
+            println!("{:#x?}", sec);
+        }
         Ok(())
     }
 }

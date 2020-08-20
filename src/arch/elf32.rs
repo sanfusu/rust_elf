@@ -31,7 +31,7 @@ pub struct Ident {
     pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
 }
 
-pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
+pub type Elf<'a> = crate::arch::gabi::Elf<'a, ElfBasicType, Header, section::Header>;
 
 #[repr(C)]
 #[derive(Default, Debug)]
@@ -51,13 +51,13 @@ pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
 
 impl crate::Validity for Header {
     fn is_valid(&self) -> io::Result<()> {
+        if usize::from(self.shentsize) != std::mem::size_of::<section::Header>() {
+            return Err(crate::Error::InvalidShentSize.into());
+        }
         if self.ident.class == e_ident::ei_class::ELFCLASS32 {
             Ok(())
         } else {
-            Err(io::Error::new(
-                io::ErrorKind::InvalidData,
-                crate::Error::InvalidClass,
-            ))
+            Err(crate::Error::InvalidClass.into())
         }
     }
 }

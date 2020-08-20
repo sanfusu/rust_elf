@@ -3,6 +3,11 @@ pub(crate) mod program;
 pub mod relocation;
 pub mod section;
 pub mod sym_table;
+
+pub(crate) use elf::Elf;
+pub(crate) use header::Header;
+pub use header::Iehdr;
+
 // use crate::AsBytes;
 pub(crate) mod e_ident {
     pub(crate) mod idx {
@@ -81,79 +86,142 @@ pub mod e_machine {
     }
     define_e_machine_basic_constant!(u16);
 }
-use derive::AsSlice;
-#[repr(C)]
-#[derive(Debug, Default, AsSlice)]
-pub struct Header<T: crate::BasicType, EI: Sized> {
-    pub ident: EI,
-    /// 用于表示对象文件的类型，可用值 [`ETypeValue`](e_type)
-    pub r#type: T::Half,
-    /// 用于表示目标架构，可用值 [`EMachineValue`](e_machine)
-    pub machine: T::Half,
-    /// 用于表示对象文件格式的版本，当前值只能为 [`Current`](e_ident::ei_version::EV_CURRENT)
-    pub version: T::Word,
-    /// 包含程序入口的虚拟地址。如果没有入口点，则值为 0。
-    pub entry: T::Addr,
-    /// 包含 program header table 的文件偏移地址，以字节为单位。
-    pub phoff: T::Off,
-    /// 包含 section header table 的文件偏移地址，以字节为单位。
-    pub shoff: T::Off,
-    /// 包含特定处理器的 flag
-    pub flags: T::Word,
-    /// 包含 ELF header 的大小，以字节为单位。
-    pub ehsize: T::Half,
-    /// 包含 program header table 条目的大小，以字节为单位。
-    pub phentsize: T::Half,
-    /// 包含 program header table 中条目的数量。
-    pub phnum: T::Half,
-    /// 包含 section header table 条目的大小，以字节为单位。
-    pub shentsize: T::Half,
-    /// 包含 section header table 中条目的数量。
-    pub shnum: T::Half,
-    /// 包含 section 名称字符串表的 section 在 section header table 中的索引。
-    /// 如果没有 section 名称字符串表，该字段的值为 `SHN_UNDEF`
-    pub shstrndx: T::Half,
-}
 
-#[derive(Debug)]
-pub struct Elf<'a, Header: crate::AsBytes> {
-    file: &'a mut std::fs::File,
-    ehdr: Option<Box<Header>>,
-}
+mod header {
+    use derive::AsSlice;
+    pub trait Iehdr<T: crate::BasicType> {
+        fn get_phoff(&self) -> T::Off;
+        fn get_shoff(&self) -> T::Off;
+        fn get_shdr_size(&self) -> T::Half;
+        fn get_shdr_num(&self) -> T::Half;
+    }
 
-use crate::AsBytes;
-use std::io::Read;
-use std::io::{self, Seek, SeekFrom};
-
-impl<'a, Header: std::default::Default + AsBytes + crate::Validity> Elf<'a, Header> {
-    /// crate 内部使用，避免过度的有效性检查
-    pub(crate) fn new_without_validity_check(file: &'a mut std::fs::File) -> Elf<Header> {
-        Elf {
-            file,
-            ehdr: Default::default(),
+    #[repr(C)]
+    #[derive(Debug, Default, AsSlice)]
+    pub struct Header<T: crate::BasicType, EI: Sized> {
+        pub ident: EI,
+        /// 用于表示对象文件的类型，可用值 [`ETypeValue`](e_type)
+        pub r#type: T::Half,
+        /// 用于表示目标架构，可用值 [`EMachineValue`](e_machine)
+        pub machine: T::Half,
+        /// 用于表示对象文件格式的版本，当前值只能为 [`Current`](e_ident::ei_version::EV_CURRENT)
+        pub version: T::Word,
+        /// 包含程序入口的虚拟地址。如果没有入口点，则值为 0。
+        pub entry: T::Addr,
+        /// 包含 program header table 的文件偏移地址，以字节为单位。
+        pub phoff: T::Off,
+        /// 包含 section header table 的文件偏移地址，以字节为单位。
+        pub shoff: T::Off,
+        /// 包含特定处理器的 flag
+        pub flags: T::Word,
+        /// 包含 ELF header 的大小，以字节为单位。
+        pub ehsize: T::Half,
+        /// 包含 program header table 条目的大小，以字节为单位。
+        pub phentsize: T::Half,
+        /// 包含 program header table 中条目的数量。
+        pub phnum: T::Half,
+        /// 包含 section header table 条目的大小，以字节为单位。
+        pub shentsize: T::Half,
+        /// 包含 section header table 中条目的数量。
+        pub shnum: T::Half,
+        /// 包含 section 名称字符串表的 section 在 section header table 中的索引。
+        /// 如果没有 section 名称字符串表，该字段的值为 `SHN_UNDEF`
+        pub shstrndx: T::Half,
+    }
+    impl<T: crate::BasicType, EI> Iehdr<T> for Header<T, EI> {
+        fn get_phoff(&self) -> T::Off {
+            self.phoff
+        }
+        fn get_shoff(&self) -> T::Off {
+            self.shoff
+        }
+        fn get_shdr_size(&self) -> T::Half {
+            self.shentsize * self.shnum
+        }
+        fn get_shdr_num(&self) -> T::Half {
+            self.shnum
         }
     }
-    pub fn new(file: &'a mut std::fs::File) -> io::Result<Elf<'a, Header>> {
-        let mut ret: Elf<Header> = Elf::new_without_validity_check(file);
-        let var_name = ret.read_ehdr()?;
-        let x: &[u8] = var_name.as_bytes();
-        crate::is_elf(x)?;
-        ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
+}
+
+mod elf {
+    use super::Iehdr;
+    use crate::AsBytes;
+
+    use std::{
+        default::Default,
+        fs,
+        io::{self, Read, Seek, SeekFrom},
+    };
+
+    #[derive(Debug)]
+    pub struct Elf<'a, T, Ehdr, Shdr>
+    where
+        T: crate::BasicType,
+        Ehdr: crate::AsBytes + Iehdr<T> + Default,
+        Shdr: crate::AsBytes + Default,
+    {
+        file: &'a mut fs::File,
+        ehdr: Option<Box<Ehdr>>,
+        shdr_table: Option<Box<Vec<Shdr>>>,
+        phantom: std::marker::PhantomData<T>,
     }
 
-    pub fn read_ehdr(&mut self) -> io::Result<&Box<Header>> {
-        match self.ehdr {
-            Some(ref v) => Ok(v),
-            None => {
-                let mut ehdr: Box<Header> = Box::new(Default::default());
-                self.file.seek(SeekFrom::Start(0))?;
-                let len = self.file.read(ehdr.as_bytes_mut())?;
-                if len < std::mem::size_of_val(&self.ehdr) {
-                    Err(crate::Error::DataLoss.into())
-                } else {
-                    self.ehdr = Some(ehdr);
-                    Ok(self.ehdr.as_ref().unwrap())
+    impl<'a, Ehdr, Shdr, T> Elf<'a, T, Ehdr, Shdr>
+    where
+        T: crate::BasicType,
+        Ehdr: Default + AsBytes + crate::Validity + Iehdr<T>,
+        Shdr: crate::AsBytes + Default,
+    {
+        /// crate 内部使用，避免过度的有效性检查
+        pub(crate) fn new_without_validity_check(file: &'a mut fs::File) -> Elf<T, Ehdr, Shdr> {
+            Elf {
+                file,
+                ehdr: Default::default(),
+                shdr_table: Default::default(),
+                phantom: Default::default(),
+            }
+        }
+        pub fn new(file: &'a mut fs::File) -> io::Result<Elf<'a, T, Ehdr, Shdr>> {
+            let mut ret: Elf<T, Ehdr, Shdr> = Elf::new_without_validity_check(file);
+            let var_name = ret.read_ehdr()?;
+            let x: &[u8] = var_name.as_bytes();
+            crate::is_elf(x)?;
+            ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
+        }
+
+        pub fn read_ehdr(&mut self) -> io::Result<&Box<Ehdr>> {
+            match self.ehdr {
+                Some(ref v) => Ok(v),
+                None => {
+                    self.ehdr = Some(Default::default());
+                    self.file.seek(SeekFrom::Start(0))?;
+                    let len = self.file.read(self.ehdr.as_mut().unwrap().as_bytes_mut())?;
+                    if len < std::mem::size_of_val(&self.ehdr) {
+                        Err(crate::Error::DataLoss.into())
+                    } else {
+                        Ok(self.ehdr.as_ref().unwrap())
+                    }
                 }
+            }
+        }
+
+        pub fn read_shdr_table(&mut self) -> io::Result<&Box<Vec<Shdr>>> {
+            match self.shdr_table {
+                Some(ref v) => Ok(v),
+                None => match self.ehdr {
+                    None => Err(crate::Error::InvalidEhdr.into()),
+                    Some(ref v) => {
+                        self.shdr_table = Some(Default::default());
+                        self.file.seek(SeekFrom::Start(v.get_shoff().into()))?;
+                        for _ in 0..v.get_shdr_num().into() {
+                            let mut s: Shdr = Default::default();
+                            self.file.read(s.as_bytes_mut())?;
+                            self.shdr_table.as_mut().unwrap().push(s);
+                        }
+                        Ok(self.shdr_table.as_ref().unwrap())
+                    }
+                },
             }
         }
     }
