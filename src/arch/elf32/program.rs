@@ -15,7 +15,7 @@ pub struct Header {
 }
 
 pub mod p_type {
-    crate::define_p_flags_basic_const!(<super::ElfBasicType as crate::BasicType>::Word);
+    crate::define_p_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Word);
 }
 pub mod p_flags {
     crate::define_p_flags_basic_const!(<super::ElfBasicType as crate::BasicType>::Word);
