@@ -1,6 +1,6 @@
-pub use crate::arch::gabi::section::*;
 use crate::arch::{elf64::ElfBasicType, gabi};
 
+pub use crate::arch::gabi::section::sh_idx;
 pub mod sh_type {
     crate::define_sh_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Word);
     /// elf-64 特有（特定环境使用）

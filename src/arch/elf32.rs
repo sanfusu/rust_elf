@@ -1,11 +1,10 @@
 use std::io;
-
-pub use crate::arch::gabi::*;
 pub mod dynamic;
 pub mod program;
 pub mod relocation;
 pub mod section;
 pub mod sym_table;
+
 pub mod e_ident {
     pub use crate::arch::gabi::e_ident::*;
     pub mod idx {
@@ -13,6 +12,15 @@ pub mod e_ident {
         pub const EI_PAD: usize = 7;
     }
 }
+
+pub mod e_type {
+    crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
+}
+
+pub mod e_machine {
+    crate::define_e_machine_basic_constant!(<super::ElfBasicType as crate::BasicType>::Half);
+}
+
 #[repr(C)]
 #[derive(Default, Debug)]
 pub struct Ident {
@@ -22,11 +30,12 @@ pub struct Ident {
     pub version: u8,
     pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
 }
+
+pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
+
 #[repr(C)]
 #[derive(Default, Debug)]
 pub struct ElfBasicType {}
-
-pub type Elf<'a> = crate::arch::gabi::Elf<'a, Header>;
 
 impl crate::BasicType for ElfBasicType {
     type Addr = u32;
@@ -51,9 +60,6 @@ impl crate::Validity for Header {
             ))
         }
     }
-}
-pub mod e_type {
-    crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
 }
 
 #[test]

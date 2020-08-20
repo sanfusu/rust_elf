@@ -1,5 +1,4 @@
 use crate::arch::elf64::ElfBasicType;
-pub use crate::arch::gabi::sym_table::*;
 use crate::BasicType;
 pub mod st_bind {
     pub use crate::arch::gabi::sym_table::st_bind::*;

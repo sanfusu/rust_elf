@@ -32,8 +32,8 @@ pub(crate) mod e_ident {
         pub const ELFDATA2MSB: u8 = 2;
     }
     pub mod ei_version {
-        pub const EV_NONE: u32 = 0;
-        pub const EV_CURRENT: u32 = 1;
+        pub const EV_NONE: u8 = 0;
+        pub const EV_CURRENT: u8 = 1;
     }
 }
 
@@ -62,17 +62,24 @@ pub mod e_type {
 }
 
 pub mod e_machine {
-    pub const EM_NONE: u16 = 0;
-    pub const EM_M32: u16 = 1;
-    pub const EM_SPARC: u16 = 2;
-    pub const EM_386: u16 = 3;
-    pub const EM_68K: u16 = 4;
-    pub const EM_88K: u16 = 5;
-    pub const EM_860K: u16 = 7;
-    pub const EM_MIPS: u16 = 8;
-    pub const EM_MIPS_RS4_BE: u16 = 10;
-    pub const RESERVED_LO: u16 = 11;
-    pub const RESERVED_HI: u16 = 16;
+    // 只有那些同时具有 32 和 64 模式的 machine 可以在这里定义
+    #[macro_export]
+    macro_rules! define_e_machine_basic_constant {
+        ($elf:ty) => {
+            pub const EM_NONE: $elf = 0;
+            pub const EM_M32: $elf = 1;
+            pub const EM_SPARC: $elf = 2;
+            pub const EM_386: $elf = 3;
+            pub const EM_68K: $elf = 4;
+            pub const EM_88K: $elf = 5;
+            pub const EM_860K: $elf = 7;
+            pub const EM_MIPS: $elf = 8;
+            pub const EM_MIPS_RS4_BE: $elf = 10;
+            pub const RESERVED_LO: $elf = 11;
+            pub const RESERVED_HI: $elf = 16;
+        };
+    }
+    define_e_machine_basic_constant!(u16);
 }
 use derive::AsSlice;
 #[repr(C)]

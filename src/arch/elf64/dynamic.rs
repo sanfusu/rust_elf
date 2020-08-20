@@ -1,5 +1,5 @@
 use super::ElfBasicType;
-pub use crate::arch::gabi::dynamic::{self, *};
+use crate::arch::gabi::dynamic;
 
 pub mod d_tag {
     pub const INIT_ARRAY: <super::ElfBasicType as crate::BasicType>::Sxword = 25;
@@ -12,3 +12,4 @@ pub mod d_tag {
 }
 
 pub type Dyn = dynamic::Dyn<ElfBasicType>;
+pub type Du = dynamic::Du<ElfBasicType>;
