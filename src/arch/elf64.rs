@@ -6,8 +6,7 @@ pub mod sym_table;
 
 use basic_type::BasicType;
 pub use elf::Elf;
-pub use header::Ehdr;
-pub use ident::Ident;
+use ident::Ident;
 
 pub mod e_ident {
     pub mod idx {
@@ -65,7 +64,7 @@ pub mod basic_type {
     pub type Sxword = <BasicType as crate::IBasicType>::Sxword;
 }
 
-mod ident {
+pub mod ident {
     use super::e_ident;
 
     #[repr(C)]
@@ -82,17 +81,10 @@ mod ident {
 }
 
 pub mod header {
-    use super::basic_type::BasicType;
-    use super::Ident;
-    pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
-}
-
-pub mod elf {
-    use super::e_ident;
-    use super::{section, BasicType, Ehdr};
+    use super::{basic_type::BasicType, e_ident, section, Ident};
     use std::io;
 
-    pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
+    pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
 
     impl crate::Validity for Ehdr {
         fn is_valid(&self) -> io::Result<()> {
@@ -106,6 +98,12 @@ pub mod elf {
             }
         }
     }
+}
+
+pub(crate) mod elf {
+    use super::{basic_type::BasicType, header::Ehdr, section};
+
+    pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
 }
 
 #[cfg(test)]

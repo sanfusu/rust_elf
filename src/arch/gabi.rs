@@ -4,7 +4,7 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 
-pub use header::IEhdr;
+use header::IEhdr;
 
 // use crate::AsBytes;
 pub(crate) mod e_ident {
