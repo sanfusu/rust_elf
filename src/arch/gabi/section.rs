@@ -1,51 +1,52 @@
-use derive::AsSlice;
-#[derive(AsSlice, Default, Debug)]
-#[repr(C)]
-pub struct Header<T: crate::BasicType> {
-    /// section 的名字，值为字符串表 section 的索引
-    pub name: T::Word,
-    /// 用于对 section 的内容和语义进行分类，可用值为 [`sh_type`]
-    pub r#type: T::Word,
-    /// section 所支持的各种 bit flag 属性，可用值见 [`sh_flags`]
-    pub flags: T::Xword,
-    /// 如果 section 在出现在进程的内存映像中，
-    /// 该成员会给出该 section 的首地址。
-    /// 否则，该成员的值为 0。
-    pub addr: T::Addr,
-    /// section 在文件中相对于文件开头的偏移地址。
-    /// 但如果 section 的类型为 [`sh_type::NOBITS`]（不占用文件空间），
-    /// 则给出理论上的位置。
-    pub offset: T::Off,
-    /// section 在文件中所占用的大小。如果 section 类型为 [`sh_type::NOBITS`]
-    /// 则不占用空间，但该字段可以不为 0 .
-    pub size: T::Xword,
-    /// 用于保存 section header table 的索引链接，
-    /// 具体解释取决于 section 的类型
-    ///
-    /// |`sh_type`|`sh_link`|`sh_info`|
-    /// |--|--|--|
-    /// |[`sh_type::DYNAMIC`]|用于索引 section 条目中所使用的字符串表|0|
-    /// |[`sh_type::HASH`]|用于索引 hash 表所应用的符号表|0|
-    /// |[`sh_type::REL`], [`sh_type::RELA`]|用于索引相关联的符号表| 用于索引重定位所应用的 section |
-    /// |[`sh_type::SYMTAB`], [`sh_type::DYNSYM`]|用于索引相关联的字符串表|比最后一个本地符号得符号表索引大一（绑定 `STB_LOCAL`）|
-    /// |其他|[`SHN_UNDEF`](sh_idx::UNDEF)|0|
-    pub link: T::Word,
-    /// 用于保存额外的信息，具体解释取决于 section 类型。
-    pub info: T::Word,
-    /// 地址对齐限制
-    pub addralign: T::Xword,
-    /// 部分 section 如符号表，具有固定大小的条目，本字段给出这些条目的大小。
-    /// 如果本字段值为 0，则该 section 不具有这种固定大小的条目。
-    pub entsize: T::Xword,
+pub mod header {
+    use derive::AsSlice;
+    #[derive(AsSlice, Default, Debug)]
+    #[repr(C)]
+    pub struct Shdr<T: crate::IBasicType> {
+        /// section 的名字，值为字符串表 section 的索引
+        pub name: T::Word,
+        /// 用于对 section 的内容和语义进行分类，可用值为 [`super::sh_type`]
+        pub r#type: T::Word,
+        /// section 所支持的各种 bit flag 属性，可用值见 [`super::sh_flags`]
+        pub flags: T::Xword,
+        /// 如果 section 在出现在进程的内存映像中，
+        /// 该成员会给出该 section 的首地址。
+        /// 否则，该成员的值为 0。
+        pub addr: T::Addr,
+        /// section 在文件中相对于文件开头的偏移地址。
+        /// 但如果 section 的类型为 [`super::sh_type::NOBITS`]（不占用文件空间），
+        /// 则给出理论上的位置。
+        pub offset: T::Off,
+        /// section 在文件中所占用的大小。如果 section 类型为 [`super::sh_type::NOBITS`]
+        /// 则不占用空间，但该字段可以不为 0 .
+        pub size: T::Xword,
+        /// 用于保存 section header table 的索引链接，
+        /// 具体解释取决于 section 的类型
+        ///
+        /// |`super::sh_type`|`sh_link`|`sh_info`|
+        /// |--|--|--|
+        /// |[`super::sh_type::DYNAMIC`]|用于索引 section 条目中所使用的字符串表|0|
+        /// |[`super::sh_type::HASH`]|用于索引 hash 表所应用的符号表|0|
+        /// |[`super::sh_type::REL`], [`super::sh_type::RELA`]|用于索引相关联的符号表| 用于索引重定位所应用的 section |
+        /// |[`super::sh_type::SYMTAB`], [`super::sh_type::DYNSYM`]|用于索引相关联的字符串表|比最后一个本地符号得符号表索引大一（绑定 `STB_LOCAL`）|
+        /// |其他|[`SHN_UNDEF`](super::sh_idx::UNDEF)|0|
+        pub link: T::Word,
+        /// 用于保存额外的信息，具体解释取决于 section 类型。
+        pub info: T::Word,
+        /// 地址对齐限制
+        pub addralign: T::Xword,
+        /// 部分 section 如符号表，具有固定大小的条目，本字段给出这些条目的大小。
+        /// 如果本字段值为 0，则该 section 不具有这种固定大小的条目。
+        pub entsize: T::Xword,
+    }
 }
-
 /// You shoud not use the const defined here directly.
 /// Use the specified arch's sh_flags instead.
 pub mod sh_flags {
     #[macro_export]
     macro_rules! define_sh_flags_basic_const {
         ($elf:ty) => {
-            /// 用作 [`Shdr::flags`](super::Header::flags) 的可用值。
+            /// 用作 [`Shdr::flags`](super::header::Shdr::flags) 的可用值。
             /// 具有 WRITE 属性标签的 section 在进程执行时应当是可写的。   
             pub const WRITE: $elf = 0x1;
             /// 在进程执行时，具有该属性的 section 占用内存。
@@ -77,7 +78,7 @@ pub mod sh_type {
     macro_rules! define_sh_type_basic_const {
         ($elf:ty) => {
             // #[derive(Ordinalize, Debug)]
-            /// 用作 [`sh_type`](super::Header) 字段的值。
+            /// 用作 [`sh_type`](crate::arch::gabi::section::header::Shdr::type) 字段的值。
             pub const NULL: $elf = 0;
             /// 包含程序定义的信息
             pub const PROGBITS: $elf = 1;
@@ -113,15 +114,19 @@ pub mod sh_type {
     }
     define_sh_type_basic_const!(u32);
 }
-#[test]
-fn as_slices_test() {
-    use crate::AsBytes;
-    let mut var = crate::arch::elf32::section::Header {
-        ..Default::default()
-    };
-    let b = var.as_mut();
-    b[1] = 1u8;
-    assert_eq!(b.len(), std::mem::size_of_val(b));
-    println!("{:?}", var.as_bytes_mut());
-    println!("{:?}", var.as_bytes_mut().len());
+
+#[cfg(test)]
+mod test {
+    use crate::{arch::elf32::section::header::Shdr as Shdr32, AsBytes};
+    #[test]
+    fn as_slices_test() {
+        let mut var = Shdr32 {
+            ..Default::default()
+        };
+        let b = var.as_mut();
+        b[1] = 1u8;
+        assert_eq!(b.len(), std::mem::size_of_val(b));
+        println!("{:?}", var.as_bytes_mut());
+        println!("{:?}", var.as_bytes_mut().len());
+    }
 }

@@ -1,4 +1,4 @@
-pub union Du<T: crate::BasicType> {
+pub union Du<T: crate::IBasicType> {
     pub val: T::Xword,
     pub ptr: T::Addr,
 }
@@ -6,7 +6,7 @@ pub union Du<T: crate::BasicType> {
 use derive::AsSlice;
 #[derive(AsSlice)]
 #[repr(C)]
-pub struct Dyn<T: crate::BasicType> {
+pub struct Dyn<T: crate::IBasicType> {
     pub tag: T::Sxword,
     pub un: Du<T>,
 }

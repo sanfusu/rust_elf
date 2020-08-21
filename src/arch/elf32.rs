@@ -5,6 +5,8 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 
+use basic_type::*;
+
 pub mod e_ident {
     pub use crate::arch::gabi::e_ident::*;
     pub mod idx {
@@ -14,11 +16,13 @@ pub mod e_ident {
 }
 
 pub mod e_type {
-    crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
+    crate::define_e_type_basic_const!(super::Half);
 }
 
 pub mod e_machine {
-    crate::define_e_machine_basic_constant!(<super::ElfBasicType as crate::BasicType>::Half);
+    pub const RESERVED_LO: super::Half = 11;
+    pub const RESERVED_HI: super::Half = 16;
+    crate::define_e_machine_basic_constant!(super::Half);
 }
 
 #[repr(C)]
@@ -31,27 +35,36 @@ pub struct Ident {
     pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
 }
 
-pub type Elf<'a> = crate::arch::gabi::Elf<'a, ElfBasicType, Header, section::Header>;
+pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
 
-#[repr(C)]
-#[derive(Default, Debug)]
-pub struct ElfBasicType {}
+pub mod basic_type {
+    #[repr(C)]
+    #[derive(Default, Debug)]
+    pub struct BasicType {}
 
-impl crate::BasicType for ElfBasicType {
-    type Addr = u32;
-    type Half = u16;
-    type Off = u32;
-    type Word = u32;
-    type Sword = i32;
-    type Xword = Self::Word;
-    type Sxword = Self::Sword;
+    impl crate::IBasicType for BasicType {
+        type Addr = u32;
+        type Half = u16;
+        type Off = u32;
+        type Word = u32;
+        type Sword = i32;
+        type Xword = Self::Word;
+        type Sxword = Self::Sword;
+    }
+    pub type Addr = <BasicType as crate::IBasicType>::Addr;
+    pub type Off = <BasicType as crate::IBasicType>::Off;
+    pub type Half = <BasicType as crate::IBasicType>::Half;
+    pub type Word = <BasicType as crate::IBasicType>::Word;
+    pub type Sword = <BasicType as crate::IBasicType>::Sword;
+    pub type Xword = <BasicType as crate::IBasicType>::Xword;
+    pub type Sxword = <BasicType as crate::IBasicType>::Sxword;
 }
 
-pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
+pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
 
-impl crate::Validity for Header {
+impl crate::Validity for Ehdr {
     fn is_valid(&self) -> io::Result<()> {
-        if usize::from(self.shentsize) != std::mem::size_of::<section::Header>() {
+        if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
             return Err(crate::Error::InvalidShentSize.into());
         }
         if self.ident.class == e_ident::ei_class::ELFCLASS32 {

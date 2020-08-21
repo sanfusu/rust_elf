@@ -1,5 +1,5 @@
-use crate::arch::elf64::ElfBasicType;
-use crate::BasicType;
+use crate::arch::elf64::BasicType;
+use crate::IBasicType;
 pub mod st_bind {
     pub use crate::arch::gabi::sym_table::st_bind::*;
     pub const LOOS: u8 = 10;
@@ -12,10 +12,10 @@ pub mod st_type {
 }
 #[repr(C)]
 pub struct Entry {
-    pub name: <ElfBasicType as BasicType>::Word,
+    pub name: <BasicType as IBasicType>::Word,
     pub info: u8,
     pub other: u8,
-    pub shndx: <ElfBasicType as BasicType>::Half,
-    pub value: <ElfBasicType as BasicType>::Addr,
-    pub size: <ElfBasicType as BasicType>::Xword,
+    pub shndx: <BasicType as IBasicType>::Half,
+    pub value: <BasicType as IBasicType>::Addr,
+    pub size: <BasicType as IBasicType>::Xword,
 }

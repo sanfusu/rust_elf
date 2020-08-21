@@ -4,9 +4,9 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 
+use basic_type::BasicType;
 pub use elf::Elf;
-pub use elf_basic_type::ElfBasicType;
-pub use header::Header;
+pub use header::Ehdr;
 pub use ident::Ident;
 
 pub mod e_ident {
@@ -24,25 +24,30 @@ pub mod e_ident {
     pub use crate::arch::gabi::e_ident::*;
 }
 
-/// 可用作 [`Ehdr::r#type`](crate::arch::gabi::Header::type) 的值
+/// 可用作 [`Ehdr::r#type`](crate::arch::gabi::header::Ehdr::type) 的值
 pub mod e_type {
-    crate::define_e_type_basic_const!(<super::ElfBasicType as crate::BasicType>::Half);
+    use super::basic_type;
+
+    crate::define_e_type_basic_const!(basic_type::Half);
     /// 特定环境使用的下限
-    pub const ET_LOOS: <super::ElfBasicType as crate::BasicType>::Half = 0xFE00;
+    pub const ET_LOOS: basic_type::Half = 0xFE00;
     /// 特定环境使用的上限
-    pub const ET_HIOS: <super::ElfBasicType as crate::BasicType>::Half = 0xFEFF;
+    pub const ET_HIOS: basic_type::Half = 0xFEFF;
 }
 
 pub mod e_machine {
-    crate::define_e_machine_basic_constant!(<super::ElfBasicType as crate::BasicType>::Half);
+    use super::basic_type;
+
+    pub const EM_X86_64: basic_type::Half = 62;
+    crate::define_e_machine_basic_constant!(basic_type::Half);
 }
 
-mod elf_basic_type {
+pub mod basic_type {
     #[repr(C)]
     #[derive(Default, Debug)]
-    pub struct ElfBasicType {}
+    pub struct BasicType {}
 
-    impl crate::BasicType for ElfBasicType {
+    impl crate::IBasicType for BasicType {
         type Addr = u64;
         type Half = u16;
         type Off = u64;
@@ -51,6 +56,13 @@ mod elf_basic_type {
         type Xword = u64;
         type Sxword = i64;
     }
+    pub type Addr = <BasicType as crate::IBasicType>::Addr;
+    pub type Off = <BasicType as crate::IBasicType>::Off;
+    pub type Half = <BasicType as crate::IBasicType>::Half;
+    pub type Word = <BasicType as crate::IBasicType>::Word;
+    pub type Sword = <BasicType as crate::IBasicType>::Sword;
+    pub type Xword = <BasicType as crate::IBasicType>::Xword;
+    pub type Sxword = <BasicType as crate::IBasicType>::Sxword;
 }
 
 mod ident {
@@ -69,22 +81,22 @@ mod ident {
     }
 }
 
-mod header {
-    use super::ElfBasicType;
+pub mod header {
+    use super::basic_type::BasicType;
     use super::Ident;
-    pub type Header = crate::arch::gabi::Header<ElfBasicType, Ident>;
+    pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
 }
 
-mod elf {
+pub mod elf {
     use super::e_ident;
-    use super::{section, Header};
+    use super::{section, BasicType, Ehdr};
     use std::io;
 
-    pub type Elf<'a> = crate::arch::gabi::Elf<'a, super::ElfBasicType, Header, section::Header>;
+    pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
 
-    impl crate::Validity for Header {
+    impl crate::Validity for Ehdr {
         fn is_valid(&self) -> io::Result<()> {
-            if usize::from(self.shentsize) != std::mem::size_of::<section::Header>() {
+            if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
                 return Err(crate::Error::InvalidShentSize.into());
             }
             if self.ident.class == e_ident::ei_class::ELFCLASS64 {
@@ -105,9 +117,9 @@ mod test {
         let mut file = std::fs::File::open("./test/elf64_example")?;
         let mut elf = Elf::new(&mut file)?;
         println!("{:#x?}", elf.read_ehdr()?);
-        let shdr = elf.read_shdr_table()?;
-        for sec in shdr.iter() {
-            println!("{:#x?}", sec);
+        let shdr_table = elf.read_shdr_table()?;
+        for shdr in shdr_table.iter() {
+            println!("{:#x?}", shdr);
         }
         Ok(())
     }

@@ -38,7 +38,7 @@ impl fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
-pub trait BasicType {
+pub trait IBasicType {
     type Xword: Debug
         + Default
         + From<u32>
