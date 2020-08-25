@@ -1,12 +1,15 @@
 use crate::arch::elf64::BasicType;
 use crate::IBasicType;
-pub mod st_bind {
-    pub use crate::arch::gabi::sym_table::st_bind::*;
+#[allow(non_snake_case)]
+pub mod BIND {
+    pub use crate::arch::gabi::sym_table::BIND::*;
     pub const LOOS: u8 = 10;
     pub const HIOS: u8 = 12;
 }
-pub mod st_type {
-    pub use crate::arch::gabi::sym_table::st_type::*;
+
+#[allow(non_snake_case)]
+pub mod TYPE {
+    pub use crate::arch::gabi::sym_table::TYPE::*;
     pub const LOOS: u8 = 10;
     pub const HIOS: u8 = 12;
 }

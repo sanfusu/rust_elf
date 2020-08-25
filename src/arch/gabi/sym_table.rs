@@ -1,4 +1,5 @@
-pub mod st_bind {
+#[allow(non_snake_case)]
+pub(crate) mod BIND {
     pub const LOCAL: u8 = 0;
     pub const GLOBAL: u8 = 1;
     pub const WEAK: u8 = 2;
@@ -6,7 +7,8 @@ pub mod st_bind {
     pub const HIPROC: u8 = 15;
 }
 
-pub mod st_type {
+#[allow(non_snake_case)]
+pub(crate) mod TYPE {
     pub const NOTYPE: u8 = 0;
     pub const OBJECT: u8 = 1;
     pub const FUNC: u8 = 2;

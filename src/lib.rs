@@ -82,23 +82,23 @@ pub enum Elf<'a> {
 
 use arch::{
     elf32, elf64,
-    gabi::e_ident::{
+    gabi::IDENT::{
         self,
-        ei_class::{ELFCLASS32, ELFCLASS64},
+        CLASS::{CLASS32, CLASS64},
     },
 };
 use std::io::Read;
 use Elf::{Elf32, Elf64};
 
 pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
-    if ident.len() < e_ident::idx::EI_MAG3 {
+    if ident.len() < IDENT::IDX::MAG3 {
         Err(Error::DataLoss.into())
     } else if [
-        e_ident::ei_mag::ELFMAG0,
-        e_ident::ei_mag::ELFMAG1,
-        e_ident::ei_mag::ELFMAG2,
-        e_ident::ei_mag::ELFMAG3,
-    ] == ident[e_ident::idx::EI_MAG0..=e_ident::idx::EI_MAG3]
+        IDENT::MAGIC::MAG0,
+        IDENT::MAGIC::MAG1,
+        IDENT::MAGIC::MAG2,
+        IDENT::MAGIC::MAG3,
+    ] == ident[IDENT::IDX::MAG0..=IDENT::IDX::MAG3]
     {
         Ok(true)
     } else {
@@ -107,14 +107,14 @@ pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
 }
 use std::io::{self, Seek};
 pub fn new<'a>(file: &'a mut std::fs::File) -> io::Result<Option<Elf<'a>>> {
-    let mut ident: [u8; e_ident::idx::EI_NIDENT] = [0; e_ident::idx::EI_NIDENT];
+    let mut ident: [u8; IDENT::IDX::NIDENT] = [0; IDENT::IDX::NIDENT];
     file.seek(io::SeekFrom::Start(0))?;
     file.read(&mut ident)?;
 
     is_elf(&ident)?;
-    match ident[e_ident::idx::EI_CLASS] {
-        ELFCLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_validity_check(file)))),
-        ELFCLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_validity_check(file)))),
+    match ident[IDENT::IDX::CLASS] {
+        CLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_validity_check(file)))),
+        CLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_validity_check(file)))),
         _ => Err(Error::InvalidClass.into()),
     }
 }

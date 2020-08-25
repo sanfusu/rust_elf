@@ -7,22 +7,24 @@ pub mod sym_table;
 use basic_type::*;
 pub use elf::Elf;
 
-pub mod e_ident {
-    pub use crate::arch::gabi::e_ident::*;
-    pub mod idx {
-        pub use crate::arch::gabi::e_ident::idx::*;
-        pub const EI_PAD: usize = 7;
+#[allow(non_snake_case)]
+pub mod IDENT {
+    pub use crate::arch::gabi::IDENT::*;
+    pub mod IDX {
+        pub use crate::arch::gabi::IDENT::IDX::*;
+        pub const PAD: usize = 7;
     }
 }
-
-pub mod e_type {
-    crate::define_e_type_basic_const!(super::Half);
+#[allow(non_snake_case)]
+pub mod TYPE {
+    define_e_type_basic_const!(super::Half);
 }
 
-pub mod e_machine {
+#[allow(non_snake_case)]
+pub mod MACHINE {
     pub const RESERVED_LO: super::Half = 11;
     pub const RESERVED_HI: super::Half = 16;
-    crate::define_e_machine_basic_constant!(super::Half);
+    define_e_machine_basic_constant!(super::Half);
 }
 
 #[repr(C)]
@@ -32,12 +34,12 @@ pub struct Ident {
     pub class: u8,
     pub data: u8,
     pub version: u8,
-    pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
+    pub pad: [u8; IDENT::IDX::NIDENT - IDENT::IDX::PAD],
 }
 
 mod elf {
     use super::{basic_type::BasicType, header::Ehdr, section};
-
+    
     pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
 }
 
@@ -65,7 +67,7 @@ pub mod basic_type {
 }
 
 pub mod header {
-    use super::{e_ident, section, Ident};
+    use super::{section, Ident, IDENT};
     use crate::arch::elf32::basic_type::BasicType;
     use std::io;
 
@@ -76,7 +78,7 @@ pub mod header {
             if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
                 return Err(crate::Error::InvalidShentSize.into());
             }
-            if self.ident.class == e_ident::ei_class::ELFCLASS32 {
+            if self.ident.class == IDENT::CLASS::CLASS32 {
                 Ok(())
             } else {
                 Err(crate::Error::InvalidClass.into())

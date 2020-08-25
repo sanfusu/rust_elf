@@ -13,9 +13,11 @@ pub struct Header {
     pub align: <BasicType as crate::IBasicType>::Xword,
 }
 
-pub mod p_type {
-    crate::define_p_type_basic_const!(<super::BasicType as crate::IBasicType>::Word);
+#[allow(non_snake_case)]
+pub mod TYPE {
+    define_p_type_basic_const!(<super::BasicType as crate::IBasicType>::Word);
 }
-pub mod p_flags {
-    crate::define_p_flags_basic_const!(<super::BasicType as crate::IBasicType>::Word);
+#[allow(non_snake_case)]
+pub mod FLAGS {
+    define_p_flags_basic_const!(<super::BasicType as crate::IBasicType>::Word);
 }

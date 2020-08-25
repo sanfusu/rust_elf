@@ -14,17 +14,19 @@ pub struct Phdr {
     pub align: basic_type::Xword,
 }
 
-pub mod p_type {
+#[allow(non_snake_case)]
+pub mod TYPE {
     use super::basic_type;
 
-    crate::define_p_type_basic_const!(basic_type::Word);
+    define_p_type_basic_const!(basic_type::Word);
     pub const LOOS: basic_type::Word = 0x6000_0000;
     pub const HIOS: basic_type::Word = 0x6fff_ffff;
 }
 
-pub mod p_flags {
+#[allow(non_snake_case)]
+pub mod FLAGS {
     use super::basic_type;
 
-    crate::define_p_flags_basic_const!(basic_type::Word);
+    define_p_flags_basic_const!(basic_type::Word);
     pub const MASKOS: basic_type::Word = 0x00ff_0000;
 }

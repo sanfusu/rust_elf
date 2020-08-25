@@ -6,80 +6,50 @@ pub mod sym_table;
 
 use header::IEhdr;
 
-// use crate::AsBytes;
-pub(crate) mod e_ident {
-    pub(crate) mod idx {
-        pub const EI_MAG0: usize = 0;
-        pub const EI_MAG1: usize = 1;
-        pub const EI_MAG2: usize = 2;
-        pub const EI_MAG3: usize = 3;
-        pub const EI_CLASS: usize = 4;
-        pub const EI_DATA: usize = 5;
-        pub const EI_VERSION: usize = 6;
-        pub const EI_NIDENT: usize = 16;
+#[allow(non_snake_case)]
+pub(crate) mod IDENT {
+    pub(crate) mod IDX {
+        pub const MAG0: usize = 0;
+        pub const MAG1: usize = 1;
+        pub const MAG2: usize = 2;
+        pub const MAG3: usize = 3;
+        pub const CLASS: usize = 4;
+        pub const DATA: usize = 5;
+        pub const VERSION: usize = 6;
+        pub const NIDENT: usize = 16;
     }
-    pub mod ei_mag {
-        pub const ELFMAG0: u8 = 0x7f;
-        pub const ELFMAG1: u8 = 'E' as u8;
-        pub const ELFMAG2: u8 = 'L' as u8;
-        pub const ELFMAG3: u8 = 'F' as u8;
+    pub mod MAGIC {
+        pub const MAG0: u8 = 0x7f;
+        pub const MAG1: u8 = 'E' as u8;
+        pub const MAG2: u8 = 'L' as u8;
+        pub const MAG3: u8 = 'F' as u8;
     }
-    pub mod ei_class {
-        pub const ELFCLASSNONE: u8 = 0;
-        pub const ELFCLASS32: u8 = 1;
-        pub const ELFCLASS64: u8 = 2;
+    pub mod CLASS {
+        pub const NONE: u8 = 0;
+        pub const CLASS32: u8 = 1;
+        pub const CLASS64: u8 = 2;
     }
-    pub mod ei_data {
-        pub const ELFDATANONE: u8 = 0;
-        pub const ELFDATA2LSB: u8 = 1;
-        pub const ELFDATA2MSB: u8 = 2;
+    pub mod DATA {
+        pub const NONE: u8 = 0;
+        pub const LSB: u8 = 1;
+        pub const MSB: u8 = 2;
     }
-    pub mod ei_version {
-        pub const EV_NONE: u8 = 0;
-        pub const EV_CURRENT: u8 = 1;
+    pub mod VERSION {
+        pub const NONE: u8 = 0;
+        pub const CURRENT: u8 = 1;
     }
 }
 
 /// You should not use these constant directly.
 /// Use the arch specified constant instead.
-pub mod e_type {
-    #[macro_export]
-    macro_rules! define_e_type_basic_const {
-        ($elf:ty) => {
-            pub const ET_NONE: $elf = 0;
-            /// 可重定位对象文件
-            pub const ET_REL: $elf = 1;
-            /// 可执行文件
-            pub const ET_EXEC: $elf = 2;
-            /// 共享的对象文件
-            pub const ET_DYN: $elf = 3;
-            /// 核心文件
-            pub const ET_CORE: $elf = 4;
-            /// 特定处理器使用的下限
-            pub const ET_LOPROC: $elf = 0xFF00;
-            /// 特定处理器使用的上限
-            pub const ET_HIPROC: $elf = 0xFFFF;
-        };
-    }
+#[allow(non_snake_case)]
+pub mod TYPE {
     define_e_type_basic_const!(u16);
 }
 
-pub mod e_machine {
+#[allow(non_snake_case)]
+pub mod MACHINE {
     // 只有那些同时具有 32 和 64 模式的 machine 可以在这里定义
-    #[macro_export]
-    macro_rules! define_e_machine_basic_constant {
-        ($elf:ty) => {
-            pub const EM_NONE: $elf = 0;
-            pub const EM_M32: $elf = 1;
-            pub const EM_SPARC: $elf = 2;
-            pub const EM_386: $elf = 3;
-            pub const EM_68K: $elf = 4;
-            pub const EM_88K: $elf = 5;
-            pub const EM_860K: $elf = 7;
-            pub const EM_MIPS: $elf = 8;
-            pub const EM_MIPS_RS4_BE: $elf = 10;
-        };
-    }
     define_e_machine_basic_constant!(u16);
 }
 
@@ -96,11 +66,11 @@ pub mod header {
     #[derive(Debug, Default, AsSlice)]
     pub struct Ehdr<T: crate::IBasicType, EI: Sized> {
         pub ident: EI,
-        /// 用于表示对象文件的类型，可用值 [`ETypeValue`](super::e_type)
+        /// 用于表示对象文件的类型，可用值 [`TYPE`](super::TYPE)
         pub r#type: T::Half,
-        /// 用于表示目标架构，可用值 [`EMachineValue`](super::e_machine)
+        /// 用于表示目标架构，可用值 [`MACHINE`](super::MACHINE)
         pub machine: T::Half,
-        /// 用于表示对象文件格式的版本，当前值只能为 [`Current`](super::e_ident::ei_version::EV_CURRENT)
+        /// 用于表示对象文件格式的版本，当前值只能为 [`CURRENT`](super::IDENT::VERSION::CURRENT)
         pub version: T::Word,
         /// 包含程序入口的虚拟地址。如果没有入口点，则值为 0。
         pub entry: T::Addr,

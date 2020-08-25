@@ -1,6 +1,14 @@
 use crate::arch::elf32::BasicType;
-pub use crate::arch::gabi::sym_table::*;
 use crate::IBasicType;
+
+#[allow(non_snake_case)]
+pub mod BIND {
+    pub use crate::arch::gabi::sym_table::BIND::*;
+}
+#[allow(non_snake_case)]
+pub mod TYPE {
+    pub use crate::arch::gabi::sym_table::TYPE::*;
+}
 
 #[repr(C)]
 pub struct Entry {

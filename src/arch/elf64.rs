@@ -6,39 +6,42 @@ pub mod sym_table;
 
 use basic_type::BasicType;
 pub use elf::Elf;
-use ident::Ident;
+pub use ident::Ident;
 
-pub mod e_ident {
-    pub mod idx {
-        pub use crate::arch::gabi::e_ident::idx::*;
-        pub const EI_OSABI: usize = 7;
-        pub const EI_ABIVERSION: usize = 8;
-        pub const EI_PAD: usize = 9;
+#[allow(non_snake_case)]
+pub mod IDENT {
+    pub mod IDX {
+        pub use crate::arch::gabi::IDENT::IDX::*;
+        pub const OSABI: usize = 7;
+        pub const ABIVERSION: usize = 8;
+        pub const PAD: usize = 9;
     }
-    pub mod ei_osabi {
-        pub const ELFOSABI_SYSV: u8 = 0;
-        pub const ELFOSABI_HPUX: u8 = 1;
-        pub const ELFOSABI_STANDLONE: u8 = 255;
+    pub mod OSABI {
+        pub const SYSV: u8 = 0;
+        pub const HPUX: u8 = 1;
+        pub const STANDLONE: u8 = 255;
     }
-    pub use crate::arch::gabi::e_ident::*;
+    pub use crate::arch::gabi::IDENT::*;
 }
 
 /// 可用作 [`Ehdr::r#type`](crate::arch::gabi::header::Ehdr::type) 的值
-pub mod e_type {
+#[allow(non_snake_case)]
+pub mod TYPE {
     use super::basic_type;
 
-    crate::define_e_type_basic_const!(basic_type::Half);
+    define_e_type_basic_const!(basic_type::Half);
     /// 特定环境使用的下限
-    pub const ET_LOOS: basic_type::Half = 0xFE00;
+    pub const LOOS: basic_type::Half = 0xFE00;
     /// 特定环境使用的上限
-    pub const ET_HIOS: basic_type::Half = 0xFEFF;
+    pub const HIOS: basic_type::Half = 0xFEFF;
 }
 
-pub mod e_machine {
+#[allow(non_snake_case)]
+pub mod MACHINE {
     use super::basic_type;
 
     pub const EM_X86_64: basic_type::Half = 62;
-    crate::define_e_machine_basic_constant!(basic_type::Half);
+    define_e_machine_basic_constant!(basic_type::Half);
 }
 
 pub mod basic_type {
@@ -64,8 +67,8 @@ pub mod basic_type {
     pub type Sxword = <BasicType as crate::IBasicType>::Sxword;
 }
 
-pub mod ident {
-    use super::e_ident;
+pub(crate) mod ident {
+    use super::IDENT;
 
     #[repr(C)]
     #[derive(Debug, Default)]
@@ -76,12 +79,12 @@ pub mod ident {
         pub version: u8,
         pub os_abi: u8,
         pub abi_version: u8,
-        pub pad: [u8; e_ident::idx::EI_NIDENT - e_ident::idx::EI_PAD],
+        pub pad: [u8; IDENT::IDX::NIDENT - IDENT::IDX::PAD],
     }
 }
 
 pub mod header {
-    use super::{basic_type::BasicType, e_ident, section, Ident};
+    use super::{basic_type::BasicType, section, Ident, IDENT};
     use std::io;
 
     pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
@@ -91,7 +94,7 @@ pub mod header {
             if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
                 return Err(crate::Error::InvalidShentSize.into());
             }
-            if self.ident.class == e_ident::ei_class::ELFCLASS64 {
+            if self.ident.class == IDENT::CLASS::CLASS64 {
                 Ok(())
             } else {
                 Err(crate::Error::InvalidClass.into())
