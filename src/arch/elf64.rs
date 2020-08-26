@@ -6,7 +6,6 @@ pub mod sym_table;
 
 use basic_type::BasicType;
 pub use elf::Elf;
-pub use header::Ident;
 
 #[allow(non_snake_case)]
 pub mod IDENT {
@@ -109,7 +108,7 @@ pub(crate) mod elf {
         pub ident: &'a super::header::Ident,
         pub ehdr: &'a super::header::Ehdr,
         pub shdr: &'a super::section::header::Shdr,
-        pub data: &'a [u8],
+        _data: &'a [u8],
     }
     impl<'a> Elf<'a> {}
 
@@ -118,7 +117,7 @@ pub(crate) mod elf {
         fn try_from(src: &'a [u8]) -> Result<Self, Self::Error> {
             let ehdr = src.try_into()?;
             Ok(Elf {
-                data: src,
+                _data: src,
                 ident: src.try_into()?,
                 ehdr,
                 shdr: src
@@ -132,15 +131,15 @@ pub(crate) mod elf {
 
 #[cfg(test)]
 mod test {
-    use super::header::Ehdr;
+    use super::header::{Ehdr, Ident};
 
     const MAGIC_0X55: u8 = 0x55;
     const MAGIC_0XAA: u8 = 0xaa;
     #[test]
     fn test_ident_from_array() {
-        let mut test_data = [MAGIC_0X55; std::mem::size_of::<super::Ident>()];
-        let ident_move = super::Ident::from(test_data);
-        let ident_borrow: &super::Ident = (&test_data).into();
+        let mut test_data = [MAGIC_0X55; std::mem::size_of::<Ident>()];
+        let ident_move = Ident::from(test_data);
+        let ident_borrow: &Ident = (&test_data).into();
 
         test_data[0] = MAGIC_0XAA;
         assert_eq!(ident_borrow.as_ref(), test_data);
@@ -148,7 +147,7 @@ mod test {
 
         assert_eq!(
             ident_move.as_ref(),
-            [MAGIC_0X55; std::mem::size_of::<super::Ident>()]
+            [MAGIC_0X55; std::mem::size_of::<Ident>()]
         );
         println!("{:?}", ident_move);
     }
