@@ -102,6 +102,7 @@ pub mod header {
 }
 
 pub(crate) mod elf {
+    use super::{header::Ident, IDENT};
     use std::convert::TryInto;
 
     pub struct Elf<'a> {
@@ -115,10 +116,24 @@ pub(crate) mod elf {
     impl<'a> std::convert::TryFrom<&'a [u8]> for Elf<'a> {
         type Error = crate::Error;
         fn try_from(src: &'a [u8]) -> Result<Self, Self::Error> {
+            let ident: &Ident = src.try_into()?;
+
+            if ident.class != IDENT::CLASS::CLASS64
+                && ident.magic
+                    != [
+                        IDENT::MAGIC::MAG0,
+                        IDENT::MAGIC::MAG1,
+                        IDENT::MAGIC::MAG2,
+                        IDENT::MAGIC::MAG3,
+                    ]
+            {
+                return Err(crate::Error::InvalidClass);
+            }
+
             let ehdr = src.try_into()?;
             Ok(Elf {
                 _data: src,
-                ident: src.try_into()?,
+                ident,
                 ehdr,
                 shdr: src
                     .get((ehdr.shoff) as usize..(ehdr.shnum * ehdr.shentsize) as usize)
