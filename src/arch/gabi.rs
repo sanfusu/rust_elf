@@ -54,7 +54,6 @@ pub mod MACHINE {
 }
 
 pub mod header {
-    use derive::AsSlice;
     pub trait IEhdr<T: crate::IBasicType> {
         fn get_phoff(&self) -> T::Off;
         fn get_shoff(&self) -> T::Off;
@@ -63,7 +62,7 @@ pub mod header {
     }
 
     #[repr(C)]
-    #[derive(Debug, Default, AsSlice)]
+    #[derive(Debug, Default, Copy, Clone)]
     pub struct Ehdr<T: crate::IBasicType, EI: Sized> {
         pub ident: EI,
         /// 用于表示对象文件的类型，可用值 [`TYPE`](super::TYPE)
@@ -121,8 +120,8 @@ use std::{
 pub struct Elf<'a, T, Ehdr, Shdr>
 where
     T: crate::IBasicType,
-    Ehdr: crate::AsBytes + IEhdr<T> + Default,
-    Shdr: crate::AsBytes + Default,
+    Ehdr: IEhdr<T> + Default,
+    Shdr: Default,
 {
     file: &'a mut fs::File,
     ehdr: Option<Box<Ehdr>>,

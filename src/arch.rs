@@ -1,3 +1,52 @@
+macro_rules! impl_convert_from_block_mem_for_plain_struct {
+    ($struct:ty) => {
+        impl std::convert::TryFrom<&[u8]> for &$struct {
+            type Error = crate::Error;
+            fn try_from(src: &[u8]) -> Result<Self, Self::Error> {
+                if src.len() < std::mem::size_of::<Self>() {
+                    return Err(crate::Error::DataLoss);
+                } else {
+                    unsafe { Ok(&*(src.as_ptr() as *const $struct)) }
+                }
+            }
+        }
+        impl From<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
+            fn from(src: &[u8; std::mem::size_of::<$struct>()]) -> Self {
+                unsafe { &*(src.as_ptr() as *const $struct) }
+            }
+        }
+        impl From<[u8; std::mem::size_of::<$struct>()]> for $struct {
+            fn from(src: [u8; std::mem::size_of::<$struct>()]) -> Self {
+                assert_eq!(
+                    src.as_ptr() as usize % std::mem::align_of::<$struct>(),
+                    0,
+                    "Miss aligned"
+                );
+                unsafe { *(src.as_ptr() as *const $struct) }
+            }
+        }
+        impl AsRef<[u8]> for $struct {
+            fn as_ref(&self) -> &[u8] {
+                unsafe {
+                    std::slice::from_raw_parts(
+                        self as *const $struct as *const u8,
+                        std::mem::size_of::<$struct>(),
+                    )
+                }
+            }
+        }
+        impl AsMut<[u8]> for $struct {
+            fn as_mut(&mut self) -> &mut [u8] {
+                unsafe {
+                    std::slice::from_raw_parts_mut(
+                        self as *mut $struct as *mut u8,
+                        std::mem::size_of::<$struct>(),
+                    )
+                }
+            }
+        }
+    };
+}
 macro_rules! define_e_machine_basic_constant {
     ($elf:ty) => {
         pub const EM_NONE: $elf = 0;

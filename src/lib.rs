@@ -80,15 +80,8 @@ pub enum Elf<'a> {
     Elf32(elf32::Elf<'a>),
 }
 
-use arch::{
-    elf32, elf64,
-    gabi::IDENT::{
-        self,
-        CLASS::{CLASS32, CLASS64},
-    },
-};
-use std::io::Read;
-use Elf::{Elf32, Elf64};
+use arch::{elf32, elf64, gabi::IDENT};
+use std::io;
 
 pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
     if ident.len() < IDENT::IDX::MAG3 {
@@ -105,40 +98,11 @@ pub(crate) fn is_elf(ident: &[u8]) -> io::Result<bool> {
         Err(Error::InvalidMagic.into())
     }
 }
-use std::io::{self, Seek};
-pub fn new<'a>(file: &'a mut std::fs::File) -> io::Result<Option<Elf<'a>>> {
-    let mut ident: [u8; IDENT::IDX::NIDENT] = [0; IDENT::IDX::NIDENT];
-    file.seek(io::SeekFrom::Start(0))?;
-    file.read(&mut ident)?;
-
-    is_elf(&ident)?;
-    match ident[IDENT::IDX::CLASS] {
-        CLASS32 => Ok(Some(Elf32(elf32::Elf::new_without_validity_check(file)))),
-        CLASS64 => Ok(Some(Elf64(elf64::Elf::new_without_validity_check(file)))),
-        _ => Err(Error::InvalidClass.into()),
-    }
-}
 
 #[cfg(test)]
 mod test {
     use super::*;
-    #[test]
-    fn test_new() -> io::Result<()> {
-        let mut file = std::fs::File::open("./test/elf64_example")?;
-        match self::new(&mut file)? {
-            Some(elf) => match elf {
-                Elf64(mut v) => {
-                    println!("Elf64: {:?}", v.read_ehdr());
-                    Ok(())
-                }
-                Elf32(mut v) => {
-                    println!("Elf32: {:?}", v.read_ehdr());
-                    Ok(())
-                }
-            },
-            None => Err(Error::InvalidClass.into()),
-        }
-    }
+    use std::io;
     #[test]
     fn test_is_elf_with_err_data() -> io::Result<()> {
         let err_data = [0x7f, 'e' as u8];

@@ -1,6 +1,5 @@
 pub mod header {
-    use derive::AsSlice;
-    #[derive(AsSlice, Default, Debug)]
+    #[derive(Default, Debug, Copy, Clone)]
     #[repr(C)]
     pub struct Shdr<T: crate::IBasicType> {
         /// section 的名字，值为字符串表 section 的索引
@@ -67,17 +66,4 @@ pub mod TYPE {
 }
 
 #[cfg(test)]
-mod test {
-    use crate::{arch::elf32::section::header::Shdr as Shdr32, AsBytes};
-    #[test]
-    fn as_slices_test() {
-        let mut var = Shdr32 {
-            ..Default::default()
-        };
-        let b = var.as_mut();
-        b[1] = 1u8;
-        assert_eq!(b.len(), std::mem::size_of_val(b));
-        println!("{:?}", var.as_bytes_mut());
-        println!("{:?}", var.as_bytes_mut().len());
-    }
-}
+mod test {}

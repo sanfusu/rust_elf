@@ -23,4 +23,5 @@ pub mod header {
     use super::BasicType;
     use crate::arch::gabi;
     pub type Shdr = gabi::section::header::Shdr<BasicType>;
+    impl_convert_from_block_mem_for_plain_struct!(Shdr);
 }

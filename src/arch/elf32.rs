@@ -39,7 +39,7 @@ pub struct Ident {
 
 mod elf {
     use super::{basic_type::BasicType, header::Ehdr, section};
-    
+
     pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
 }
 
@@ -88,14 +88,4 @@ pub mod header {
 }
 
 #[cfg(test)]
-mod test {
-    use super::Elf;
-    use std::io;
-
-    #[test]
-    fn test_file_open() -> io::Result<()> {
-        let mut file = std::fs::File::open("./test/elf64_example")?;
-        let _elf = Elf::new(&mut file).expect_err("elf64_example 应当是 elf64 文件");
-        Ok(())
-    }
-}
+mod test {}

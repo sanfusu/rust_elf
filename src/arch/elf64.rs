@@ -6,7 +6,7 @@ pub mod sym_table;
 
 use basic_type::BasicType;
 pub use elf::Elf;
-pub use ident::Ident;
+pub use header::Ident;
 
 #[allow(non_snake_case)]
 pub mod IDENT {
@@ -46,7 +46,7 @@ pub mod MACHINE {
 
 pub mod basic_type {
     #[repr(C)]
-    #[derive(Default, Debug)]
+    #[derive(Default, Debug, Copy, Clone)]
     pub struct BasicType {}
 
     impl crate::IBasicType for BasicType {
@@ -67,11 +67,13 @@ pub mod basic_type {
     pub type Sxword = <BasicType as crate::IBasicType>::Sxword;
 }
 
-pub(crate) mod ident {
+pub mod header {
     use super::IDENT;
+    use super::{basic_type::BasicType, section};
+    use std::io;
 
     #[repr(C)]
-    #[derive(Debug, Default)]
+    #[derive(Debug, Default, Copy, Clone)]
     pub struct Ident {
         pub magic: [u8; 4],
         pub class: u8,
@@ -81,13 +83,10 @@ pub(crate) mod ident {
         pub abi_version: u8,
         pub pad: [u8; IDENT::IDX::NIDENT - IDENT::IDX::PAD],
     }
-}
-
-pub mod header {
-    use super::{basic_type::BasicType, section, Ident, IDENT};
-    use std::io;
+    impl_convert_from_block_mem_for_plain_struct!(Ident);
 
     pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
+    impl_convert_from_block_mem_for_plain_struct!(Ehdr);
 
     impl crate::Validity for Ehdr {
         fn is_valid(&self) -> io::Result<()> {
@@ -104,24 +103,72 @@ pub mod header {
 }
 
 pub(crate) mod elf {
-    use super::{basic_type::BasicType, header::Ehdr, section};
+    use std::convert::TryInto;
 
-    pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
+    pub struct Elf<'a> {
+        pub ident: &'a super::header::Ident,
+        pub ehdr: &'a super::header::Ehdr,
+        pub shdr: &'a super::section::header::Shdr,
+        pub data: &'a [u8],
+    }
+    impl<'a> Elf<'a> {}
+
+    impl<'a> std::convert::TryFrom<&'a [u8]> for Elf<'a> {
+        type Error = crate::Error;
+        fn try_from(src: &'a [u8]) -> Result<Self, Self::Error> {
+            let ehdr = src.try_into()?;
+            Ok(Elf {
+                data: src,
+                ident: src.try_into()?,
+                ehdr,
+                shdr: src
+                    .get((ehdr.shoff) as usize..(ehdr.shnum * ehdr.shentsize) as usize)
+                    .ok_or(crate::Error::DataLoss)?
+                    .try_into()?,
+            })
+        }
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use std::io;
+    use super::header::Ehdr;
+
+    const MAGIC_0X55: u8 = 0x55;
+    const MAGIC_0XAA: u8 = 0xaa;
     #[test]
-    fn test_file_open() -> io::Result<()> {
-        let mut file = std::fs::File::open("./test/elf64_example")?;
-        let mut elf = Elf::new(&mut file)?;
-        println!("{:#x?}", elf.read_ehdr()?);
-        let shdr_table = elf.read_shdr_table()?;
-        for shdr in shdr_table.iter() {
-            println!("{:#x?}", shdr);
-        }
-        Ok(())
+    fn test_ident_from_array() {
+        let mut test_data = [MAGIC_0X55; std::mem::size_of::<super::Ident>()];
+        let ident_move = super::Ident::from(test_data);
+        let ident_borrow: &super::Ident = (&test_data).into();
+
+        test_data[0] = MAGIC_0XAA;
+        assert_eq!(ident_borrow.as_ref(), test_data);
+        println!("{:?}", ident_borrow);
+
+        assert_eq!(
+            ident_move.as_ref(),
+            [MAGIC_0X55; std::mem::size_of::<super::Ident>()]
+        );
+        println!("{:?}", ident_move);
+    }
+
+    #[test]
+    fn test_ehdr_from_array() {
+        let mut test_data = [MAGIC_0X55; std::mem::size_of::<Ehdr>()];
+        let ehdr_move = Ehdr::from(test_data);
+        let ehdr_borrow: &Ehdr = (&test_data).into();
+
+        test_data[0] = MAGIC_0XAA;
+        println!("{:?}", ehdr_borrow.as_ref());
+        assert_eq!(ehdr_borrow.as_ref(), test_data);
+
+        println!("{:?}", ehdr_move.as_ref());
+        assert_eq!(
+            ehdr_move.as_ref(),
+            [MAGIC_0X55; std::mem::size_of::<Ehdr>()]
+        );
+
+        println!("{:b}", test_data.as_ptr() as usize);
     }
 }
