@@ -12,6 +12,11 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
         }
         impl From<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
             fn from(src: &[u8; std::mem::size_of::<$struct>()]) -> Self {
+                assert_eq!(
+                    src.as_ptr() as usize % std::mem::align_of::<$struct>(),
+                    0,
+                    "Miss aligned"
+                );
                 unsafe { &*(src.as_ptr() as *const $struct) }
             }
         }

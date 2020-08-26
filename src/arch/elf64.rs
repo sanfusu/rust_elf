@@ -162,7 +162,7 @@ mod test {
 
         assert_eq!(
             ident_move.as_ref(),
-            [MAGIC_0X55; std::mem::size_of::<Ident>()]
+            &[MAGIC_0X55; std::mem::size_of::<Ident>()][..]
         );
         println!("{:?}", ident_move);
     }
@@ -175,12 +175,12 @@ mod test {
 
         test_data[0] = MAGIC_0XAA;
         println!("{:?}", ehdr_borrow.as_ref());
-        assert_eq!(ehdr_borrow.as_ref(), test_data);
+        assert_eq!(ehdr_borrow.as_ref(), &test_data[..]);
 
         println!("{:?}", ehdr_move.as_ref());
         assert_eq!(
             ehdr_move.as_ref(),
-            [MAGIC_0X55; std::mem::size_of::<Ehdr>()]
+            &[MAGIC_0X55; std::mem::size_of::<Ehdr>()][..]
         );
 
         println!("{:b}", test_data.as_ptr() as usize);
