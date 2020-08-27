@@ -34,6 +34,7 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
             }
         }
         impl AsRef<[u8]> for $struct {
+            #[inline(always)]
             fn as_ref(&self) -> &[u8] {
                 unsafe {
                     std::slice::from_raw_parts(
@@ -44,6 +45,7 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
             }
         }
         impl AsMut<[u8]> for $struct {
+            #[inline(always)]
             fn as_mut(&mut self) -> &mut [u8] {
                 unsafe {
                     std::slice::from_raw_parts_mut(
