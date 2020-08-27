@@ -3,31 +3,34 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
         impl std::convert::TryFrom<&[u8]> for &$struct {
             type Error = crate::Error;
             fn try_from(src: &[u8]) -> Result<Self, Self::Error> {
-                if src.len() < std::mem::size_of::<Self>() {
-                    return Err(crate::Error::DataLoss);
+                if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
+                    Err(crate::Error::MissAligned)
                 } else {
-                    unsafe { Ok(&*(src.as_ptr() as *const $struct)) }
+                    if src.len() < std::mem::size_of::<Self>() {
+                        return Err(crate::Error::DataLoss);
+                    } else {
+                        unsafe { Ok(&*(src.as_ptr() as *const $struct)) }
+                    }
                 }
             }
         }
-        impl From<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
-            fn from(src: &[u8; std::mem::size_of::<$struct>()]) -> Self {
-                assert_eq!(
-                    src.as_ptr() as usize % std::mem::align_of::<$struct>(),
-                    0,
-                    "Miss aligned"
-                );
-                unsafe { &*(src.as_ptr() as *const $struct) }
+        impl std::convert::TryFrom<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
+            type Error = crate::Error;
+            fn try_from(src: &[u8; std::mem::size_of::<$struct>()]) -> Result<Self, Self::Error> {
+                if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
+                    return Err(crate::Error::MissAligned);
+                }
+
+                unsafe { Ok(&*(src.as_ptr() as *const $struct)) }
             }
         }
-        impl From<[u8; std::mem::size_of::<$struct>()]> for $struct {
-            fn from(src: [u8; std::mem::size_of::<$struct>()]) -> Self {
-                assert_eq!(
-                    src.as_ptr() as usize % std::mem::align_of::<$struct>(),
-                    0,
-                    "Miss aligned"
-                );
-                unsafe { *(src.as_ptr() as *const $struct) }
+        impl std::convert::TryFrom<[u8; std::mem::size_of::<$struct>()]> for $struct {
+            type Error = crate::Error;
+            fn try_from(src: [u8; std::mem::size_of::<$struct>()]) -> Result<Self, Self::Error> {
+                if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
+                    return Err(crate::Error::MissAligned);
+                }
+                unsafe { Ok(*(src.as_ptr() as *const $struct)) }
             }
         }
         impl AsRef<[u8]> for $struct {

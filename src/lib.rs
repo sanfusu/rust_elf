@@ -16,6 +16,7 @@ pub enum Error {
     InvalidMagic,
     InvalidClass,
     InvalidEhdr,
+    MissAligned,
 }
 
 impl std::convert::Into<io::Error> for Error {
@@ -26,6 +27,7 @@ impl std::convert::Into<io::Error> for Error {
             Error::InvalidClass => (io::ErrorKind::InvalidInput, Error::DataLoss),
             Error::InvalidEhdr => (io::ErrorKind::InvalidData, Error::InvalidEhdr),
             Error::InvalidShentSize => (io::ErrorKind::InvalidData, Error::InvalidShentSize),
+            Error::MissAligned => (io::ErrorKind::InvalidData, Error::MissAligned),
         };
         io::Error::new(x.0, x.1)
     }

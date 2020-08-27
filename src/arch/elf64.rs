@@ -147,14 +147,15 @@ pub(crate) mod elf {
 #[cfg(test)]
 mod test {
     use super::header::{Ehdr, Ident};
+    use std::convert::{TryFrom, TryInto};
 
     const MAGIC_0X55: u8 = 0x55;
     const MAGIC_0XAA: u8 = 0xaa;
     #[test]
-    fn test_ident_from_array() {
+    fn test_ident_from_array() -> Result<(), crate::Error> {
         let mut test_data = [MAGIC_0X55; std::mem::size_of::<Ident>()];
-        let ident_move = Ident::from(test_data);
-        let ident_borrow: &Ident = (&test_data).into();
+        let ident_move = Ident::try_from(test_data)?;
+        let ident_borrow: &Ident = (&test_data).try_into().unwrap();
 
         test_data[0] = MAGIC_0XAA;
         assert_eq!(ident_borrow.as_ref(), test_data);
@@ -165,13 +166,14 @@ mod test {
             &[MAGIC_0X55; std::mem::size_of::<Ident>()][..]
         );
         println!("{:?}", ident_move);
+        Ok(())
     }
 
     #[test]
-    fn test_ehdr_from_array() {
+    fn test_ehdr_from_array() -> Result<(), crate::Error> {
         let mut test_data = [MAGIC_0X55; std::mem::size_of::<Ehdr>()];
-        let ehdr_move = Ehdr::from(test_data);
-        let ehdr_borrow: &Ehdr = (&test_data).into();
+        let ehdr_move = Ehdr::try_from(test_data)?;
+        let ehdr_borrow: &Ehdr = (&test_data).try_into()?;
 
         test_data[0] = MAGIC_0XAA;
         println!("{:?}", ehdr_borrow.as_ref());
@@ -184,5 +186,9 @@ mod test {
         );
 
         println!("{:b}", test_data.as_ptr() as usize);
+        use std::any::Any;
+        println!("{:?}", (&test_data).type_id());
+        println!("{:?}", (&test_data[..]).type_id());
+        Ok(())
     }
 }
