@@ -6,7 +6,6 @@ pub mod sym_table;
 
 use basic_type::BasicType;
 pub use elf::Elf;
-
 #[allow(non_snake_case)]
 pub mod IDENT {
     pub mod IDX {
@@ -86,6 +85,20 @@ pub mod header {
 
     pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
     impl_convert_from_block_mem_for_plain_struct!(Ehdr);
+    impl Ehdr {
+        pub fn shdr_table_range(&self) -> std::ops::Range<usize> {
+            std::ops::Range {
+                start: self.shoff as usize,
+                end: self.shoff as usize + (self.shentsize * self.shnum) as usize,
+            }
+        }
+        pub fn phdr_table_range(&self) -> std::ops::Range<usize> {
+            std::ops::Range {
+                start: self.phoff as usize,
+                end: self.phoff as usize + (self.phentsize * self.phnum) as usize,
+            }
+        }
+    }
 
     impl crate::Validity for Ehdr {
         fn is_valid(&self) -> io::Result<()> {
@@ -102,14 +115,19 @@ pub mod header {
 }
 
 pub(crate) mod elf {
-    use super::{header::Ident, IDENT};
+    use super::{
+        header::{Ehdr, Ident},
+        IDENT,
+    };
     use std::convert::TryInto;
 
+    #[derive(Debug)]
     pub struct Elf<'a> {
         pub ident: &'a super::header::Ident,
         pub ehdr: &'a super::header::Ehdr,
-        pub shdr: &'a super::section::header::Shdr,
-        _data: &'a [u8],
+        pub shdr_table: Option<Box<Vec<&'a super::section::Shdr>>>,
+        pub phdr_table: Option<Box<Vec<&'a super::program::Phdr>>>,
+        // _data: &'a [u8],
     }
     impl<'a> Elf<'a> {}
 
@@ -129,16 +147,41 @@ pub(crate) mod elf {
             {
                 return Err(crate::Error::InvalidClass);
             }
-
-            let ehdr = src.try_into()?;
+            let ehdr: &Ehdr = src.try_into()?;
+            let shdr_table = match ehdr.shoff {
+                0 => None,
+                _ => {
+                    let mut tmp = Box::new(Vec::<&super::section::Shdr>::new());
+                    for shdr in src
+                        .get(ehdr.shdr_table_range())
+                        .ok_or(crate::Error::DataLoss)?
+                        .chunks_exact(ehdr.shentsize as usize)
+                    {
+                        tmp.push(shdr.try_into()?);
+                    }
+                    Some(tmp)
+                }
+            };
+            let phdr_table = match ehdr.phoff {
+                0 => None,
+                _ => {
+                    let mut tmp = Box::new(Vec::<&super::program::Phdr>::new());
+                    for shdr in src
+                        .get(ehdr.phdr_table_range())
+                        .ok_or(crate::Error::DataLoss)?
+                        .chunks_exact(ehdr.phentsize as usize)
+                    {
+                        tmp.push(shdr.try_into()?);
+                    }
+                    Some(tmp)
+                }
+            };
             Ok(Elf {
-                _data: src,
                 ident,
                 ehdr,
-                shdr: src
-                    .get((ehdr.shoff) as usize..(ehdr.shnum * ehdr.shentsize) as usize)
-                    .ok_or(crate::Error::DataLoss)?
-                    .try_into()?,
+                shdr_table,
+                phdr_table,
+                // _data: src,
             })
         }
     }
@@ -189,6 +232,18 @@ mod test {
         use std::any::Any;
         println!("{:?}", (&test_data).type_id());
         println!("{:?}", (&test_data[..]).type_id());
+        Ok(())
+    }
+    #[test]
+    fn test_elf_from_slice() -> Result<(), crate::Error> {
+        let test_data = std::fs::read("./test/elf64_example").unwrap();
+        let elf = super::Elf::try_from(test_data.as_slice());
+        println!(
+            "{},{},{:#x?}",
+            std::mem::size_of_val(&elf),
+            test_data.as_slice().len(),
+            elf?
+        );
         Ok(())
     }
 }

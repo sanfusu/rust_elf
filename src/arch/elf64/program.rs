@@ -1,7 +1,6 @@
 use super::basic_type;
 
-use derive::AsSlice;
-#[derive(AsSlice)]
+#[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct Phdr {
     pub r#type: basic_type::Word,
@@ -13,6 +12,7 @@ pub struct Phdr {
     pub memsz: basic_type::Xword,
     pub align: basic_type::Xword,
 }
+impl_convert_from_block_mem_for_plain_struct!(Phdr);
 
 #[allow(non_snake_case)]
 pub mod TYPE {

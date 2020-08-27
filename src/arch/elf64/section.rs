@@ -1,5 +1,5 @@
 use crate::arch::elf64::BasicType;
-
+pub use header::Shdr;
 #[allow(non_snake_case)]
 pub mod IDX {
     pub use crate::arch::gabi::section::IDX::*;
@@ -19,7 +19,7 @@ pub mod FLAGS {
     define_sh_flags_basic_const!(<super::BasicType as crate::IBasicType>::Xword);
 }
 
-pub mod header {
+pub(crate) mod header {
     use super::BasicType;
     use crate::arch::gabi;
     pub type Shdr = gabi::section::header::Shdr<BasicType>;
