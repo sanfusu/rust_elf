@@ -66,9 +66,8 @@ pub mod basic_type {
 }
 
 pub mod header {
+    use super::basic_type::BasicType;
     use super::IDENT;
-    use super::{basic_type::BasicType, section};
-    use std::io;
 
     #[repr(C)]
     #[derive(Debug, Default, Copy, Clone)]
@@ -83,6 +82,37 @@ pub mod header {
     }
     impl_convert_from_block_mem_for_plain_struct!(Ident);
 
+    impl Ident {
+        pub fn read<T: std::io::Seek + std::io::Read>(
+            reader: &mut T,
+        ) -> Result<Box<Self>, crate::Error> {
+            reader.seek(std::io::SeekFrom::Start(0)).map_or_else(
+                |e| Err(crate::Error::UnExpectedIoError(e)),
+                |v| {
+                    if v != 0 {
+                        Err(crate::Error::DataLoss)
+                    } else {
+                        Ok(v)
+                    }
+                },
+            )?;
+
+            let mut ident = Box::new(Ident {
+                ..Default::default()
+            });
+            reader.read(ident.as_mut().as_mut()).map_or_else(
+                |e| Err(crate::Error::UnExpectedIoError(e)),
+                |v| {
+                    if v == 0 {
+                        Err(crate::Error::DataLoss)
+                    } else {
+                        Ok(ident)
+                    }
+                },
+            )
+        }
+    }
+
     pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
     impl_convert_from_block_mem_for_plain_struct!(Ehdr);
     impl Ehdr {
@@ -96,19 +126,6 @@ pub mod header {
             std::ops::Range {
                 start: self.phoff as usize,
                 end: self.phoff as usize + (self.phentsize * self.phnum) as usize,
-            }
-        }
-    }
-
-    impl crate::Validity for Ehdr {
-        fn is_valid(&self) -> io::Result<()> {
-            if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
-                return Err(crate::Error::InvalidShentSize.into());
-            }
-            if self.ident.class == IDENT::CLASS::CLASS64 {
-                Ok(())
-            } else {
-                Err(crate::Error::InvalidClass.into())
             }
         }
     }
@@ -188,12 +205,13 @@ pub(crate) mod elf {
 }
 
 #[cfg(test)]
-mod test {
+pub mod test {
     use super::header::{Ehdr, Ident};
     use std::convert::{TryFrom, TryInto};
 
     const MAGIC_0X55: u8 = 0x55;
     const MAGIC_0XAA: u8 = 0xaa;
+
     #[test]
     fn test_ident_from_array() -> Result<(), crate::Error> {
         let mut test_data = [MAGIC_0X55; std::mem::size_of::<Ident>()];
@@ -237,13 +255,21 @@ mod test {
     #[test]
     fn test_elf_from_slice() -> Result<(), crate::Error> {
         let test_data = std::fs::read("./test/elf64_example").unwrap();
-        let elf = super::Elf::try_from(test_data.as_slice());
+        let elf = super::Elf::try_from(test_data.as_slice())?;
         println!(
             "{},{},{:#x?}",
             std::mem::size_of_val(&elf),
             test_data.as_slice().len(),
-            elf?
+            elf
         );
+        Ok(())
+    }
+    #[test]
+    fn test_read_ident() -> Result<(), crate::Error> {
+        let mut file = std::fs::File::open("./test/elf64_example")
+            .map_err(|e| crate::Error::UnExpectedIoError(e))?;
+        let ident = Ident::read(&mut file)?;
+        println!("{:#?}", ident);
         Ok(())
     }
 }
