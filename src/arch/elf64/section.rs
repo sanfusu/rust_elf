@@ -25,3 +25,7 @@ pub(crate) mod header {
     pub type Shdr = gabi::section::header::Shdr<BasicType>;
     impl_convert_from_block_mem_for_plain_struct!(Shdr);
 }
+#[repr(transparent)]
+pub struct ShdrTable<'a> {
+    pub data: &'a [u8],
+}
