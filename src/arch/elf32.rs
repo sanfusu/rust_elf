@@ -38,9 +38,7 @@ pub struct Ident {
 }
 
 mod elf {
-    use super::{basic_type::BasicType, header::Ehdr, section};
-
-    pub type Elf<'a> = crate::arch::gabi::Elf<'a, BasicType, Ehdr, section::header::Shdr>;
+    pub struct Elf {}
 }
 
 pub mod basic_type {
@@ -67,24 +65,10 @@ pub mod basic_type {
 }
 
 pub mod header {
-    use super::{section, Ident, IDENT};
+    use super::Ident;
     use crate::arch::elf32::basic_type::BasicType;
-    use std::io;
 
     pub type Ehdr = crate::arch::gabi::header::Ehdr<BasicType, Ident>;
-
-    impl crate::Validity for Ehdr {
-        fn is_valid(&self) -> io::Result<()> {
-            if usize::from(self.shentsize) != std::mem::size_of::<section::header::Shdr>() {
-                return Err(crate::Error::InvalidShentSize.into());
-            }
-            if self.ident.class == IDENT::CLASS::CLASS32 {
-                Ok(())
-            } else {
-                Err(crate::Error::InvalidClass.into())
-            }
-        }
-    }
 }
 
 #[cfg(test)]

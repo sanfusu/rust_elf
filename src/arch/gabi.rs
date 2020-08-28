@@ -4,8 +4,6 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 
-use header::IEhdr;
-
 #[allow(non_snake_case)]
 pub(crate) mod IDENT {
     pub(crate) mod IDX {
@@ -105,85 +103,6 @@ pub mod header {
         }
         fn get_shdr_num(&self) -> T::Half {
             self.shnum
-        }
-    }
-}
-
-use crate::AsBytes;
-use std::{
-    default::Default,
-    fs,
-    io::{self, Read, Seek, SeekFrom},
-};
-
-#[derive(Debug)]
-pub struct Elf<'a, T, Ehdr, Shdr>
-where
-    T: crate::IBasicType,
-    Ehdr: IEhdr<T> + Default,
-    Shdr: Default,
-{
-    file: &'a mut fs::File,
-    ehdr: Option<Box<Ehdr>>,
-    shdr_table: Option<Box<Vec<Shdr>>>,
-    phantom: std::marker::PhantomData<T>,
-}
-
-impl<'a, Ehdr, Shdr, T> Elf<'a, T, Ehdr, Shdr>
-where
-    T: crate::IBasicType,
-    Ehdr: Default + AsBytes + crate::Validity + IEhdr<T>,
-    Shdr: crate::AsBytes + Default,
-{
-    /// crate 内部使用，避免过度的有效性检查
-    pub(crate) fn new_without_validity_check(file: &'a mut fs::File) -> Elf<T, Ehdr, Shdr> {
-        Elf {
-            file,
-            ehdr: Default::default(),
-            shdr_table: Default::default(),
-            phantom: Default::default(),
-        }
-    }
-    pub fn new(file: &'a mut fs::File) -> io::Result<Elf<'a, T, Ehdr, Shdr>> {
-        let mut ret: Elf<T, Ehdr, Shdr> = Elf::new_without_validity_check(file);
-        let var_name = ret.read_ehdr()?;
-        let x: &[u8] = var_name.as_bytes();
-        crate::is_elf(x)?;
-        ret.ehdr.as_ref().unwrap().is_valid().map(|_| ret)
-    }
-
-    pub fn read_ehdr(&mut self) -> io::Result<&Box<Ehdr>> {
-        match self.ehdr {
-            Some(ref v) => Ok(v),
-            None => {
-                self.ehdr = Some(Default::default());
-                self.file.seek(SeekFrom::Start(0))?;
-                let len = self.file.read(self.ehdr.as_mut().unwrap().as_bytes_mut())?;
-                if len < std::mem::size_of_val(&self.ehdr) {
-                    Err(crate::Error::DataLoss.into())
-                } else {
-                    Ok(self.ehdr.as_ref().unwrap())
-                }
-            }
-        }
-    }
-
-    pub fn read_shdr_table(&mut self) -> io::Result<&Box<Vec<Shdr>>> {
-        match self.shdr_table {
-            Some(ref v) => Ok(v),
-            None => match self.ehdr {
-                None => Err(crate::Error::InvalidEhdr.into()),
-                Some(ref v) => {
-                    self.shdr_table = Some(Default::default());
-                    self.file.seek(SeekFrom::Start(v.get_shoff().into()))?;
-                    for _ in 0..v.get_shdr_num().into() {
-                        let mut s: Shdr = Default::default();
-                        self.file.read(s.as_bytes_mut())?;
-                        self.shdr_table.as_mut().unwrap().push(s);
-                    }
-                    Ok(self.shdr_table.as_ref().unwrap())
-                }
-            },
         }
     }
 }
