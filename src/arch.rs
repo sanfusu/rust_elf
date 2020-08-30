@@ -2,6 +2,10 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
     ($struct:ty) => {
         impl std::convert::TryFrom<&[u8]> for &$struct {
             type Error = crate::Error;
+            /// 类型转换（不保证内容的有效性）
+            ///
+            ///  + 如果 slice 地址未对齐，则返回 [`MissAligned`](crate::Error::MissAligned) 错误
+            ///  + 如果 slice 长度不够，则返回 [`DataLoss`](crate::Error::DataLoss) 错误
             fn try_from(src: &[u8]) -> Result<Self, Self::Error> {
                 if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
                     Err(crate::Error::MissAligned)
@@ -16,6 +20,9 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
         }
         impl std::convert::TryFrom<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
             type Error = crate::Error;
+            /// 类型转换（不保证内容的有效性）
+            ///
+            ///  + 如果 slice 地址未对齐，则返回 [`MissAligned`](crate::Error::MissAligned) 错误
             fn try_from(src: &[u8; std::mem::size_of::<$struct>()]) -> Result<Self, Self::Error> {
                 if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
                     Err(crate::Error::MissAligned)
@@ -26,6 +33,9 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
         }
         impl std::convert::TryFrom<[u8; std::mem::size_of::<$struct>()]> for $struct {
             type Error = crate::Error;
+            /// 类型转换（不保证内容的有效性）
+            ///
+            ///  + 如果 slice 地址未对齐，则返回 [`MissAligned`](crate::Error::MissAligned) 错误
             fn try_from(src: [u8; std::mem::size_of::<$struct>()]) -> Result<Self, Self::Error> {
                 if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
                     Err(crate::Error::MissAligned)
@@ -34,7 +44,11 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
                 }
             }
         }
+        impl_convert_from_block_mem_for_plain_struct!(concat!("类型转换转换后的 slice 可以毫不出错的再次转换为 ",stringify!($struct)), $struct);
+    };
+    ($doc:expr, $struct:ty) => {
         impl AsRef<[u8]> for $struct {
+            #[doc=$doc]
             #[inline(always)]
             fn as_ref(&self) -> &[u8] {
                 unsafe {
@@ -46,6 +60,7 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
             }
         }
         impl AsMut<[u8]> for $struct {
+            #[doc=$doc]
             #[inline(always)]
             fn as_mut(&mut self) -> &mut [u8] {
                 unsafe {
