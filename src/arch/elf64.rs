@@ -83,7 +83,7 @@ pub mod header {
     impl_convert_from_block_mem_for_plain_struct!(Ident);
 
     impl Ident {
-        pub fn read<T: std::io::Seek + std::io::Read>(
+        pub fn parse<T: std::io::Seek + std::io::Read>(
             reader: &mut T,
         ) -> Result<Box<Self>, crate::Error> {
             reader.seek(std::io::SeekFrom::Start(0)).map_or_else(
@@ -265,10 +265,10 @@ pub mod test {
         Ok(())
     }
     #[test]
-    fn test_read_ident() -> Result<(), crate::Error> {
+    fn test_parse_ident() -> Result<(), crate::Error> {
         let mut file = std::fs::File::open("./test/elf64_example")
             .map_err(|e| crate::Error::UnExpectedIoError(e))?;
-        let ident = Ident::read(&mut file)?;
+        let ident = Ident::parse(&mut file)?;
         println!("{:#?}", ident);
         Ok(())
     }
