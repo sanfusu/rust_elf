@@ -136,14 +136,14 @@ pub(crate) mod elf {
         header::{Ehdr, Ident},
         IDENT,
     };
-    use std::convert::TryInto;
+    use std::{cell::RefCell, convert::TryInto};
 
     #[derive(Debug)]
     pub struct Elf<'a> {
-        pub ident: &'a super::header::Ident,
-        pub ehdr: &'a super::header::Ehdr,
-        pub shdr_table: Option<Box<Vec<&'a super::section::Shdr>>>,
-        pub phdr_table: Option<Box<Vec<&'a super::program::Phdr>>>,
+        pub ident: RefCell<&'a super::header::Ident>,
+        pub ehdr: RefCell<&'a super::header::Ehdr>,
+        pub shdr_table: RefCell<Option<Box<Vec<&'a super::section::Shdr>>>>,
+        pub phdr_table: RefCell<Option<Box<Vec<&'a super::program::Phdr>>>>,
         // _data: &'a [u8],
     }
     impl<'a> Elf<'a> {}
@@ -194,10 +194,10 @@ pub(crate) mod elf {
                 }
             };
             Ok(Elf {
-                ident,
-                ehdr,
-                shdr_table,
-                phdr_table,
+                ident: RefCell::new(ident),
+                ehdr: RefCell::new(ehdr),
+                shdr_table: RefCell::new(shdr_table),
+                phdr_table: RefCell::new(phdr_table),
                 // _data: src,
             })
         }
@@ -206,8 +206,14 @@ pub(crate) mod elf {
 
 #[cfg(test)]
 pub mod test {
-    use super::header::{Ehdr, Ident};
-    use std::convert::{TryFrom, TryInto};
+    use super::{
+        header::{Ehdr, Ident},
+        Elf, IDENT,
+    };
+    use std::{
+        convert::{TryFrom, TryInto},
+        fs,
+    };
 
     const MAGIC_0X55: u8 = 0x55;
     const MAGIC_0XAA: u8 = 0xaa;
@@ -254,19 +260,17 @@ pub mod test {
     }
     #[test]
     fn test_elf_from_slice() -> Result<(), crate::Error> {
-        let test_data = std::fs::read("./test/elf64_example").unwrap();
-        let elf = super::Elf::try_from(test_data.as_slice())?;
-        println!(
-            "{},{},{:#x?}",
-            std::mem::size_of_val(&elf),
-            test_data.as_slice().len(),
-            elf
-        );
+        let mut test_data = fs::read("./test/elf64_example").unwrap();
+        let ident: &mut Ident =
+            (&mut (test_data.as_mut_slice()[0..std::mem::size_of::<Ident>()])).try_into()?;
+        ident.class = IDENT::CLASS::CLASS32;
+        let elf = Elf::try_from(test_data.as_slice())?;
+        println!("{:#?},{:#x?}", ident, elf);
         Ok(())
     }
     #[test]
     fn test_parse_ident() -> Result<(), crate::Error> {
-        let mut file = std::fs::File::open("./test/elf64_example")
+        let mut file = fs::File::open("./test/elf64_example")
             .map_err(|e| crate::Error::UnExpectedIoError(e))?;
         let ident = Ident::parse(&mut file)?;
         println!("{:#?}", ident);

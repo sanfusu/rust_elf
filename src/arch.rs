@@ -18,6 +18,24 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
                 }
             }
         }
+        impl std::convert::TryFrom<&mut [u8]> for &mut $struct {
+            type Error = crate::Error;
+            /// 类型转换（不保证内容的有效性）
+            ///
+            ///  + 如果 slice 地址未对齐，则返回 [`MissAligned`](crate::Error::MissAligned) 错误
+            ///  + 如果 slice 长度不够，则返回 [`DataLoss`](crate::Error::DataLoss) 错误
+            fn try_from(src: &mut [u8]) -> Result<Self, Self::Error> {
+                if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
+                    Err(crate::Error::MissAligned)
+                } else {
+                    if src.len() < std::mem::size_of::<Self>() {
+                        Err(crate::Error::DataLoss)
+                    } else {
+                        unsafe { Ok(&mut *(src.as_ptr() as *mut $struct)) }
+                    }
+                }
+            }
+        }
         impl std::convert::TryFrom<&[u8; std::mem::size_of::<$struct>()]> for &$struct {
             type Error = crate::Error;
             /// 类型转换（不保证内容的有效性）
@@ -28,6 +46,19 @@ macro_rules! impl_convert_from_block_mem_for_plain_struct {
                     Err(crate::Error::MissAligned)
                 } else {
                     unsafe { Ok(&*(src.as_ptr() as *const $struct)) }
+                }
+            }
+        }
+        impl std::convert::TryFrom<&mut [u8; std::mem::size_of::<$struct>()]> for &mut $struct {
+            type Error = crate::Error;
+            /// 类型转换（不保证内容的有效性）
+            ///
+            ///  + 如果 slice 地址未对齐，则返回 [`MissAligned`](crate::Error::MissAligned) 错误
+            fn try_from(src: &mut [u8; std::mem::size_of::<$struct>()]) -> Result<Self, Self::Error> {
+                if src.as_ptr() as usize % std::mem::align_of::<$struct>() != 0 {
+                    Err(crate::Error::MissAligned)
+                } else {
+                    unsafe { Ok(&mut *(src.as_ptr() as *mut $struct)) }
                 }
             }
         }
