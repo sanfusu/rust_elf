@@ -4,8 +4,8 @@ pub mod relocation;
 pub mod section;
 pub mod sym_table;
 
+pub use self::elf::Elf;
 use basic_type::*;
-pub use elf::Elf;
 
 #[allow(non_snake_case)]
 pub mod IDENT {
