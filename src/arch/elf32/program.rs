@@ -1,7 +1,5 @@
 use super::BasicType;
-use derive::AsSlice;
 #[repr(C)]
-#[derive(AsSlice)]
 pub struct Header {
     pub r#type: <BasicType as crate::IBasicType>::Word,
     pub offset: <BasicType as crate::IBasicType>::Off,

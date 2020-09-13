@@ -1,6 +1,4 @@
 pub mod rel {
-    use derive::AsSlice;
-    #[derive(AsSlice)]
     #[repr(C)]
     pub struct Entry<T: crate::IBasicType> {
         pub offset: T::Addr,
@@ -8,8 +6,6 @@ pub mod rel {
     }
 }
 pub mod rela {
-    use derive::AsSlice;
-    #[derive(AsSlice)]
     #[repr(C)]
     pub struct Entry<T: crate::IBasicType> {
         pub offset: T::Addr,

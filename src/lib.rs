@@ -1,13 +1,14 @@
+#![no_std]
+
 pub mod arch;
 pub mod utils;
 
-use std::{
+use core::{
     cmp,
     convert::TryInto,
     fmt::{self, Debug},
     ops,
 };
-use utils::AsBytes;
 
 #[derive(Debug)]
 pub enum Error {
@@ -17,37 +18,21 @@ pub enum Error {
     InvalidClass,
     InvalidEhdr,
     MissAligned,
-    UnExpectedIoError(std::io::Error),
+    UnExpectedIoError,
 }
 
-// impl std::convert::Into<io::Error> for Error {
-//     fn into(self) -> io::Error {
-//         let x = match self {
-//             Error::DataLoss => (io::ErrorKind::InvalidInput, Error::DataLoss),
-//             Error::InvalidMagic => (io::ErrorKind::InvalidInput, Error::DataLoss),
-//             Error::InvalidClass => (io::ErrorKind::InvalidInput, Error::DataLoss),
-//             Error::InvalidEhdr => (io::ErrorKind::InvalidData, Error::InvalidEhdr),
-//             Error::InvalidShentSize => (io::ErrorKind::InvalidData, Error::InvalidShentSize),
-//             Error::MissAligned => (io::ErrorKind::InvalidData, Error::MissAligned),
-//             Error::UnExpectedIoError => (io::ErrorKind::InvalidData, Error::MissAligned),
-//         };
-//         io::Error::new(x.0, x.1)
-//     }
-// }
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self)
     }
 }
 
-impl std::error::Error for Error {}
-
 pub trait IBasicType {
     type Xword: Debug
         + Default
         + From<u32>
         + Copy
-        + TryInto<usize, Error = std::num::TryFromIntError>
+        + TryInto<usize, Error = core::num::TryFromIntError>
         + ops::BitOrAssign
         + ops::BitOr<Output = Self::Xword>
         + ops::BitAndAssign
@@ -71,7 +56,7 @@ pub trait IBasicType {
         + From<u32>
         + fmt::LowerHex
         + Copy
-        + TryInto<usize, Error = std::num::TryFromIntError>;
+        + TryInto<usize, Error = core::num::TryFromIntError>;
 }
 
 #[cfg(test)]

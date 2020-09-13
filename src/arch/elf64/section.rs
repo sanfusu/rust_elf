@@ -29,3 +29,9 @@ pub(crate) mod header {
 pub struct ShdrTable<'a> {
     pub data: &'a [u8],
 }
+
+pub struct Section<'a> {
+    pub header: &'a header::Shdr,
+    pub data: &'a [u8],
+    pub src: &'a [u8],
+}
