@@ -15,25 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
+use quote::quote;
+use syn::DeriveInput;
 
-pub(crate) mod ehdr;
-pub(crate) mod metadata;
+pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
+    let ast: DeriveInput = syn::parse2(input).unwrap();
+    let name = ast.ident;
 
-#[proc_macro_derive(MetaData)]
-pub fn metadata_proc(input: TokenStream) -> TokenStream {
-    metadata::metadata_proc(input.into()).into()
-}
-
-#[proc_macro_derive(Ehdr, attributes(shoff, shentsize, phoff, shnum, phnum, phentsize))]
-pub fn ehdr_proc(input: TokenStream) -> TokenStream {
-    ehdr::ehdr_proc(input.into()).into()
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    quote! {
+        impl crate::interface::MetaData for #name{}
     }
 }
