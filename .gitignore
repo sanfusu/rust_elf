@@ -1,4 +1,3 @@
 **/target/
-**/abi_derive
-# !**/target/doc
+.vscode
 Cargo.lock
