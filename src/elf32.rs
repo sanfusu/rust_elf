@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-pub mod sh_type;
+pub mod section;
+pub mod segment;
 
 pub type Addr = u32;
 pub type Off = u32;
@@ -48,20 +49,7 @@ pub struct Ehdr {
     pub e_shstrndx: Half,
 }
 
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Shdr {
-    pub sh_name: Word,
-    pub sh_type: Word,
-    pub sh_flags: Word,
-    pub sh_addr: Addr,
-    pub sh_offset: Off,
-    pub sh_size: Word,
-    pub sh_link: Word,
-    pub sh_info: Word,
-    pub sh_addralign: Word,
-    pub sh_entsize: Word,
-}
+
 
 #[derive(MetaData)]
 #[repr(packed)]
@@ -74,26 +62,3 @@ pub struct Sym {
     pub st_shndx: Half,
 }
 
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Phdr {
-    pub p_type: Word,
-    pub p_offset: Off,
-    pub p_vaddr: Addr,
-    pub p_paddr: Addr,
-    pub p_filesz: Word,
-    pub p_memsz: Word,
-    pub p_flags: Word,
-    pub p_align: Word,
-}
-
-pub struct Segment {
-    pub header: Phdr,
-    pub section: Section,
-}
-
-pub struct Section {
-    pub header: Shdr,
-    pub name: String,
-    pub data: Vec<u8>,
-}

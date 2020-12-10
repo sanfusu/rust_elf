@@ -17,7 +17,24 @@
 
 use super::Word;
 
-#[derive(Debug)]
+pub struct Wrapper<'a> {
+    sec: &'a super::Shdr,
+}
+impl Wrapper<'_> {
+    pub fn get(&self) -> ShType {
+        self.sec.sh_type.into()
+    }
+}
+pub struct WrapperMut<'a> {
+    sec: &'a mut super::Shdr,
+}
+impl WrapperMut<'_> {
+    pub fn with(&mut self, val: ShType) {
+        self.sec.sh_type = val.into();
+    }
+}
+
+#[derive(Debug, Eq, PartialEq)]
 pub enum ShType {
     NULL,
     PROGBITS,
@@ -54,6 +71,26 @@ impl std::convert::From<u32> for ShType {
             LOPROC..=HIPROC => ShType::PROCESSOR(val),
             LOOS..=HIOS => ShType::OS(val),
             _ => ShType::UNKNOW(val),
+        }
+    }
+}
+
+impl std::convert::Into<u32> for ShType {
+    fn into(self) -> u32 {
+        match self {
+            ShType::NULL => NULL,
+            ShType::PROGBITS => PROGBITS,
+            ShType::SYMTAB => SYMTAB,
+            ShType::STRTAB => STRTAB,
+            ShType::RELA => RELA,
+            ShType::HASH => HASH,
+            ShType::DYNAMIC => DYNAMIC,
+            ShType::NOTE => NOTE,
+            ShType::NOBITS => NOBITS,
+            ShType::REL => REL,
+            ShType::SHLIB => SHLIB,
+            ShType::DYNSYM => DYNSYM,
+            ShType::PROCESSOR(v) | ShType::OS(v) | ShType::UNKNOW(v) => v,
         }
     }
 }
