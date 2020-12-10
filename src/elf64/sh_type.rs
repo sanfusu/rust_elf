@@ -32,7 +32,7 @@ pub enum ShType {
     SHLIB,
     DYNSYM,
     PROCESSOR(Word),
-    USER(Word),
+    OS(Word),
     UNKNOW(Word),
 }
 
@@ -52,11 +52,13 @@ impl std::convert::From<u32> for ShType {
             SHLIB => ShType::SHLIB,
             DYNSYM => ShType::DYNSYM,
             LOPROC..=HIPROC => ShType::PROCESSOR(val),
-            LOUSER..=HIUSER => ShType::USER(val),
+            LOOS..=HIOS => ShType::OS(val),
             _ => ShType::UNKNOW(val),
         }
     }
 }
+
+// elf64 中用户保留类型区间被移除，额外添加了 OS 保留类型区间
 
 const NULL: u32 = 0;
 const PROGBITS: u32 = 1;
@@ -70,7 +72,7 @@ const NOBITS: u32 = 8;
 const REL: u32 = 9;
 const SHLIB: u32 = 10;
 const DYNSYM: u32 = 11;
+const LOOS: u32 = 0x60000000;
+const HIOS: u32 = 0x6FFFFFFF;
 const LOPROC: u32 = 0x70000000;
-const HIPROC: u32 = 0x7fffffff;
-const LOUSER: u32 = 0x80000000;
-const HIUSER: u32 = 0xffffffff;
+const HIPROC: u32 = 0x7FFFFFFF;
