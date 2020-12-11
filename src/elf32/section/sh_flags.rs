@@ -58,8 +58,6 @@ pub struct WrapperMut<'a> {
 }
 impl<'a> WrapperMut<'a> {
     /// 设置 Ehdr 中 sh_flags 的值。
-    ///
-    /// val 如果是 Flags::Unknown(xxx)，则会被忽略。
     pub fn with(&'a mut self, val: Flags) -> &'a mut Self {
         match val {
             Flags::Write => self.shdr.sh_flags |= WRITE,
