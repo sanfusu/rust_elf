@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+pub mod sh_flags;
 pub mod sh_type;
 use super::*;
 
@@ -67,7 +68,10 @@ pub struct Wrapper<'a> {
 
 impl Wrapper<'_> {
     pub fn sh_type(&self) -> sh_type::Wrapper {
-        sh_type::Wrapper { sec: self.sec }
+        sh_type::Wrapper { shdr: &self.sec.header }
+    }
+    pub fn sh_flags(&self) -> sh_flags::Wrapper {
+        sh_flags::Wrapper { shdr: &self.sec.header }
     }
 }
 
@@ -76,6 +80,9 @@ pub struct WrapperMut<'a> {
 }
 impl WrapperMut<'_> {
     pub fn sh_type(&mut self) -> sh_type::WrapperMut {
-        sh_type::WrapperMut { sec: self.sec }
+        sh_type::WrapperMut { shdr: &mut self.sec.header }
+    }
+    pub fn sh_flags(&mut self) -> sh_flags::WrapperMut {
+        sh_flags::WrapperMut { shdr: &mut self.sec.header }
     }
 }

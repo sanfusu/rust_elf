@@ -18,85 +18,94 @@
 use super::Word;
 
 pub struct Wrapper<'a> {
-    sec: &'a super::Shdr,
+    shdr: &'a super::Shdr,
 }
 impl Wrapper<'_> {
-    pub fn get(&self) -> ShType {
-        self.sec.sh_type.into()
+    pub fn get(&self) -> Type {
+        self.shdr.sh_type.into()
+    }
+    pub fn any_unknown(&self) -> Option<u32> {
+        let sh_type = self.shdr.sh_type;
+        if sh_type == NULL {
+            return None;
+        }
+        if let Type::Null = sh_type.into() {
+            Some(sh_type)
+        } else {
+            None
+        }
     }
 }
 pub struct WrapperMut<'a> {
-    sec: &'a mut super::Shdr,
+    shdr: &'a mut super::Shdr,
 }
 impl WrapperMut<'_> {
-    pub fn with(&mut self, val: ShType) {
-        self.sec.sh_type = val.into();
+    pub fn with(&mut self, val: Type) {
+        self.shdr.sh_type = val.into();
     }
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub enum ShType {
-    NULL,
-    PROGBITS,
-    SYMTAB,
-    STRTAB,
-    RELA,
-    HASH,
-    DYNAMIC,
-    NOTE,
-    NOBITS,
-    REL,
-    SHLIB,
-    DYNSYM,
-    PROCESSOR(Word),
-    OS(Word),
-    UNKNOW(Word),
+pub enum Type {
+    Null,
+    Progbits,
+    Symtab,
+    Strtab,
+    Rela,
+    Hash,
+    Dynamic,
+    Note,
+    Nobits,
+    Rel,
+    Shlib,
+    Dynsym,
+    Processor(Word),
+    Os(Word),
 }
 
-impl std::convert::From<u32> for ShType {
+impl std::convert::From<u32> for Type {
     fn from(val: u32) -> Self {
         match val {
-            NULL => ShType::NULL,
-            PROGBITS => ShType::PROGBITS,
-            SYMTAB => ShType::SYMTAB,
-            STRTAB => ShType::STRTAB,
-            RELA => ShType::RELA,
-            HASH => ShType::HASH,
-            DYNAMIC => ShType::DYNAMIC,
-            NOTE => ShType::NOTE,
-            NOBITS => ShType::NOBITS,
-            REL => ShType::REL,
-            SHLIB => ShType::SHLIB,
-            DYNSYM => ShType::DYNSYM,
-            LOPROC..=HIPROC => ShType::PROCESSOR(val),
-            LOOS..=HIOS => ShType::OS(val),
-            _ => ShType::UNKNOW(val),
+            NULL => Type::Null,
+            PROGBITS => Type::Progbits,
+            SYMTAB => Type::Symtab,
+            STRTAB => Type::Strtab,
+            RELA => Type::Rela,
+            HASH => Type::Hash,
+            DYNAMIC => Type::Dynamic,
+            NOTE => Type::Note,
+            NOBITS => Type::Nobits,
+            REL => Type::Rel,
+            SHLIB => Type::Shlib,
+            DYNSYM => Type::Dynsym,
+            LOPROC..=HIPROC => Type::Processor(val),
+            LOOS..=HIOS => Type::Os(val),
+            _ => Type::Null,
         }
     }
 }
 
-impl std::convert::Into<u32> for ShType {
+impl std::convert::Into<u32> for Type {
     fn into(self) -> u32 {
         match self {
-            ShType::NULL => NULL,
-            ShType::PROGBITS => PROGBITS,
-            ShType::SYMTAB => SYMTAB,
-            ShType::STRTAB => STRTAB,
-            ShType::RELA => RELA,
-            ShType::HASH => HASH,
-            ShType::DYNAMIC => DYNAMIC,
-            ShType::NOTE => NOTE,
-            ShType::NOBITS => NOBITS,
-            ShType::REL => REL,
-            ShType::SHLIB => SHLIB,
-            ShType::DYNSYM => DYNSYM,
-            ShType::PROCESSOR(v) | ShType::OS(v) | ShType::UNKNOW(v) => v,
+            Type::Null => NULL,
+            Type::Progbits => PROGBITS,
+            Type::Symtab => SYMTAB,
+            Type::Strtab => STRTAB,
+            Type::Rela => RELA,
+            Type::Hash => HASH,
+            Type::Dynamic => DYNAMIC,
+            Type::Note => NOTE,
+            Type::Nobits => NOBITS,
+            Type::Rel => REL,
+            Type::Shlib => SHLIB,
+            Type::Dynsym => DYNSYM,
+            Type::Processor(v) | Type::Os(v) => v,
         }
     }
 }
 
 // elf64 中用户保留类型区间被移除，额外添加了 OS 保留类型区间
-
 const NULL: u32 = 0;
 const PROGBITS: u32 = 1;
 const SYMTAB: u32 = 2;
