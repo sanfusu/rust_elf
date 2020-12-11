@@ -15,27 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::elf32::Word;
 pub struct Wrapper<'a> {
     pub(crate) shdr: &'a super::Shdr,
 }
 impl Wrapper<'_> {
-    /// 只能获取 [`Type`] 中已知的限定的值，非限定值会返回 [`Type::Null`]。
-    ///
-    /// 如果有非限定值，使用 [`Wrapper::any_unknown`] 获取（原则上不允许非限定值）
-    pub fn known(&self) -> Type {
+    pub fn get(&self) -> Type {
         self.shdr.sh_type.into()
-    }
-    pub fn any_unknown(&self) -> Option<u32> {
-        let sh_type = self.shdr.sh_type;
-        if sh_type == NULL {
-            return None;
-        }
-        if let Type::Null = sh_type.into() {
-            Some(sh_type)
-        } else {
-            None
-        }
     }
 }
 pub struct WrapperMut<'a> {
@@ -60,8 +45,9 @@ pub enum Type {
     Rel,
     Shlib,
     Dynsym,
-    Processor(Word),
-    User(Word),
+    Processor(u32),
+    User(u32),
+    Unknown(u32),
 }
 
 impl std::convert::From<u32> for Type {
@@ -81,12 +67,14 @@ impl std::convert::From<u32> for Type {
             DYNSYM => Type::Dynsym,
             LOPROC..=HIPROC => Type::Processor(val),
             LOUSER..=HIUSER => Type::User(val),
-            _ => Type::Null,
+            _ => Type::Unknown(val),
         }
     }
 }
 
 impl std::convert::Into<u32> for Type {
+    /// 将 [`Type`] 转换为 u32 类型，如果类似 [`Type::Processor`] 中的值不在范围类，
+    /// 则会 panic（大部分情况下这属于编码赋值问题，而非运行时错误，可以通过检查代码排查）
     fn into(self) -> u32 {
         match self {
             Type::Null => NULL,
@@ -101,7 +89,16 @@ impl std::convert::Into<u32> for Type {
             Type::Rel => REL,
             Type::Shlib => SHLIB,
             Type::Dynsym => DYNSYM,
-            Type::Processor(v) | Type::User(v) => v,
+            Type::Processor(v) if v < LOPROC || v > HIPROC => {
+                panic!("Invalid processor specified sh_type({})", v)
+            }
+            Type::User(v) if v < LOUSER || v > HIUSER => {
+                panic!("Invalid user specified sh_type({})", v)
+            }
+            Type::Unknown(v) if v < LOUNKN || v > HIUNKN => {
+                panic!("Invalid unknow specified sh_type({})", v)
+            }
+            Type::Processor(v) | Type::User(v) | Type::Unknown(v) => v,
         }
     }
 }
@@ -118,6 +115,8 @@ const NOBITS: u32 = 8;
 const REL: u32 = 9;
 const SHLIB: u32 = 10;
 const DYNSYM: u32 = 11;
+const LOUNKN: u32 = 12;
+const HIUNKN: u32 = 0x6fffffff;
 const LOPROC: u32 = 0x70000000;
 const HIPROC: u32 = 0x7fffffff;
 const LOUSER: u32 = 0x80000000;

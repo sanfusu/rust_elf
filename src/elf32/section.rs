@@ -55,7 +55,7 @@ impl Section {
     /// let mut sec = Section{..Default::default()};
     /// sec.setter().sh_type().with(Type::Progbits);
     ///
-    /// assert!(match sec.getter().sh_type().known() {Type::Progbits => true, _ => false});
+    /// assert!(match sec.getter().sh_type().get() {Type::Progbits => true, _ => false});
     /// ```
     pub fn setter(&mut self) -> WrapperMut {
         WrapperMut { sec: self }

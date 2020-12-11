@@ -15,25 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::Word;
-
 pub struct Wrapper<'a> {
     shdr: &'a super::Shdr,
 }
 impl Wrapper<'_> {
     pub fn get(&self) -> Type {
         self.shdr.sh_type.into()
-    }
-    pub fn any_unknown(&self) -> Option<u32> {
-        let sh_type = self.shdr.sh_type;
-        if sh_type == NULL {
-            return None;
-        }
-        if let Type::Null = sh_type.into() {
-            Some(sh_type)
-        } else {
-            None
-        }
     }
 }
 pub struct WrapperMut<'a> {
@@ -59,8 +46,9 @@ pub enum Type {
     Rel,
     Shlib,
     Dynsym,
-    Processor(Word),
-    Os(Word),
+    Processor(u32),
+    Os(u32),
+    Unknown(u32),
 }
 
 impl std::convert::From<u32> for Type {
@@ -80,7 +68,7 @@ impl std::convert::From<u32> for Type {
             DYNSYM => Type::Dynsym,
             LOPROC..=HIPROC => Type::Processor(val),
             LOOS..=HIOS => Type::Os(val),
-            _ => Type::Null,
+            _ => Type::Unknown(val),
         }
     }
 }
@@ -100,7 +88,16 @@ impl std::convert::Into<u32> for Type {
             Type::Rel => REL,
             Type::Shlib => SHLIB,
             Type::Dynsym => DYNSYM,
-            Type::Processor(v) | Type::Os(v) => v,
+            Type::Processor(v) if v < LOPROC || v > HIPROC => {
+                panic!("Invalid processor specified sh_type({})", v)
+            }
+            Type::Os(v) if v < LOOS || v > HIOS => {
+                panic!("Invalid os specified sh_type({})", v)
+            }
+            Type::Unknown(v) if (v >= LOOS && v <= HIOS) || (v >= LOPROC && v <= HIPROC) => {
+                panic!("Invalid unknown specified sh_type({})", v)
+            }
+            Type::Processor(v) | Type::Os(v) | Type::Unknown(v) => v,
         }
     }
 }

@@ -20,6 +20,7 @@ pub enum Flags {
     Alloc,
     ExecInstr,
     Processor(u32),
+    Unknown(u32),
 }
 
 pub struct Wrapper<'a> {
@@ -33,16 +34,16 @@ impl Wrapper<'_> {
         self.shdr.sh_flags & ALLOC != 0
     }
     pub fn any_processor(&self) -> Option<u32> {
-        let processor = self.shdr.sh_flags & MASKPROC;
+        let processor = self.shdr.sh_flags & MASK_PROCESSOR;
 
         if processor != 0 {
-            Some(processor >> MASKPROC_OFFSET)
+            Some(processor)
         } else {
             None
         }
     }
     pub fn any_unknown(&self) -> Option<u32> {
-        let unknown = self.shdr.sh_flags & (!WRITE) & (!ALLOC) & (!EXECINSTR);
+        let unknown = self.shdr.sh_flags & MASK_PROCESSOR;
 
         if unknown != 0 {
             Some(unknown)
@@ -64,7 +65,8 @@ impl<'a> WrapperMut<'a> {
             Flags::Write => self.shdr.sh_flags |= WRITE,
             Flags::Alloc => self.shdr.sh_flags |= ALLOC,
             Flags::ExecInstr => self.shdr.sh_flags |= EXECINSTR,
-            Flags::Processor(v) => self.shdr.sh_flags |= v & MASKPROC,
+            Flags::Processor(v) => self.shdr.sh_flags |= v & MASK_PROCESSOR,
+            Flags::Unknown(v) => self.shdr.sh_flags |= v & MASK_UNKNOWN,
         };
         self
     }
@@ -76,7 +78,14 @@ impl std::convert::Into<u32> for Flags {
             Flags::Write => WRITE,
             Flags::Alloc => ALLOC,
             Flags::ExecInstr => EXECINSTR,
-            Flags::Processor(v) => v & MASKPROC,
+            Flags::Processor(v) if (v & !MASK_PROCESSOR) != 0 => {
+                panic! {"Invalid processor bit"}
+            }
+            Flags::Unknown(v) if (v & !MASK_UNKNOWN) != 0 => {
+                panic!("Invalid unknown bit")
+            }
+            Flags::Processor(v) => v & MASK_PROCESSOR,
+            Flags::Unknown(v) => v & MASK_UNKNOWN,
         }
     }
 }
@@ -84,5 +93,5 @@ impl std::convert::Into<u32> for Flags {
 const WRITE: u32 = 0x1;
 const ALLOC: u32 = 0x2;
 const EXECINSTR: u32 = 0x4;
-const MASKPROC: u32 = 0xf0000000;
-const MASKPROC_OFFSET: u32 = 28;
+const MASK_PROCESSOR: u32 = 0xf0000000;
+const MASK_UNKNOWN: u32 = (!WRITE) & (!ALLOC) & (!EXECINSTR) & (!MASK_PROCESSOR);
