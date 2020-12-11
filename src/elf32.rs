@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+use ident::version::Version;
+use crate::interface::MetaData;
+
+pub mod ident;
 pub mod section;
 pub mod segment;
 
@@ -30,7 +34,7 @@ pub struct Ehdr {
     pub e_ident: [u8; 16],
     pub e_type: Half,
     pub e_machine: Half,
-    pub e_version: Word,
+    pub(crate) e_version: Word,
     pub e_entry: Addr,
     #[phoff]
     pub e_phoff: Off,
@@ -49,16 +53,49 @@ pub struct Ehdr {
     pub e_shstrndx: Half,
 }
 
-
-
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Sym {
-    pub st_name: Word,
-    pub st_value: Addr,
-    pub st_size: Word,
-    pub st_info: u8,
-    pub st_other: u8,
-    pub st_shndx: Half,
+impl Default for Ehdr {
+    fn default() -> Self {
+        let tmp = [0u8; std::mem::size_of::<Ehdr>()];
+        let mut ret = Ehdr::from_le_bytes(tmp);
+        ret.e_version = Version::Current.into();
+        ret.as_mut_slice()[0..std::mem::size_of_val(&ident::MAGIC)].copy_from_slice(&ident::MAGIC);
+        ret
+    }
 }
 
+pub struct Elf {
+    header: Ehdr,
+}
+
+pub struct Wrapper<'a> {
+    header: &'a Ehdr,
+}
+
+pub struct WrapperMut<'a> {
+    header: &'a mut Ehdr,
+}
+
+impl Elf {
+    pub fn getter(&self) -> Wrapper {
+        Wrapper {
+            header: &self.header,
+        }
+    }
+    pub fn setter(&mut self) -> WrapperMut {
+        WrapperMut {
+            header: &mut self.header,
+        }
+    }
+}
+
+impl Wrapper<'_> {
+    pub fn version(&self) -> Version {
+        self.header.e_version.into()
+    }
+}
+
+impl WrapperMut<'_> {
+    pub fn version(&mut self, ver: Version) {
+        self.header.e_version = ver.into();
+    }
+}
