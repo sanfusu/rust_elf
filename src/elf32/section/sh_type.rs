@@ -15,22 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-pub struct Wrapper<'a> {
-    pub(crate) shdr: &'a super::Shdr,
-}
-impl Wrapper<'_> {
-    pub fn get(&self) -> Type {
-        self.shdr.sh_type.into()
-    }
-}
-pub struct WrapperMut<'a> {
-    pub(crate) shdr: &'a mut super::Shdr,
-}
-impl WrapperMut<'_> {
-    pub fn with(&mut self, val: Type) {
-        self.shdr.sh_type = val.into();
-    }
-}
 #[derive(Debug)]
 pub enum Type {
     Null,

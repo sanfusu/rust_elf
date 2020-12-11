@@ -17,6 +17,7 @@
 
 pub mod sh_flags;
 pub mod sh_type;
+pub mod sym;
 use super::*;
 
 #[derive(MetaData, Default)]
@@ -53,9 +54,9 @@ impl Section {
     /// use elf::elf32::section::sh_type::*;
     ///
     /// let mut sec = Section{..Default::default()};
-    /// sec.setter().sh_type().with(Type::Progbits);
+    /// sec.setter().sh_type(Type::Progbits);
     ///
-    /// assert!(match sec.getter().sh_type().get() {Type::Progbits => true, _ => false});
+    /// assert!(match sec.getter().sh_type() {Type::Progbits => true, _ => false});
     /// ```
     pub fn setter(&mut self) -> WrapperMut {
         WrapperMut { sec: self }
@@ -67,11 +68,13 @@ pub struct Wrapper<'a> {
 }
 
 impl Wrapper<'_> {
-    pub fn sh_type(&self) -> sh_type::Wrapper {
-        sh_type::Wrapper { shdr: &self.sec.header }
+    pub fn sh_type(&self) -> sh_type::Type {
+        self.sec.header.sh_type.into()
     }
     pub fn sh_flags(&self) -> sh_flags::Wrapper {
-        sh_flags::Wrapper { shdr: &self.sec.header }
+        sh_flags::Wrapper {
+            shdr: &self.sec.header,
+        }
     }
 }
 
@@ -79,10 +82,12 @@ pub struct WrapperMut<'a> {
     sec: &'a mut Section,
 }
 impl WrapperMut<'_> {
-    pub fn sh_type(&mut self) -> sh_type::WrapperMut {
-        sh_type::WrapperMut { shdr: &mut self.sec.header }
+    pub fn sh_type(&mut self, val: sh_type::Type) {
+        self.sec.header.sh_type = val.into();
     }
     pub fn sh_flags(&mut self) -> sh_flags::WrapperMut {
-        sh_flags::WrapperMut { shdr: &mut self.sec.header }
+        sh_flags::WrapperMut {
+            shdr: &mut self.sec.header,
+        }
     }
 }
