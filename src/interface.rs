@@ -74,8 +74,13 @@ pub trait Ehdr {
     fn shdr_table_range(&self) -> Range<usize>;
     fn phdr_table_range(&self) -> Range<usize>;
 }
+
 pub trait Section {
     fn name(&self) -> String;
+}
+
+pub trait Shdr {
+    fn data_range(&self) -> Range<usize>;
 }
 pub trait Elf {
     fn sections<T: Section>(&self) -> Vec<T>;
