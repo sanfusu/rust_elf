@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::elf32::*;
 pub mod bind;
 pub mod st_type;
+
+use super::super::basic_type::*;
+
 #[derive(MetaData)]
 #[repr(packed)]
 pub struct Sym {

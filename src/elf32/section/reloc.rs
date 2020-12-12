@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::elf32::*;
+use super::super::basic_type::*;
 pub struct Rel {
     pub offset: Addr,
     pub info: Word,
@@ -30,7 +30,7 @@ impl Rel {
     pub fn r_sym_idx(&self) -> usize {
         (self.info >> 8) as usize
     }
-    pub fn r_type_idx(&self)->usize{
+    pub fn r_type_idx(&self) -> usize {
         (self.info & 0xf) as usize
     }
 }
@@ -38,7 +38,7 @@ impl Rela {
     pub fn r_sym_idx(&self) -> usize {
         (self.info >> 8) as usize
     }
-    pub fn r_type_idx(&self)->usize{
+    pub fn r_type_idx(&self) -> usize {
         (self.info & 0xf) as usize
     }
 }

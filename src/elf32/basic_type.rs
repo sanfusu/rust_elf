@@ -15,22 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::{basic_type::*, section::Section};
-
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Phdr {
-    pub p_type: Word,
-    pub p_offset: Off,
-    pub p_vaddr: Addr,
-    pub p_paddr: Addr,
-    pub p_filesz: Word,
-    pub p_memsz: Word,
-    pub p_flags: Word,
-    pub p_align: Word,
-}
-
-pub struct Segment {
-    pub header: Phdr,
-    pub section: Section,
-}
+pub type Addr = u32;
+pub type Off = u32;
+pub type Half = u16;
+pub type Word = u32;
+pub type Sword = u32;

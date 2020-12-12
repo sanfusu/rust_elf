@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+pub mod reloc;
 pub mod sh_flags;
 pub mod sh_type;
 pub mod sym;
-pub mod reloc;
-use super::*;
+use super::basic_type::*;
 
 #[derive(MetaData, Default)]
 #[repr(packed)]
