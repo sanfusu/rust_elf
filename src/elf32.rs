@@ -16,9 +16,7 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::interface::MetaData;
-use ident::{version::Version, DATA_IDX};
-
-use self::ident::{class::Class, encode::Encode, CLASS_IDX, VERSION_IDX};
+use ident::version::Version;
 
 pub mod ident;
 pub mod section;
@@ -33,10 +31,10 @@ pub type Sword = u32;
 #[derive(MetaData, Ehdr)]
 #[repr(packed)]
 pub struct Ehdr {
-    pub e_ident: [u8; 16],
-    pub e_type: Half,
-    pub e_machine: Half,
-    pub(crate) e_version: Word,
+    e_ident: [u8; 16],
+    e_type: Half,
+    e_machine: Half,
+    e_version: Word,
     pub e_entry: Addr,
     #[phoff]
     pub e_phoff: Off,
@@ -91,22 +89,20 @@ impl Elf {
 }
 
 impl Wrapper<'_> {
-    pub fn obj_ver(&self) -> Version {
+    pub fn id(&self) -> ident::Wrapper {
+        ident::Wrapper {
+            id: &self.header.e_ident,
+        }
+    }
+    pub fn version(&self) -> Version {
         self.header.e_version.into()
-    }
-    pub fn class(&self) -> Class {
-        self.header.e_ident[CLASS_IDX].into()
-    }
-    pub fn encode(&self) -> Encode {
-        self.header.e_ident[DATA_IDX].into()
-    }
-    pub fn hdr_ver(&self) -> Version {
-        (self.header.e_ident[VERSION_IDX] as u32).into()
     }
 }
 
 impl WrapperMut<'_> {
-    pub fn encode(&mut self, ec: Encode) {
-        self.header.e_ident[DATA_IDX] = ec.into();
+    pub fn id(&mut self) -> ident::WrapperMut {
+        ident::WrapperMut {
+            id: &mut self.header.e_ident,
+        }
     }
 }

@@ -21,7 +21,36 @@ pub mod encode;
 pub mod machine;
 pub mod version;
 
+use self::{class::Class, encode::Encode, version::Version};
+
 pub(crate) const MAGIC: [u8; 4] = [0x7f, 'E' as u8, 'L' as u8, 'F' as u8];
 pub(crate) const CLASS_IDX: usize = 4;
 pub(crate) const DATA_IDX: usize = 5;
 pub(crate) const VERSION_IDX: usize = 6;
+
+pub struct Wrapper<'a> {
+    pub(crate) id: &'a [u8; 16],
+}
+
+impl Wrapper<'_> {
+    pub fn version(&self) -> Version {
+        (self.id[VERSION_IDX] as u32).into()
+    }
+    /// Class 只能是 [`Class::Class32`]，所以不提供写入访问
+    pub fn class(&self) -> Class {
+        self.id[CLASS_IDX].into()
+    }
+    pub fn encode(&self) -> Encode {
+        self.id[DATA_IDX].into()
+    }
+}
+
+pub struct WrapperMut<'a> {
+    pub(crate) id: &'a mut [u8; 16],
+}
+
+impl WrapperMut<'_> {
+    pub fn encode(&mut self, ec: Encode) {
+        self.id[DATA_IDX] = ec.into();
+    }
+}
