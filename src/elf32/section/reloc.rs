@@ -16,15 +16,29 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::elf32::*;
-pub mod bind;
-pub mod st_type;
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Sym {
-    pub st_name: Word,
-    pub st_value: Addr,
-    pub st_size: Word,
-    pub st_info: u8,
-    pub st_other: u8,
-    pub st_shndx: Half,
+pub struct Rel {
+    pub offset: Addr,
+    pub info: Word,
+}
+pub struct Rela {
+    pub offset: Addr,
+    pub info: Word,
+    pub addend: Sword,
+}
+
+impl Rel {
+    pub fn r_sym_idx(&self) -> usize {
+        (self.info >> 8) as usize
+    }
+    pub fn r_type_idx(&self)->usize{
+        (self.info & 0xf) as usize
+    }
+}
+impl Rela {
+    pub fn r_sym_idx(&self) -> usize {
+        (self.info >> 8) as usize
+    }
+    pub fn r_type_idx(&self)->usize{
+        (self.info & 0xf) as usize
+    }
 }

@@ -18,6 +18,7 @@
 pub mod sh_flags;
 pub mod sh_type;
 pub mod sym;
+pub mod reloc;
 use super::*;
 
 #[derive(MetaData, Default)]

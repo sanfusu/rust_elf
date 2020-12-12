@@ -18,7 +18,12 @@
 // Ident 单独列为一个模块是因为，ident 作为 u8 数组和字节顺序无关。
 pub mod class;
 pub mod encode;
-pub mod version;
 pub mod machine;
+pub mod version;
 
 pub(crate) const MAGIC: [u8; 4] = [0x7f, 'E' as u8, 'L' as u8, 'F' as u8];
+pub const CLASS_IDX: usize = 4;
+pub const DATA_IDX: usize = 5;
+pub const VERSION_IDX: usize = 6;
+pub const PAD_IDX: usize = 7;
+pub const NIDENT_IDX: usize = 16;

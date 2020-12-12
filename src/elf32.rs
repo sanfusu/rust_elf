@@ -15,8 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use ident::version::Version;
 use crate::interface::MetaData;
+use ident::{version::Version, DATA_IDX};
+
+use self::ident::{class::Class, encode::Encode, CLASS_IDX};
 
 pub mod ident;
 pub mod section;
@@ -92,10 +94,19 @@ impl Wrapper<'_> {
     pub fn version(&self) -> Version {
         self.header.e_version.into()
     }
+    pub fn class(&self) -> Class {
+        self.header.e_ident[CLASS_IDX].into()
+    }
+    pub fn encode(&self) -> Encode {
+        self.header.e_ident[DATA_IDX].into()
+    }
 }
 
 impl WrapperMut<'_> {
     pub fn version(&mut self, ver: Version) {
         self.header.e_version = ver.into();
+    }
+    pub fn encode(&mut self, ec: Encode) {
+        self.header.e_ident[DATA_IDX] = ec.into();
     }
 }
