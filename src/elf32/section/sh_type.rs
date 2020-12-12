@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::ops::Range;
+
 #[derive(Debug)]
 pub enum Type {
     Null,
@@ -73,16 +75,18 @@ impl std::convert::Into<u32> for Type {
             Type::Rel => REL,
             Type::Shlib => SHLIB,
             Type::Dynsym => DYNSYM,
-            Type::Processor(v) if v < LOPROC || v > HIPROC => {
+            Type::Processor(v) if PROCRANGE.contains(&v) => v,
+            Type::User(v) if USERRANGE.contains(&v) => v,
+            Type::Unknown(v) if UNKNRANGE.contains(&v) => v,
+            Type::Processor(v) => {
                 panic!("Invalid processor specified sh_type({})", v)
             }
-            Type::User(v) if v < LOUSER || v > HIUSER => {
+            Type::User(v) => {
                 panic!("Invalid user specified sh_type({})", v)
             }
-            Type::Unknown(v) if v < LOUNKN || v > HIUNKN => {
+            Type::Unknown(v) => {
                 panic!("Invalid unknow specified sh_type({})", v)
             }
-            Type::Processor(v) | Type::User(v) | Type::Unknown(v) => v,
         }
     }
 }
@@ -105,3 +109,6 @@ const LOPROC: u32 = 0x70000000;
 const HIPROC: u32 = 0x7fffffff;
 const LOUSER: u32 = 0x80000000;
 const HIUSER: u32 = 0xffffffff;
+const PROCRANGE: Range<u32> = LOPROC..HIPROC + 1;
+const USERRANGE: Range<u32> = LOUSER..HIUSER + 1;
+const UNKNRANGE: Range<u32> = LOUNKN..HIUNKN + 1;

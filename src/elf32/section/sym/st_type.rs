@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::ops::Range;
+
 pub enum Type {
     None,
     Object,
@@ -32,7 +34,7 @@ impl Into<u8> for Type {
             Type::Object => OBJECT,
             Type::Func => FUNC,
             Type::Section => SECTION,
-            Type::Processor(v) if v >= LOPROC && v <= HIPROC => v,
+            Type::Processor(v) if PROCRANGE.contains(&v) => v,
             Type::Processor(_) => {
                 panic!("You should not construct a processor sym type out of range")
             }
@@ -62,3 +64,4 @@ const SECTION: u8 = 3;
 const FILE: u8 = 4;
 const LOPROC: u8 = 13;
 const HIPROC: u8 = 15;
+const PROCRANGE: Range<u8> = LOPROC..HIPROC + 1;
