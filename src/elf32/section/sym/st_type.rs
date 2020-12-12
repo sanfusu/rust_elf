@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 pub enum Type {
     None,
@@ -64,4 +64,4 @@ const SECTION: u8 = 3;
 const FILE: u8 = 4;
 const LOPROC: u8 = 13;
 const HIPROC: u8 = 15;
-const PROCRANGE: Range<u8> = LOPROC..HIPROC + 1;
+const PROCRANGE: RangeInclusive<u8> = LOPROC..=HIPROC;

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 #[derive(Debug)]
 pub enum Type {
@@ -109,6 +109,6 @@ const LOPROC: u32 = 0x70000000;
 const HIPROC: u32 = 0x7fffffff;
 const LOUSER: u32 = 0x80000000;
 const HIUSER: u32 = 0xffffffff;
-const PROCRANGE: Range<u32> = LOPROC..HIPROC + 1;
-const USERRANGE: Range<u32> = LOUSER..HIUSER + 1;
-const UNKNRANGE: Range<u32> = LOUNKN..HIUNKN + 1;
+const PROCRANGE: RangeInclusive<u32> = LOPROC..=HIPROC;
+const USERRANGE: RangeInclusive<u32> = LOUSER..=HIUSER;
+const UNKNRANGE: RangeInclusive<u32> = LOUNKN..=HIUNKN;
