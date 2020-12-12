@@ -18,7 +18,7 @@
 use crate::interface::MetaData;
 use ident::{version::Version, DATA_IDX};
 
-use self::ident::{class::Class, encode::Encode, CLASS_IDX};
+use self::ident::{class::Class, encode::Encode, CLASS_IDX, VERSION_IDX};
 
 pub mod ident;
 pub mod section;
@@ -91,7 +91,7 @@ impl Elf {
 }
 
 impl Wrapper<'_> {
-    pub fn version(&self) -> Version {
+    pub fn obj_ver(&self) -> Version {
         self.header.e_version.into()
     }
     pub fn class(&self) -> Class {
@@ -100,12 +100,12 @@ impl Wrapper<'_> {
     pub fn encode(&self) -> Encode {
         self.header.e_ident[DATA_IDX].into()
     }
+    pub fn hdr_ver(&self) -> Version {
+        (self.header.e_ident[VERSION_IDX] as u32).into()
+    }
 }
 
 impl WrapperMut<'_> {
-    pub fn version(&mut self, ver: Version) {
-        self.header.e_version = ver.into();
-    }
     pub fn encode(&mut self, ec: Encode) {
         self.header.e_ident[DATA_IDX] = ec.into();
     }

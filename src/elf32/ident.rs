@@ -22,8 +22,6 @@ pub mod machine;
 pub mod version;
 
 pub(crate) const MAGIC: [u8; 4] = [0x7f, 'E' as u8, 'L' as u8, 'F' as u8];
-pub const CLASS_IDX: usize = 4;
-pub const DATA_IDX: usize = 5;
-pub const VERSION_IDX: usize = 6;
-pub const PAD_IDX: usize = 7;
-pub const NIDENT_IDX: usize = 16;
+pub(crate) const CLASS_IDX: usize = 4;
+pub(crate) const DATA_IDX: usize = 5;
+pub(crate) const VERSION_IDX: usize = 6;
