@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::{basic_type::*, section::Section};
+use super::basic_type::*;
 
 #[derive(MetaData)]
 #[repr(packed)]
@@ -32,5 +32,5 @@ pub struct Phdr {
 
 pub struct Segment {
     pub header: Phdr,
-    pub section: Section,
+    pub data: Vec<u8>,
 }

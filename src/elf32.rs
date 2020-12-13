@@ -20,8 +20,14 @@ pub mod ehdr;
 pub mod section;
 pub mod segment;
 
+use ehdr::Ehdr;
+use section::{Section, Shdr};
+use segment::{Phdr, Segment};
+
 pub struct Elf {
     header: ehdr::Ehdr,
+    pub secs: Option<Vec<section::Section>>,
+    pub segs: Option<Vec<segment::Segment>>,
 }
 
 impl Elf {
@@ -35,4 +41,16 @@ impl Elf {
             header: &mut self.header,
         }
     }
+}
+
+pub struct LinkView {
+    pub hdr: Ehdr,
+    pub secs: Vec<Section>,
+    pub phdrs: Option<Vec<Phdr>>,
+}
+
+pub struct RuntimeView {
+    pub hdr: Ehdr,
+    pub segs: Vec<Segment>,
+    pub shdrs: Option<Vec<Shdr>>,
 }
