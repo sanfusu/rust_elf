@@ -1,17 +1,17 @@
 // Copyright (C) 2020 sanfusu@foxmail.com
-// 
+//
 // This file is part of rust_elf.
-// 
+//
 // rust_elf is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // rust_elf is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -40,11 +40,11 @@ pub(crate) fn ehdr_proc(input: TokenStream2) -> TokenStream2 {
     }
     quote! {
         impl crate::interface::Ehdr for #name {
-            fn shdr_table_range(&self)->std::ops::Range<usize>{
-                (self.#shoff as usize) .. (self.#shnum as usize) * (self.#shentsize as usize) + (self.#shoff as usize)
+            fn shdr_table_range(&self)->std::ops::RangeInclusive<usize>{
+                (self.#shoff as usize) ..= (self.#shnum as usize) * (self.#shentsize as usize) + (self.#shoff as usize)
             }
-            fn phdr_table_range(&self)->std::ops::Range<usize> {
-                (self.#phoff as usize) .. (self.#phnum as usize) * (self.#phentsize as usize) + (self.#phoff as usize)
+            fn phdr_table_range(&self)->std::ops::RangeInclusive<usize> {
+                (self.#phoff as usize) ..= (self.#phnum as usize) * (self.#phentsize as usize) + (self.#phoff as usize)
 
             }
         }

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::sync::{Arc, RwLock};
-
-/// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，
-/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Shdr::sh_entsize) 决定
-pub(crate) type DataChunk = Arc<RwLock<Vec<u8>>>;
+pub enum Err {
+    InvalidIdent,
+    OutofRange,
+}

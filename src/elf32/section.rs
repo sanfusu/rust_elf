@@ -45,6 +45,10 @@ pub struct Section {
 }
 
 impl Section {
+    /// Consume self and return the data
+    pub fn take_data(self) -> Vec<DataChunk> {
+        self.data
+    }
     /// getter 访问器效率上可能不会很高（看编译器优化），但形式上会更安全一点
     pub fn getter(&self) -> Wrapper {
         Wrapper { sec: self }

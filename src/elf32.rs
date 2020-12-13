@@ -16,15 +16,19 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 pub mod basic_type;
+pub mod chunk;
 pub mod ehdr;
+pub mod err;
 pub mod section;
 pub mod segment;
-pub mod chunk;
 
 use ehdr::Ehdr;
 use section::{Section, Shdr};
 use segment::{Phdr, Segment};
 
+use crate::interface::{Ehdr as IEhdr, MetaData};
+
+#[derive(Default)]
 pub struct Elf {
     header: ehdr::Ehdr,
     pub secs: Option<Vec<section::Section>>,
@@ -41,6 +45,46 @@ impl Elf {
         ehdr::WrapperMut {
             header: &mut self.header,
         }
+    }
+    pub fn from_le_slice(_src: &[u8]) -> Result<Elf, err::Err> {
+        todo!()
+    }
+    pub unsafe fn from_le_slice_uncheck(src: &[u8]) -> Result<Elf, err::Err> {
+        let mut elf = Elf::default();
+
+        if src.len() < Ehdr::len() {
+            return Err(err::Err::OutofRange);
+        };
+        elf.header.read_from_slice(&src[0..Ehdr::len()]);
+        elf.header = Ehdr::from_le(elf.header);
+
+        let shdr_tab_range = elf.header.shdr_table_range();
+        if src.len() < *shdr_tab_range.end() {
+            return Err(err::Err::OutofRange);
+        }
+        if !shdr_tab_range.is_empty() {
+            let mut secs: Vec<Section> = Vec::new();
+            for shdr_bytes in src[shdr_tab_range].chunks(Shdr::len()) {
+                let mut sec = Section::default();
+                sec.header.read_from_slice(shdr_bytes);
+                sec.header = Shdr::from_le(sec.header);
+                //TODO 解析数据部分
+                secs.push(sec);
+            }
+
+            elf.secs = Some(secs);
+        }
+
+        todo! {}
+    }
+    pub fn from_be_slice(_src: &[u8]) -> Result<Elf, err::Err> {
+        todo!()
+    }
+    pub unsafe fn from_be_slice_uncheck(_src: &[u8]) -> Elf {
+        todo!()
+    }
+    pub fn from_slice(_src: &[u8]) -> Result<Elf, err::Err> {
+        todo!()
     }
 }
 
