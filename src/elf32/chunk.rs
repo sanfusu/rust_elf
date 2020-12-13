@@ -15,23 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::{basic_type::*, chunk};
+use std::sync::{Arc, RwLock};
 
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Phdr {
-    pub p_type: Word,
-    pub p_offset: Off,
-    pub p_vaddr: Addr,
-    pub p_paddr: Addr,
-    pub p_filesz: Word,
-    pub p_memsz: Word,
-    pub p_flags: Word,
-    pub p_align: Word,
-}
-
-pub struct Segment {
-    pub header: Phdr,
-    /// 如果 Elf 文件中具有 Shdr table，那么 [`Segment::data`] 中将包含多个 section 的数据块。
-    pub data: Vec<chunk::DataChunk>,
+/// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，
+/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Shdr::sh_entsize) 决定
+#[derive(Default, Debug)]
+pub struct DataChunk {
+    pub data: Arc<RwLock<Vec<u8>>>,
 }

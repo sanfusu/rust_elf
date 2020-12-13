@@ -19,7 +19,8 @@ pub mod reloc;
 pub mod sh_flags;
 pub mod sh_type;
 pub mod sym;
-use super::basic_type::*;
+
+use super::{basic_type::*, chunk::DataChunk};
 
 #[derive(MetaData, Default)]
 #[repr(packed)]
@@ -40,7 +41,7 @@ pub struct Shdr {
 pub struct Section {
     pub header: Shdr,
     pub name: String,
-    pub data: Vec<u8>,
+    pub data: Vec<DataChunk>,
 }
 
 impl Section {

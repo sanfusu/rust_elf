@@ -19,6 +19,7 @@ pub mod basic_type;
 pub mod ehdr;
 pub mod section;
 pub mod segment;
+pub mod chunk;
 
 use ehdr::Ehdr;
 use section::{Section, Shdr};
