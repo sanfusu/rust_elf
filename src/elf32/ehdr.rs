@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+pub mod e_type;
 pub mod ident;
 
 use self::ident::version::Version;
@@ -68,17 +69,23 @@ impl Wrapper<'_> {
     pub fn version(&self) -> Version {
         self.header.e_version.into()
     }
-    pub fn id(&self) -> ident::Wrapper {
+    pub fn ident(&self) -> ident::Wrapper {
         ident::Wrapper {
             id: &self.header.e_ident,
         }
     }
+    pub fn obj_type(&self) -> e_type::Type {
+        self.header.e_type.into()
+    }
 }
 
 impl WrapperMut<'_> {
-    pub fn id(&mut self) -> ident::WrapperMut {
+    pub fn ident(&mut self) -> ident::WrapperMut {
         ident::WrapperMut {
             id: &mut self.header.e_ident,
         }
+    }
+    pub fn obj_type(&mut self, ty: e_type::Type) {
+        self.header.e_type = ty.into();
     }
 }
