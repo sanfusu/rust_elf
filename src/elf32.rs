@@ -64,14 +64,11 @@ impl Elf {
         }
         if !shdr_tab_range.is_empty() {
             let mut secs: Vec<Section> = Vec::new();
-            for shdr_bytes in src[shdr_tab_range].chunks(Shdr::len()) {
-                let mut sec = Section::default();
-                sec.header.read_from_slice(shdr_bytes);
-                sec.header = Shdr::from_le(sec.header);
+            for shdr_src in src[shdr_tab_range].chunks(Shdr::len()) {
+                let sec = Section::from_le_slice(src, shdr_src);
                 //TODO 解析数据部分
                 secs.push(sec);
             }
-
             elf.secs = Some(secs);
         }
 

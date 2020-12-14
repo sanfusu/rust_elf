@@ -84,6 +84,7 @@ pub trait Section {
 
 pub trait Shdr {
     fn data_range(&self) -> RangeInclusive<usize>;
+    fn entsize(&self)->usize;
 }
 pub trait Elf {
     fn sections<T: Section>(&self) -> Vec<T>;

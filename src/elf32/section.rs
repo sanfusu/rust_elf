@@ -20,20 +20,25 @@ pub mod sh_flags;
 pub mod sh_type;
 pub mod sym;
 
+use crate::interface::{MetaData, Shdr as IEhdr};
+
 use super::{basic_type::*, chunk::DataChunk};
 
-#[derive(MetaData, Default)]
+#[derive(MetaData, Default, Shdr)]
 #[repr(packed)]
 pub struct Shdr {
     pub sh_name: Word,
     pub sh_type: Word,
     pub sh_flags: Word,
     pub sh_addr: Addr,
+    #[offset]
     pub sh_offset: Off,
+    #[size]
     pub sh_size: Word,
     pub sh_link: Word,
     pub sh_info: Word,
     pub sh_addralign: Word,
+    #[entsize]
     pub sh_entsize: Word,
 }
 
@@ -66,6 +71,20 @@ impl Section {
     /// ```
     pub fn setter(&mut self) -> WrapperMut {
         WrapperMut { sec: self }
+    }
+
+    pub fn from_le_slice(src: &[u8], shdr_src: &[u8]) -> Section {
+        let mut sec = Section::default();
+        sec.header.read_from_slice(shdr_src);
+        sec.header = Shdr::from_le(sec.header);
+        if sec.header.sh_entsize == 0 {
+            sec.data = vec![DataChunk::new(src[sec.header.data_range()].to_vec())];
+        } else {
+            for data in src[sec.header.data_range()].chunks(sec.header.entsize()) {
+                sec.data.push(DataChunk::new(data.to_vec()));
+            }
+        }
+        sec
     }
 }
 
