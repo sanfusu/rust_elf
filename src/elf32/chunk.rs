@@ -15,8 +15,33 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::sync::{Arc, RwLock};
+use std::ops::{Deref, DerefMut};
 
 /// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，
 /// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Shdr::sh_entsize) 决定
-pub(crate) type DataChunk = Arc<RwLock<Vec<u8>>>;
+///
+/// 对 Vec<u8> 类型的简单封装，实现了 Deref。
+#[derive(Default)]
+pub struct DataChunk {
+    data: Vec<u8>,
+}
+
+impl DataChunk {
+    pub fn new(data: Vec<u8>) -> Self {
+        Self { data }
+    }
+}
+
+impl Deref for DataChunk {
+    type Target = Vec<u8>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.data
+    }
+}
+
+impl DerefMut for DataChunk {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.data
+    }
+}
