@@ -22,25 +22,25 @@ use std::ops::{Deref, DerefMut};
 ///
 /// 对 Vec<u8> 类型的简单封装，实现了 Deref。
 #[derive(Default)]
-pub struct DataChunk {
-    data: Vec<u8>,
+pub struct DataChunk<T> {
+    data: T,
 }
 
-impl DataChunk {
-    pub fn new(data: Vec<u8>) -> Self {
+impl<T> DataChunk<T> {
+    pub fn new(data: T) -> Self {
         Self { data }
     }
 }
 
-impl Deref for DataChunk {
-    type Target = Vec<u8>;
+impl<T> Deref for DataChunk<T> {
+    type Target = T;
 
     fn deref(&self) -> &Self::Target {
         &self.data
     }
 }
 
-impl DerefMut for DataChunk {
+impl<T> DerefMut for DataChunk<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.data
     }
