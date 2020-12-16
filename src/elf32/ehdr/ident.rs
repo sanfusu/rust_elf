@@ -49,10 +49,20 @@ impl WrapperMut<'_, Ident> {
     }
 }
 
-#[derive(MetaData, Default)]
+#[derive(MetaData)]
 #[repr(packed)]
 pub struct Ident {
     src: [u8; 16],
+}
+
+impl Default for Ident {
+    fn default() -> Self {
+        let mut ret = Self { src: [0; 16] };
+        ret.src.copy_from_slice(&MAGIC);
+        ret.src[CLASS_IDX] = Class::Class32.into();
+        ret.src[VERSION_IDX] = Version::Current.into();
+        ret
+    }
 }
 
 impl Ident {
