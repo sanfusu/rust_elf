@@ -17,7 +17,25 @@
 
 #[macro_use]
 extern crate elf_proc;
+use elf32::ehdr::ident::encode::Encode;
 
 pub mod elf32;
 pub mod elf64;
 pub mod interface;
+
+pub struct EndWrapper<'a, T> {
+    pub src: &'a T,
+    pub endiness: Encode,
+}
+
+pub struct EndWrapperMut<'a, T> {
+    pub src: &'a mut T,
+    pub endiness: Encode,
+}
+
+pub struct Wrapper<'a, T> {
+    pub src: &'a T,
+}
+pub struct WrapperMut<'a, T> {
+    pub src: &'a mut T,
+}

@@ -18,14 +18,16 @@
 pub mod e_type;
 pub mod ident;
 
+use ident::Ident;
+
 use self::ident::version::Version;
 use super::basic_type::*;
-use crate::interface::MetaData;
+use crate::{interface::MetaData, EndWrapper, EndWrapperMut, Wrapper, WrapperMut};
 
 #[derive(MetaData, Ehdr)]
 #[repr(packed)]
 pub struct Ehdr {
-    e_ident: [u8; 16],
+    e_ident: Ident,
     e_type: Half,
     e_machine: Half,
     e_version: Word,
@@ -58,42 +60,50 @@ impl Default for Ehdr {
 }
 
 impl Ehdr {
-    pub fn getter(&self) -> Wrapper {
-        Wrapper { header: self }
+    pub fn getter(&self) -> crate::Wrapper<Self> {
+        crate::Wrapper { src: self }
     }
-    pub fn setter(&mut self) -> WrapperMut {
-        WrapperMut { header: self }
+    pub fn setter(&mut self) -> crate::WrapperMut<Self> {
+        crate::WrapperMut { src: self }
     }
-}
-pub struct Wrapper<'a> {
-    header: &'a Ehdr,
+
+    pub fn getter_le(&self) -> EndWrapper<Self> {
+        EndWrapper::<Self> {
+            src: self,
+            endiness: ident::encode::Encode::Lsb,
+        }
+    }
+    pub fn setter_le(&mut self) -> EndWrapperMut<Self> {
+        EndWrapperMut::<Self> {
+            src: self,
+            endiness: ident::encode::Encode::Lsb,
+        }
+    }
 }
 
-pub struct WrapperMut<'a> {
-    header: &'a mut Ehdr,
-}
+impl<'a> EndWrapper<'a, Ehdr> {}
 
-impl Wrapper<'_> {
+impl crate::Wrapper<'_, Ehdr> {
     pub fn version(&self) -> Version {
-        self.header.e_version.into()
+        self.src.e_version.into()
     }
-    pub fn ident(&self) -> ident::Wrapper {
-        ident::Wrapper {
-            id: &self.header.e_ident,
+    pub fn ident(&self) -> Wrapper<Ident> {
+        Wrapper::<Ident> {
+            src: &self.src.e_ident,
         }
     }
     pub fn obj_type(&self) -> e_type::Type {
-        self.header.e_type.into()
+        self.src.e_type.into()
     }
 }
 
-impl WrapperMut<'_> {
-    pub fn ident(&mut self) -> ident::WrapperMut {
-        ident::WrapperMut {
-            id: &mut self.header.e_ident,
+impl crate::WrapperMut<'_, Ehdr> {
+    pub fn ident(&mut self) -> WrapperMut<Ident> {
+        WrapperMut::<Ident> {
+            src: &mut self.src.e_ident,
         }
     }
     pub fn obj_type(&mut self, ty: e_type::Type) {
-        self.header.e_type = ty.into();
+        self.src.e_type = ty.into();
     }
 }
