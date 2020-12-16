@@ -37,5 +37,21 @@ impl std::convert::From<u32> for Version {
         }
     }
 }
+impl std::convert::Into<u8> for Version {
+    fn into(self) -> u8 {
+        match self {
+            Version::Current => 1,
+            Version::Invalid => panic! {"You should not construct a invalid version"},
+        }
+    }
+}
 
+impl std::convert::From<u8> for Version {
+    fn from(val: u8) -> Self {
+        match val as u32 {
+            CURRENT => Version::Current,
+            _ => Version::Invalid,
+        }
+    }
+}
 const CURRENT: u32 = 1;
