@@ -31,6 +31,7 @@ pub(crate) const DATA_IDX: usize = 5;
 pub(crate) const VERSION_IDX: usize = 6;
 
 impl Wrapper<'_, Ident> {
+    /// Version 只能是 [`Version::Current`]，所以不提供写入访问
     pub fn version(&self) -> Version {
         (self.src.src[VERSION_IDX] as u32).into()
     }
@@ -56,6 +57,7 @@ pub struct Ident {
 }
 
 impl Default for Ident {
+    /// 提供默认的 Magic, Class, Version
     fn default() -> Self {
         let mut ret = Self { src: [0; 16] };
         ret.src.copy_from_slice(&MAGIC);
