@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::{basic_type::*, chunk};
+use super::basic_type::*;
 
 #[derive(MetaData)]
 #[repr(packed)]
@@ -28,10 +28,4 @@ pub struct Phdr {
     pub p_memsz: Word,
     pub p_flags: Word,
     pub p_align: Word,
-}
-
-pub struct Segment {
-    pub header: Phdr,
-    /// 如果 Elf 文件中具有 Shdr table，那么 [`Segment::data`] 中将包含多个 section 的数据块。
-    pub data: Vec<chunk::DataChunk>,
 }

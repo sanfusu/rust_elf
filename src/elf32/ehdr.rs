@@ -57,12 +57,20 @@ impl Default for Ehdr {
     }
 }
 
+impl Ehdr {
+    pub fn getter(&self) -> Wrapper {
+        Wrapper { header: self }
+    }
+    pub fn setter(&mut self) -> WrapperMut {
+        WrapperMut { header: self }
+    }
+}
 pub struct Wrapper<'a> {
-    pub(crate) header: &'a Ehdr,
+    header: &'a Ehdr,
 }
 
 pub struct WrapperMut<'a> {
-    pub(crate) header: &'a mut Ehdr,
+    header: &'a mut Ehdr,
 }
 
 impl Wrapper<'_> {

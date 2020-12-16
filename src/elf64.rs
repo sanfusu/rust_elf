@@ -88,14 +88,3 @@ pub struct Phdr {
     pub p_memsz: Xword,
     pub p_align: Xword,
 }
-
-pub struct Segment {
-    pub header: Phdr,
-    pub section: Section,
-}
-
-pub struct Section {
-    pub header: Shdr,
-    pub name: String,
-    pub data: Vec<u8>,
-}
