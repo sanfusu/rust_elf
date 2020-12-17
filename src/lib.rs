@@ -48,7 +48,13 @@ pub struct WrapperMut<'a, T> {
 ///
 /// let tmp = ['a' as u8,'b' as u8,'c' as u8,'\0' as u8];
 /// let str_tab = StrTab::new(&tmp);
-/// println!("{}", &str_tab[0], &str_tab[1]);
+/// assert_eq!(&str_tab[0], "abc");
+/// assert_eq!(&str_tab[1],"bc");
+///
+/// let tmp_witout_null = ['a' as u8,'b' as u8,'c' as u8];
+/// let str_tab_without_null = StrTab::new(&tmp);
+/// assert_eq!(&str_tab_without_null[0], "abc");
+/// assert_eq!(&str_tab_without_null[1],"bc");
 /// ```
 pub struct StrTab<'a> {
     src: &'a [u8],
