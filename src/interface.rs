@@ -38,6 +38,9 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     fn read_from_slice(&mut self, src: &[u8]) {
         self.as_mut_slice().copy_from_slice(src);
     }
+    /// 将 self 转换为大端的字节数组，
+    /// 以及类似的字节端转换都会消耗源值，
+    /// 这是因为转换前和转换后是两个完全不同的数据表示
     fn to_be_bytes(self) -> T {
         todo! {}
     }
@@ -84,7 +87,7 @@ pub trait Section {
 
 pub trait Shdr {
     fn data_range(&self) -> RangeInclusive<usize>;
-    fn entsize(&self)->usize;
+    fn entsize(&self) -> usize;
 }
 pub trait Elf {
     fn sections<T: Section>(&self) -> Vec<T>;
