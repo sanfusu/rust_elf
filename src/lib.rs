@@ -17,6 +17,8 @@
 
 #[macro_use]
 extern crate elf_proc;
+use std::ops::Index;
+
 use elf32::ehdr::ident::encode::Encode;
 
 pub mod elf32;
@@ -38,4 +40,36 @@ pub struct Wrapper<'a, T> {
 }
 pub struct WrapperMut<'a, T> {
     pub src: &'a mut T,
+}
+/// 直接通过索引来获取字符串表中的数值
+/// # Example
+/// ```
+/// use elf::StrTab;
+///
+/// let tmp = ['a' as u8,'b' as u8,'c' as u8,'\0' as u8];
+/// let str_tab = StrTab::new(&tmp);
+/// println!("{}", &str_tab[0], &str_tab[1]);
+/// ```
+pub struct StrTab<'a> {
+    src: &'a [u8],
+}
+
+impl<'a> StrTab<'a> {
+    pub fn new(src: &'a [u8]) -> Self {
+        Self { src }
+    }
+}
+
+impl Index<usize> for StrTab<'_> {
+    type Output = str;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        let end = self
+            .src
+            .iter()
+            .enumerate()
+            .find(|x| *x.1 == 0)
+            .map_or(self.src.len(), |x| x.0);
+        std::str::from_utf8(&self.src[index..end]).map_or("", |x| x)
+    }
 }
