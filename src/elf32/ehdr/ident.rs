@@ -21,6 +21,8 @@ pub mod encode;
 pub mod machine;
 pub mod version;
 
+use std::ops::{Deref, DerefMut};
+
 use crate::{Wrapper, WrapperMut};
 
 use self::{class::Class, encode::Encode, version::Version};
@@ -46,7 +48,7 @@ impl Wrapper<'_, Ident> {
 
 impl WrapperMut<'_, Ident> {
     pub fn encode(&mut self, ec: Encode) {
-        self.src.src[DATA_IDX] = ec.into();
+        self.src[DATA_IDX] = ec.into();
     }
 }
 
@@ -60,9 +62,9 @@ impl Default for Ident {
     /// 提供默认的 Magic, Class, Version
     fn default() -> Self {
         let mut ret = Self { src: [0; 16] };
-        ret.src.copy_from_slice(&MAGIC);
-        ret.src[CLASS_IDX] = Class::Class32.into();
-        ret.src[VERSION_IDX] = Version::Current.into();
+        ret.copy_from_slice(&MAGIC);
+        ret[CLASS_IDX] = Class::Class32.into();
+        ret[VERSION_IDX] = Version::Current.into();
         ret
     }
 }
@@ -70,5 +72,24 @@ impl Default for Ident {
 impl Ident {
     pub fn getter(&self) -> Wrapper<Ident> {
         Wrapper::<Ident> { src: self }
+    }
+    pub fn new() -> Self {
+        Self {
+            ..Default::default()
+        }
+    }
+}
+
+impl Deref for Ident {
+    type Target = [u8; 16];
+
+    fn deref(&self) -> &Self::Target {
+        &self.src
+    }
+}
+
+impl DerefMut for Ident {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.src
     }
 }
