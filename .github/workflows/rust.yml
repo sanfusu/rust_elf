@@ -2,25 +2,26 @@ name: Rust
 
 on:
   push:
-    branches: [master, refactor]
+    branches: [ master ]
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        run: cargo build --verbose
-      - name: Run tests
-        run: cargo test --verbose
-      - name: Run doc
-        run: cargo doc
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Run doc
+      run: cargo doc 
     -
       name: Gen dummy page
       run: |
@@ -32,6 +33,7 @@ jobs:
         </script>
         </head>
         EOL
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
