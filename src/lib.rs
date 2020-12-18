@@ -41,6 +41,7 @@ pub struct Wrapper<'a, T> {
 pub struct WrapperMut<'a, T> {
     pub src: &'a mut T,
 }
+
 /// 直接通过索引来获取字符串表中的数值
 /// # Example
 /// ```
@@ -75,25 +76,5 @@ impl Index<usize> for StrTab<'_> {
         let src = &self.src[index..];
         let end = src.iter().position(|&x| x == 0).unwrap_or(src.len());
         unsafe { std::str::from_utf8_unchecked(&src[..end]) }
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use crate::StrTab;
-
-    #[test]
-    fn str_tab_test() {
-        let tmp = ['a' as u8, 'b' as u8, 'c' as u8, '\0' as u8];
-        let str_tab = StrTab::new(&tmp);
-        assert_eq!(&str_tab[0], "abc");
-        assert_eq!(&str_tab[1], "bc");
-        assert_eq!(&str_tab[3], "");
-
-        let tmp_witout_null = ['a' as u8, 'b' as u8, 'c' as u8];
-        let str_tab_without_null = StrTab::new(&tmp_witout_null);
-        assert_eq!(&str_tab_without_null[0], "abc");
-        assert_eq!(&str_tab_without_null[1], "bc");
-        assert_eq!(&str_tab_without_null[3], "");
     }
 }
