@@ -31,7 +31,7 @@ pub fn ehdr_proc(input: TokenStream) -> TokenStream {
     ehdr::ehdr_proc(input.into()).into()
 }
 
-#[proc_macro_derive(Shdr, attributes(offset, entsize, size))]
+#[proc_macro_derive(Shdr, attributes(offset, entsize, size, name_idx))]
 pub fn shdr_proc(input: TokenStream) -> TokenStream {
     shdr::shdr_proc(input.into()).into()
 }

@@ -18,11 +18,12 @@
 pub mod e_type;
 pub mod ident;
 
+use elface::MetaData;
 use ident::Ident;
 
 use self::ident::version::Version;
 use super::basic_type::*;
-use crate::{interface::MetaData, EndWrapper, EndWrapperMut, Wrapper, WrapperMut};
+use crate::{EndWrapper, EndWrapperMut, Wrapper, WrapperMut};
 
 #[derive(MetaData, Ehdr)]
 #[repr(packed)]
@@ -81,7 +82,23 @@ impl Ehdr {
     }
 }
 
-impl<'a> EndWrapper<'a, Ehdr> {}
+impl<'a> EndWrapper<'a, Ehdr> {
+    pub fn version(&self) -> Version {
+        match self.endiness {
+            ident::encode::Encode::Lsb => u32::from_le(self.src.e_version).into(),
+            ident::encode::Encode::Msb => u32::from_be(self.src.e_version).into(),
+            ident::encode::Encode::Invalid => {
+                panic! {"Invalid encode"}
+            }
+        }
+    }
+    pub fn ident(&self) -> EndWrapper<Ident> {
+        EndWrapper::<Ident> {
+            src: &self.src.e_ident,
+            endiness: self.endiness,
+        }
+    }
+}
 
 impl crate::Wrapper<'_, Ehdr> {
     pub fn version(&self) -> Version {

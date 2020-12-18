@@ -25,6 +25,7 @@ use super::basic_type::*;
 #[derive(MetaData, Default, Shdr)]
 #[repr(packed)]
 pub struct Shdr {
+    #[name_idx]
     pub sh_name: Word,
     pub sh_type: Word,
     pub sh_flags: Word,

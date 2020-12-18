@@ -19,33 +19,39 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{DataStruct, DeriveInput};
 
-pub(crate) fn shdr_proc(input: TokenStream2) -> TokenStream2 {
+pub(crate) fn ehdr_proc(input: TokenStream2) -> TokenStream2 {
     let ast: DeriveInput = syn::parse2(input).unwrap();
     let name = ast.ident;
-    let offset: proc_macro2::Ident;
-    let entsize: proc_macro2::Ident;
-    let size: proc_macro2::Ident;
-
+    let shoff: proc_macro2::Ident;
+    let shnum: proc_macro2::Ident;
+    let shentsize: proc_macro2::Ident;
+    let phoff: proc_macro2::Ident;
+    let phnum: proc_macro2::Ident;
+    let phentsize: proc_macro2::Ident;
     if let syn::Data::Struct(data) = ast.data {
-        offset = shdr_find_attr_ident(&data, "offset");
-        entsize = shdr_find_attr_ident(&data, "entsize");
-        size = shdr_find_attr_ident(&data, "size");
+        shoff = ehdr_find_attr_ident(&data, "shoff");
+        shnum = ehdr_find_attr_ident(&data, "shnum");
+        shentsize = ehdr_find_attr_ident(&data, "shentsize");
+        phoff = ehdr_find_attr_ident(&data, "phoff");
+        phnum = ehdr_find_attr_ident(&data, "phnum");
+        phentsize = ehdr_find_attr_ident(&data, "phentsize");
     } else {
         panic! {"Should be struct"}
     }
     quote! {
-        impl crate::interface::Shdr for #name {
-            fn data_range(&self)->std::ops::RangeInclusive<usize>{
-                (self.#offset as usize) ..= self.#size as usize
+        impl elface::ElfHeader for #name {
+            fn shdr_table_range(&self)->std::ops::RangeInclusive<usize>{
+                (self.#shoff as usize) ..= (self.#shnum as usize) * (self.#shentsize as usize) + (self.#shoff as usize)
             }
-            fn entsize(&self)->usize{
-                self.#entsize as usize
+            fn phdr_table_range(&self)->std::ops::RangeInclusive<usize> {
+                (self.#phoff as usize) ..= (self.#phnum as usize) * (self.#phentsize as usize) + (self.#phoff as usize)
+
             }
         }
     }
 }
 
-pub(crate) fn shdr_find_attr_ident(data: &DataStruct, ident: &str) -> proc_macro2::Ident {
+pub(crate) fn ehdr_find_attr_ident(data: &DataStruct, ident: &str) -> proc_macro2::Ident {
     data.fields
         .iter()
         .find(|field| {

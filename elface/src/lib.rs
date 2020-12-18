@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+pub use elf_proc::*;
+
 use std::ops::RangeInclusive;
 
 pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
@@ -76,7 +78,7 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     }
 }
 
-pub trait Ehdr {
+pub trait ElfHeader {
     fn shdr_table_range(&self) -> RangeInclusive<usize>;
     fn phdr_table_range(&self) -> RangeInclusive<usize>;
 }
@@ -85,9 +87,16 @@ pub trait Section {
     fn name(&self) -> String;
 }
 
-pub trait Shdr {
+pub trait SecHeader {
     fn data_range(&self) -> RangeInclusive<usize>;
     fn entsize(&self) -> usize;
+    fn name_idx(&self) -> usize;
+    fn name_from_table<'a, T>(&self, str_tab: &'a T) -> &'a str
+    where
+        T: std::ops::Index<usize, Output = str>,
+    {
+        &str_tab[self.name_idx()]
+    }
 }
 pub trait Elf {
     fn sections<T: Section>(&self) -> Vec<T>;

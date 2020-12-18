@@ -16,14 +16,12 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 #[macro_use]
-extern crate elf_proc;
-use std::ops::Index;
-
+extern crate elface;
 use elf32::ehdr::ident::encode::Encode;
+use std::ops::Index;
 
 pub mod elf32;
 pub mod elf64;
-pub mod interface;
 
 pub struct EndWrapper<'a, T> {
     pub src: &'a T,

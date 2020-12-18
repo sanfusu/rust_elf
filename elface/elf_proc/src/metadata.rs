@@ -39,7 +39,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
     }
 
     quote! {
-        impl crate::interface::MetaData<[u8;std::mem::size_of::<#name>()]> for #name{
+        impl elface::MetaData<[u8;std::mem::size_of::<#name>()]> for #name{
             fn to_le(self) -> Self {
                 Self{
                     #(#fields: self.#fields.to_le(),)*
