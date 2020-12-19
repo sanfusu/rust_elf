@@ -52,9 +52,9 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">basic_type</span>::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>, <span class="ident">Layout</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">packed</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Phdr</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Header</span> {
     <span class="kw">pub</span> <span class="ident">p_type</span>: <span class="ident">Word</span>,
     <span class="kw">pub</span> <span class="ident">p_offset</span>: <span class="ident">Off</span>,
     <span class="kw">pub</span> <span class="ident">p_vaddr</span>: <span class="ident">Addr</span>,

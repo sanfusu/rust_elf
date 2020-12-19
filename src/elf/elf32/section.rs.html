@@ -95,9 +95,9 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">basic_type</span>::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>, <span class="ident">Default</span>, <span class="ident">Shdr</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>, <span class="ident">Default</span>, <span class="ident">Shdr</span>, <span class="ident">Layout</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">packed</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Shdr</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Header</span> {
     <span class="attribute">#[<span class="ident">name_idx</span>]</span>
     <span class="kw">pub</span> <span class="ident">sh_name</span>: <span class="ident">Word</span>,
     <span class="kw">pub</span> <span class="ident">sh_type</span>: <span class="ident">Word</span>,
@@ -115,7 +115,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Wrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Shdr</span>,
+    <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Header</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Wrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
@@ -128,7 +128,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WrapperMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Shdr</span>,
+    <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Header</span>,
 }
 <span class="kw">impl</span> <span class="ident">WrapperMut</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sh_type</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">sh_type</span>::<span class="ident">Type</span>) {

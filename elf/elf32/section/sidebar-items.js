@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["reloc",""],["sh_flags",""],["sh_type",""],["sym",""]],"struct":[["Shdr",""],["Wrapper",""],["WrapperMut",""]]});
+initSidebarItems({"mod":[["reloc",""],["sh_flags",""],["sh_type",""],["sym",""]],"struct":[["Header",""],["HeaderLayout","用于获取 Header 每个字段的内存布局，如 `HeaderLayout::sh_name();`"],["Wrapper",""],["WrapperMut",""]]});

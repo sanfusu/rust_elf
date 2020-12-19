@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["e_type",""],["ident",""]],"struct":[["Ehdr",""]]});
+initSidebarItems({"mod":[["e_type",""],["ident",""]],"struct":[["Header",""],["HeaderLayout","用于获取 Header 每个字段的内存布局，如 `HeaderLayout::e_ident();`"]]});

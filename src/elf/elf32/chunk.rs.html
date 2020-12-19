@@ -67,7 +67,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
 
 <span class="doccomment">/// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，</span>
-<span class="doccomment">/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Shdr::sh_entsize) 决定</span>
+<span class="doccomment">/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Header::sh_entsize) 决定</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DataChunk</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">data</span>: <span class="ident">T</span>,

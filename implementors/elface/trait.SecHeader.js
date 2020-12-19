@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["elf"] = [{"text":"impl SecHeader for Shdr","synthetic":false,"types":[]}];
+implementors["elf"] = [{"text":"impl SecHeader for Header","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

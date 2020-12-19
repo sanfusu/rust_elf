@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Rel",""],["Rela",""]]});
+initSidebarItems({"struct":[["Rel",""],["RelLayout","用于获取 Rel 每个字段的内存布局，如 `RelLayout::offset();`"],["Rela",""],["RelaLayout","用于获取 Rela 每个字段的内存布局，如 `RelaLayout::offset();`"]]});

@@ -123,7 +123,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Wrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw">super</span>::<span class="ident">Shdr</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw">super</span>::<span class="ident">Header</span>,
 }
 <span class="kw">impl</span> <span class="ident">Wrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_writeable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
@@ -153,7 +153,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WrapperMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="kw">super</span>::<span class="ident">Shdr</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">shdr</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="kw">super</span>::<span class="ident">Header</span>,
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">WrapperMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="doccomment">/// 设置 Ehdr 中 sh_flags 的值。</span>
