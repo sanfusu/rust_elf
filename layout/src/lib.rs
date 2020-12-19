@@ -52,7 +52,7 @@ fn struct_layout(input: TokenStream2) -> TokenStream2 {
         #[doc=#usage_msg]
         pub struct #layout_struct;
         impl #layout_struct {
-            #(pub const fn #layout_ident()->std::ops::RangeInclusive<usize> { #layout_offset_prev..=#layout_offset_after})*
+            #(pub const fn #layout_ident()->std::ops::Range<usize> { #layout_offset_prev..#layout_offset_after})*
         }
     }
 }
