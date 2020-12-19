@@ -24,7 +24,7 @@ pub enum Flags {
 }
 
 pub struct Wrapper<'a> {
-    pub(crate) shdr: &'a super::Shdr,
+    pub(crate) shdr: &'a super::Header,
 }
 impl Wrapper<'_> {
     pub fn is_writeable(&self) -> bool {
@@ -54,7 +54,7 @@ impl Wrapper<'_> {
 }
 
 pub struct WrapperMut<'a> {
-    pub(crate) shdr: &'a mut super::Shdr,
+    pub(crate) shdr: &'a mut super::Header,
 }
 impl<'a> WrapperMut<'a> {
     /// 设置 Ehdr 中 sh_flags 的值。

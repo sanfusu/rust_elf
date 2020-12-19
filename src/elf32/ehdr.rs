@@ -25,9 +25,9 @@ use self::ident::version::Version;
 use super::basic_type::*;
 use crate::{EndWrapper, EndWrapperMut, Wrapper, WrapperMut};
 
-#[derive(MetaData, Ehdr)]
+#[derive(MetaData, Ehdr, Layout)]
 #[repr(packed)]
-pub struct Ehdr {
+pub struct Header {
     e_ident: Ident,
     e_type: Half,
     e_machine: Half,
@@ -50,17 +50,17 @@ pub struct Ehdr {
     pub e_shstrndx: Half,
 }
 
-impl Default for Ehdr {
+impl Default for Header {
     fn default() -> Self {
-        let tmp = [0u8; std::mem::size_of::<Ehdr>()];
-        let mut ret = Ehdr::from_le_bytes(tmp);
+        let tmp = [0u8; std::mem::size_of::<Header>()];
+        let mut ret = Header::from_le_bytes(tmp);
         ret.e_version = Version::Current.into();
         ret.as_mut_slice()[0..std::mem::size_of_val(&ident::MAGIC)].copy_from_slice(&ident::MAGIC);
         ret
     }
 }
 
-impl Ehdr {
+impl Header {
     pub fn getter(&self) -> crate::Wrapper<Self> {
         crate::Wrapper { src: self }
     }
@@ -82,7 +82,7 @@ impl Ehdr {
     }
 }
 
-impl<'a> EndWrapper<'a, Ehdr> {
+impl<'a> EndWrapper<'a, Header> {
     pub fn version(&self) -> Version {
         match self.endiness {
             ident::encode::Encode::Lsb => u32::from_le(self.src.e_version).into(),
@@ -100,7 +100,7 @@ impl<'a> EndWrapper<'a, Ehdr> {
     }
 }
 
-impl crate::Wrapper<'_, Ehdr> {
+impl crate::Wrapper<'_, Header> {
     pub fn version(&self) -> Version {
         self.src.e_version.into()
     }
@@ -114,7 +114,7 @@ impl crate::Wrapper<'_, Ehdr> {
     }
 }
 
-impl crate::WrapperMut<'_, Ehdr> {
+impl crate::WrapperMut<'_, Header> {
     pub fn ident(&mut self) -> WrapperMut<Ident> {
         WrapperMut::<Ident> {
             src: &mut self.src.e_ident,

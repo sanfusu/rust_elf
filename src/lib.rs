@@ -17,6 +17,9 @@
 
 #[macro_use]
 extern crate elface;
+#[macro_use]
+extern crate layout;
+
 use elf32::ehdr::ident::encode::Encode;
 use std::ops::Index;
 

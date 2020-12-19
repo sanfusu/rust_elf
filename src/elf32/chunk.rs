@@ -18,7 +18,7 @@
 use std::ops::{Deref, DerefMut};
 
 /// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，
-/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Shdr::sh_entsize) 决定
+/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Header::sh_entsize) 决定
 #[derive(Default)]
 pub struct DataChunk<T> {
     data: T,

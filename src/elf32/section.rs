@@ -22,9 +22,9 @@ pub mod sym;
 
 use super::basic_type::*;
 
-#[derive(MetaData, Default, Shdr)]
+#[derive(MetaData, Default, Shdr, Layout)]
 #[repr(packed)]
-pub struct Shdr {
+pub struct Header {
     #[name_idx]
     pub sh_name: Word,
     pub sh_type: Word,
@@ -42,7 +42,7 @@ pub struct Shdr {
 }
 
 pub struct Wrapper<'a> {
-    shdr: &'a Shdr,
+    shdr: &'a Header,
 }
 
 impl Wrapper<'_> {
@@ -55,7 +55,7 @@ impl Wrapper<'_> {
 }
 
 pub struct WrapperMut<'a> {
-    shdr: &'a mut Shdr,
+    shdr: &'a mut Header,
 }
 impl WrapperMut<'_> {
     pub fn sh_type(&mut self, val: sh_type::Type) {

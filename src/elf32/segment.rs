@@ -17,9 +17,9 @@
 
 use super::basic_type::*;
 
-#[derive(MetaData)]
+#[derive(MetaData, Layout)]
 #[repr(packed)]
-pub struct Phdr {
+pub struct Header {
     pub p_type: Word,
     pub p_offset: Off,
     pub p_vaddr: Addr,

@@ -16,10 +16,12 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::super::basic_type::*;
+#[derive(Layout, MetaData)]
 pub struct Rel {
     pub offset: Addr,
     pub info: Word,
 }
+#[derive(Layout, MetaData)]
 pub struct Rela {
     pub offset: Addr,
     pub info: Word,
