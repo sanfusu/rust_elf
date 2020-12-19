@@ -1,0 +1,1 @@
+专用于 elf 接口的 proc_macro
