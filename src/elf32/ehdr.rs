@@ -124,3 +124,13 @@ impl crate::WrapperMut<'_, Header> {
         self.src.e_type = ty.into();
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn layout_test() {
+        assert_eq!(HeaderLayout::e_ident(), 0..16);
+        assert_eq!(HeaderLayout::e_type(), 16..18);
+    }
+}
