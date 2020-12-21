@@ -40,10 +40,10 @@ pub(crate) fn ehdr_proc(input: TokenStream2) -> TokenStream2 {
     }
     quote! {
         impl elface::ElfHeader for #name {
-            fn shdr_table_range(&self)->std::ops::RangeInclusive<usize>{
+            fn shdr_table_range(&self)->core::ops::RangeInclusive<usize>{
                 (self.#shoff as usize) ..= (self.#shnum as usize) * (self.#shentsize as usize) + (self.#shoff as usize)
             }
-            fn phdr_table_range(&self)->std::ops::RangeInclusive<usize> {
+            fn phdr_table_range(&self)->core::ops::RangeInclusive<usize> {
                 (self.#phoff as usize) ..= (self.#phnum as usize) * (self.#phentsize as usize) + (self.#phoff as usize)
 
             }

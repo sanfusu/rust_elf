@@ -70,7 +70,7 @@ impl<'a> WrapperMut<'a> {
     }
 }
 
-impl std::convert::Into<u32> for Flags {
+impl core::convert::Into<u32> for Flags {
     fn into(self) -> u32 {
         match self {
             Flags::Write => WRITE,

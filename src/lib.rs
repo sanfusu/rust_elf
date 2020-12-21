@@ -14,6 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
+#![no_std]
 
 #[macro_use]
 extern crate elface;
@@ -21,7 +22,7 @@ extern crate elface;
 extern crate layout;
 
 use elf32::ehdr::ident::encode::Encode;
-use std::ops::Index;
+use core::ops::Index;
 
 pub mod elf32;
 pub mod elf64;
@@ -82,6 +83,6 @@ impl Index<usize> for StrTab<'_> {
     fn index(&self, index: usize) -> &Self::Output {
         let src = &self.src[index..];
         let end = src.iter().position(|&x| x == 0).unwrap_or(src.len());
-        unsafe { std::str::from_utf8_unchecked(&src[..end]) }
+        unsafe { core::str::from_utf8_unchecked(&src[..end]) }
     }
 }

@@ -28,7 +28,7 @@ pub enum Machine {
     Unknown(u8),
 }
 
-impl std::convert::Into<u8> for Machine {
+impl core::convert::Into<u8> for Machine {
     fn into(self) -> u8 {
         match self {
             Machine::None => ET_NONE,
@@ -45,7 +45,7 @@ impl std::convert::Into<u8> for Machine {
     }
 }
 
-impl std::convert::From<u8> for Machine {
+impl core::convert::From<u8> for Machine {
     fn from(v: u8) -> Self {
         match v {
             ET_NONE => Machine::None,

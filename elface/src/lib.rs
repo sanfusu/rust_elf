@@ -17,22 +17,22 @@
 
 pub use elf_proc::*;
 
-use std::ops::RangeInclusive;
+use core::ops::RangeInclusive;
 
 pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     fn as_slice<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            std::slice::from_raw_parts(
+            core::slice::from_raw_parts(
                 self as *const Self as *const u8,
-                std::mem::size_of::<Self>(),
+                core::mem::size_of::<Self>(),
             )
         }
     }
     fn as_mut_slice<'a>(&'a mut self) -> &'a mut [u8] {
         unsafe {
-            std::slice::from_raw_parts_mut(
+            core::slice::from_raw_parts_mut(
                 self as *mut Self as *mut u8,
-                std::mem::size_of::<Self>(),
+                core::mem::size_of::<Self>(),
             )
         }
     }
@@ -74,7 +74,7 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
         todo! {}
     }
     fn len() -> usize {
-        std::mem::size_of::<Self>()
+        core::mem::size_of::<Self>()
     }
 }
 
@@ -93,7 +93,7 @@ pub trait SecHeader {
     fn name_idx(&self) -> usize;
     fn name_from_table<'a, T>(&self, str_tab: &'a T) -> &'a str
     where
-        T: std::ops::Index<usize, Output = str>,
+        T: core::ops::Index<usize, Output = str>,
     {
         &str_tab[self.name_idx()]
     }

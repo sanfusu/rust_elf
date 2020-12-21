@@ -20,7 +20,7 @@ fn struct_layout(input: TokenStream2) -> TokenStream2 {
     if let Data::Struct(data) = ast.data {
         data.fields.iter().for_each(|x| {
             let ty: Type = x.ty.clone();
-            let current_size: Expr = parse_quote! {std::mem::size_of::<#ty>()};
+            let current_size: Expr = parse_quote! {core::mem::size_of::<#ty>()};
             let current_offset: Expr;
 
             match layout_offset_after.last() {
@@ -52,7 +52,7 @@ fn struct_layout(input: TokenStream2) -> TokenStream2 {
         #[doc=#usage_msg]
         pub struct #layout_struct;
         impl #layout_struct {
-            #(pub const fn #layout_ident()->std::ops::Range<usize> { #layout_offset_prev..#layout_offset_after})*
+            #(pub const fn #layout_ident()->core::ops::Range<usize> { #layout_offset_prev..#layout_offset_after})*
         }
     }
 }

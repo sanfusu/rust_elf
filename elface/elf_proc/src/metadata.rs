@@ -39,7 +39,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
     }
 
     quote! {
-        impl elface::MetaData<[u8;std::mem::size_of::<#name>()]> for #name{
+        impl elface::MetaData<[u8;core::mem::size_of::<#name>()]> for #name{
             fn to_le(self) -> Self {
                 Self{
                     #(#fields: self.#fields.to_le(),)*
@@ -64,24 +64,24 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                     #(#fields_other: value.#fields_other,)*
                 }
             }
-            fn to_be_bytes(self) -> [u8;std::mem::size_of::<#name>()] {
+            fn to_be_bytes(self) -> [u8;core::mem::size_of::<#name>()] {
                 let tmp = self.to_be();
-                let mut ret: [u8;std::mem::size_of::<#name>()] = [0;std::mem::size_of::<#name>()];
+                let mut ret: [u8;core::mem::size_of::<#name>()] = [0;core::mem::size_of::<#name>()];
                 (&mut ret[..]).copy_from_slice(tmp.as_slice());
                 ret
             }
-            fn to_le_bytes(self) -> [u8;std::mem::size_of::<#name>()] {
+            fn to_le_bytes(self) -> [u8;core::mem::size_of::<#name>()] {
                 let tmp = self.to_le();
-                let mut ret: [u8;std::mem::size_of::<#name>()] = [0;std::mem::size_of::<#name>()];
+                let mut ret: [u8;core::mem::size_of::<#name>()] = [0;core::mem::size_of::<#name>()];
                 (&mut ret[..]).copy_from_slice(tmp.as_slice());
                 ret
             }
-            fn to_ne_bytes(self) -> [u8;std::mem::size_of::<#name>()] {
-                let mut ret: [u8;std::mem::size_of::<#name>()] = [0;std::mem::size_of::<#name>()];
+            fn to_ne_bytes(self) -> [u8;core::mem::size_of::<#name>()] {
+                let mut ret: [u8;core::mem::size_of::<#name>()] = [0;core::mem::size_of::<#name>()];
                 (&mut ret[..]).copy_from_slice(self.as_slice());
                 ret
             }
-            fn from_be_bytes(src: [u8;std::mem::size_of::<#name>()]) -> Self {
+            fn from_be_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
                     #(#fields_other: Default::default(),)*
@@ -90,7 +90,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 Self::from_be(tmp)
             }
             
-            fn from_le_bytes(src: [u8;std::mem::size_of::<#name>()]) -> Self {
+            fn from_le_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
                     #(#fields_other: Default::default(),)*
@@ -98,7 +98,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 tmp.read_from_slice(src.as_ref());
                 Self::from_le(tmp)
             }
-            fn from_ne_bytes(src: [u8;std::mem::size_of::<#name>()]) -> Self {
+            fn from_ne_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
                     #(#fields_other: Default::default(),)*

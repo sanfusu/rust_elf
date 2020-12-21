@@ -37,7 +37,7 @@ pub(crate) fn shdr_proc(input: TokenStream2) -> TokenStream2 {
     }
     quote! {
         impl elface::SecHeader for #name {
-            fn data_range(&self)->std::ops::RangeInclusive<usize>{
+            fn data_range(&self)->core::ops::RangeInclusive<usize>{
                 (self.#offset as usize) ..= self.#size as usize
             }
             fn entsize(&self)->usize{

@@ -51,7 +51,7 @@ pub enum Type {
     Unknown(u32),
 }
 
-impl std::convert::From<u32> for Type {
+impl core::convert::From<u32> for Type {
     fn from(val: u32) -> Self {
         match val {
             NULL => Type::Null,
@@ -73,7 +73,7 @@ impl std::convert::From<u32> for Type {
     }
 }
 
-impl std::convert::Into<u32> for Type {
+impl core::convert::Into<u32> for Type {
     fn into(self) -> u32 {
         match self {
             Type::Null => NULL,

@@ -20,7 +20,7 @@ pub enum Class {
     Class64,
     Invalid,
 }
-impl std::convert::From<u8> for Class {
+impl core::convert::From<u8> for Class {
     fn from(val: u8) -> Self {
         match val {
             CLASS32 => Class::Class32,
@@ -30,7 +30,7 @@ impl std::convert::From<u8> for Class {
     }
 }
 
-impl std::convert::Into<u8> for Class {
+impl core::convert::Into<u8> for Class {
     fn into(self) -> u8 {
         match self {
             Class::Class32 => CLASS32,

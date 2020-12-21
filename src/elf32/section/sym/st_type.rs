@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::ops::RangeInclusive;
+use core::ops::RangeInclusive;
 
 pub enum Type {
     None,

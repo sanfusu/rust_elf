@@ -36,7 +36,7 @@ impl Msb {
     }
 }
 
-impl std::convert::From<u8> for Encode {
+impl core::convert::From<u8> for Encode {
     fn from(val: u8) -> Self {
         match val {
             LSB => Encode::Lsb,
@@ -46,7 +46,7 @@ impl std::convert::From<u8> for Encode {
     }
 }
 
-impl std::convert::Into<u8> for Encode {
+impl core::convert::Into<u8> for Encode {
     fn into(self) -> u8 {
         match self {
             Encode::Lsb => LSB,

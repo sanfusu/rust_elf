@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::ops::RangeInclusive;
+use core::ops::RangeInclusive;
 
 #[derive(Debug)]
 pub enum Type {
@@ -36,7 +36,7 @@ pub enum Type {
     Unknown(u32),
 }
 
-impl std::convert::From<u32> for Type {
+impl core::convert::From<u32> for Type {
     fn from(val: u32) -> Self {
         match val {
             NULL => Type::Null,
@@ -58,7 +58,7 @@ impl std::convert::From<u32> for Type {
     }
 }
 
-impl std::convert::Into<u32> for Type {
+impl core::convert::Into<u32> for Type {
     /// 将 [`Type`] 转换为 u32 类型，如果类似 [`Type::Processor`] 中的值不在范围类，
     /// 则会 panic（大部分情况下这属于编码赋值问题，而非运行时错误，可以通过检查代码排查）
     fn into(self) -> u32 {

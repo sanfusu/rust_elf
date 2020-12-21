@@ -20,7 +20,7 @@ pub enum Version {
     Invalid,
 }
 
-impl std::convert::Into<u32> for Version {
+impl core::convert::Into<u32> for Version {
     fn into(self) -> u32 {
         match self {
             Version::Current => 1,
@@ -29,7 +29,7 @@ impl std::convert::Into<u32> for Version {
     }
 }
 
-impl std::convert::From<u32> for Version {
+impl core::convert::From<u32> for Version {
     fn from(val: u32) -> Self {
         match val {
             CURRENT => Version::Current,
@@ -37,7 +37,7 @@ impl std::convert::From<u32> for Version {
         }
     }
 }
-impl std::convert::Into<u8> for Version {
+impl core::convert::Into<u8> for Version {
     fn into(self) -> u8 {
         match self {
             Version::Current => 1,
@@ -46,7 +46,7 @@ impl std::convert::Into<u8> for Version {
     }
 }
 
-impl std::convert::From<u8> for Version {
+impl core::convert::From<u8> for Version {
     fn from(val: u8) -> Self {
         match val as u32 {
             CURRENT => Version::Current,

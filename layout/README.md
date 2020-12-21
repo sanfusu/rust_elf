@@ -15,10 +15,10 @@ struct A {
 ```rust
 struct ALayout;
 impl ALayout {
-    pub const fn a() -> std::ops::Range<usize> {
+    pub const fn a() -> core::ops::Range<usize> {
         0..4 // 0, 1, 2, 3 号字节
     }
-    pub const fn b() -> std::ops::Range<usize> {
+    pub const fn b() -> core::ops::Range<usize> {
         4..5 // 4 号字节
     }
 }

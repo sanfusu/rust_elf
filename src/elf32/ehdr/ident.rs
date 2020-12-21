@@ -21,7 +21,7 @@ pub mod encode;
 pub mod machine;
 pub mod version;
 
-use std::ops::{Deref, DerefMut};
+use core::ops::{Deref, DerefMut};
 
 use crate::{Wrapper, WrapperMut};
 
