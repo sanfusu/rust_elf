@@ -70,7 +70,7 @@
     <span class="ident">Class64</span>,
     <span class="ident">Invalid</span>,
 }
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Class</span> {
+<span class="kw">impl</span> <span class="ident">core</span>::<span class="ident">convert</span>::<span class="ident">From</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Class</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">val</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">val</span> {
             <span class="ident">CLASS32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Class</span>::<span class="ident">Class32</span>,
@@ -80,7 +80,7 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Class</span> {
+<span class="kw">impl</span> <span class="ident">core</span>::<span class="ident">convert</span>::<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Class</span> {
     <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Class</span>::<span class="ident">Class32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">CLASS32</span>,

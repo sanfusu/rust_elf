@@ -64,7 +64,7 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with rust_elf.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
+<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
 
 <span class="doccomment">/// 用来表示 section 中的数据块，一个 section 可能会有多个数据块，</span>
 <span class="doccomment">/// 每一个数据块的大小由 [`Shdr::sh_entsize`](crate::elf32::section::Header::sh_entsize) 决定</span>

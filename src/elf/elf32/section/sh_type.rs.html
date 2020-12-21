@@ -133,7 +133,7 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with rust_elf.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">RangeInclusive</span>;
+<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">ops</span>::<span class="ident">RangeInclusive</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Type</span> {
@@ -154,7 +154,7 @@
     <span class="ident">Unknown</span>(<span class="ident">u32</span>),
 }
 
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Type</span> {
+<span class="kw">impl</span> <span class="ident">core</span>::<span class="ident">convert</span>::<span class="ident">From</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Type</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">val</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">val</span> {
             <span class="ident">NULL</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Type</span>::<span class="ident">Null</span>,
@@ -176,7 +176,7 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Type</span> {
+<span class="kw">impl</span> <span class="ident">core</span>::<span class="ident">convert</span>::<span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Type</span> {
     <span class="doccomment">/// 将 [`Type`] 转换为 u32 类型，如果类似 [`Type::Processor`] 中的值不在范围类，</span>
     <span class="doccomment">/// 则会 panic（大部分情况下这属于编码赋值问题，而非运行时错误，可以通过检查代码排查）</span>
     <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
