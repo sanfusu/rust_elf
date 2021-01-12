@@ -128,8 +128,27 @@ impl crate::WrapperMut<'_, Header> {
 #[cfg(test)]
 mod test {
     use super::*;
+    extern crate std;
+    use std::println;
+    #[allow(dead_code)]
+
+    #[derive(Clone, Copy)]
+    struct A {
+        a1: u8,
+        a2: u32,
+    }
+    union B {
+        b1: A,
+        b2: [u8; 5],
+    }
     #[test]
     fn layout_test() {
+        let var = B {
+            b1: A { a1: 1, a2: 2 },
+        };
+        unsafe {
+            println!("{:?}", var.b2);
+        }
         assert_eq!(HeaderLayout::e_ident(), 0..16);
         assert_eq!(HeaderLayout::e_type(), 16..18);
     }

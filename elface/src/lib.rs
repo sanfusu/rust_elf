@@ -79,6 +79,7 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
 }
 
 pub trait ElfHeader {
+    
     fn shdr_table_range(&self) -> RangeInclusive<usize>;
     fn phdr_table_range(&self) -> RangeInclusive<usize>;
 }
