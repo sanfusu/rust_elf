@@ -1,4 +1,4 @@
-use core::convert::TryFrom;
+use core::{convert::TryFrom, ops::RangeInclusive};
 
 use crate::elf64::Word;
 
@@ -21,9 +21,9 @@ impl TryFrom<Word> for ShType {
     type Error = &'static str;
     fn try_from(value: Word) -> Result<Self, Self::Error> {
         let ret = ShType::new(value);
-        if (SHT_NULL..=SHT_DYNSYM).contains(&ret)
-            || (SHT_LOOS..SHT_HIOS).contains(&ret)
-            || (SHT_LOPROC..=SHT_HIPROC).contains(&ret)
+        if SHT_RESERVED_RANGE.contains(&ret)
+            || SHT_OS_RANGE.contains(&ret)
+            || SHT_PROC_RANGE.contains(&ret)
         {
             Ok(ret)
         } else {
@@ -48,3 +48,7 @@ pub const SHT_LOOS: ShType = ShType::new(0x60000000); // Environment-specific us
 pub const SHT_HIOS: ShType = ShType::new(0x6FFFFFFF); //
 pub const SHT_LOPROC: ShType = ShType::new(0x70000000); // Processor-specific use
 pub const SHT_HIPROC: ShType = ShType::new(0x7FFFFFFF); //
+
+const SHT_RESERVED_RANGE: RangeInclusive<ShType> = SHT_NULL..=SHT_DYNSYM;
+const SHT_OS_RANGE: RangeInclusive<ShType> = SHT_LOOS..=SHT_HIOS;
+const SHT_PROC_RANGE: RangeInclusive<ShType> = SHT_LOPROC..=SHT_HIPROC;
