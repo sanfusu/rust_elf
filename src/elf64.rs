@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
-pub mod sh_type;
+pub mod section;
 
 pub type Addr = u64;
 pub type Off = u64;
@@ -50,20 +50,6 @@ pub struct Ehdr {
     pub e_shstrndx: Half,
 }
 
-#[derive(MetaData)]
-#[repr(packed)]
-pub struct Shdr {
-    pub sh_name: Word,
-    pub sh_type: Word,
-    pub sh_flags: Xword,
-    pub sh_addr: Addr,
-    pub sh_offset: Off,
-    pub sh_size: Xword,
-    pub sh_link: Word,
-    pub sh_info: Word,
-    pub sh_addralign: Xword,
-    pub sh_entsize: Xword,
-}
 
 #[derive(MetaData)]
 #[repr(packed)]
