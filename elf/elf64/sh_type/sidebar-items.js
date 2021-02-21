@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Type",""]],"struct":[["Wrapper",""],["WrapperMut",""]]});
