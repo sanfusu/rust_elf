@@ -46,7 +46,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 fields_type.push(ty.to_token_stream());
             }
             _ => {
-                panic!("Unsupport type")
+                panic!("Unsupported type")
             }
         })
     } else {
