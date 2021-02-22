@@ -15,14 +15,59 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 #![no_std]
-
+#![allow(dead_code)]
 #[macro_use]
 extern crate elface;
 #[macro_use]
 extern crate layout;
 
-use elf32::ehdr::ident::encode::Encode;
 use core::ops::Index;
+use elf32::ehdr::ident::encode::Encode;
+
+macro_rules! define_transparent_meta_data {
+    ($StructVis:vis $Struct:ident, $Vt:ty {
+        $(Wellknown: {
+            $($WellknownVis:vis $Wellknown:ident = $value:literal)*
+        })?
+        ValidRange: {
+            $($ValidRangeVis:vis $valid_range:ident = $range:expr)+
+        }
+        $(Default: $defaultValue:expr)?
+    }) => {
+        #[repr(transparent)]
+        #[derive(MetaData, PartialOrd, PartialEq)]
+        $StructVis struct $Struct {
+            value: $Vt
+        }
+
+        impl $Struct {
+            const fn new(value: $Vt) -> Self {
+                Self { value }
+            }
+        }
+        $($($WellknownVis const $Wellknown:$Struct = $Struct::new($value);)*)?
+        $($ValidRangeVis const $valid_range:core::ops::RangeInclusive<$Struct> = $range;)+
+        impl core::convert::TryFrom<$Vt> for $Struct {
+            type Error = &'static str;
+            fn try_from(value:$Vt)->Result<Self,Self::Error>{
+                let ret = $Struct::new(value);
+
+                if $($valid_range.contains(&ret))||+ {
+                    Ok(ret)
+                } else {
+                    Err("Out of range")
+                }
+            }
+        }
+        $(
+            impl core::default::Default for $Struct {
+                fn default() -> Self {
+                    $defaultValue
+                }
+            }
+        )?
+    };
+}
 
 pub mod elf32;
 pub mod elf64;

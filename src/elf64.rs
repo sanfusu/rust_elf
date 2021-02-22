@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
+pub mod header;
 pub mod section;
 
 pub type Addr = u64;
@@ -24,31 +25,6 @@ pub type Word = u32;
 pub type Sword = u32;
 pub type Xword = u64;
 pub type Sxword = i64;
-
-#[derive(MetaData, Ehdr)]
-#[repr(packed)]
-pub struct Ehdr {
-    pub e_ident: [u8; 16],
-    pub e_type: Half,
-    pub e_machine: Half,
-    pub e_version: Word,
-    pub e_entry: Addr,
-    #[phoff]
-    pub e_phoff: Off,
-    #[shoff]
-    pub e_shoff: Off,
-    pub e_flags: Word,
-    pub e_ehsize: Half,
-    #[phentsize]
-    pub e_phentsize: Half,
-    #[phnum]
-    pub e_phnum: Half,
-    #[shentsize]
-    pub e_shentsize: Half,
-    #[shnum]
-    pub e_shnum: Half,
-    pub e_shstrndx: Half,
-}
 
 
 #[derive(MetaData)]

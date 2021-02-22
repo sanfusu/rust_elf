@@ -16,7 +16,7 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 
 use proc_macro2::TokenStream as TokenStream2;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::DeriveInput;
 
 pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
@@ -24,15 +24,32 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
     let name = ast.ident;
     let mut fields: Vec<syn::Ident> = Vec::new();
     let mut fields_other: Vec<syn::Ident> = Vec::new();
-    let mut fields_type: Vec<syn::TypePath> = Vec::new();
+    let mut fields_type: Vec<TokenStream2> = Vec::new();
     if let syn::Data::Struct(data) = ast.data {
-        data.fields.iter().for_each(|x| {
-            if let syn::Type::Path(ty) = x.to_owned().ty {
+        data.fields.iter().for_each(|x| match x.to_owned().ty {
+            syn::Type::Array(arr) => match *arr.elem {
+                syn::Type::Path(ty) => {
+                    if ty.to_token_stream().to_string() == "u8" {
+                        fields_other.push(x.to_owned().ident.expect("need named field"));
+                    }
+                }
+                _ => {
+                    panic!("Currently can only support u8 array")
+                }
+            },
+            syn::Type::Path(ty) => {
                 fields.push(x.to_owned().ident.expect("need named field"));
-                fields_type.push(ty);
-            } else {
-                fields_other.push(x.to_owned().ident.expect("need named field"));
+                fields_type.push(ty.to_token_stream());
             }
+            _ => match x.ty.to_token_stream().to_string().as_ref() {
+                "u8" | "u16" | "u32" | "u64" | "Word" => {
+                    fields.push(x.to_owned().ident.expect("need named field"));
+                    fields_type.push(x.ty.to_token_stream());
+                }
+                _ => {
+                    panic!("Unsupport type")
+                }
+            },
         })
     } else {
         panic!("can only be applied into struct")
@@ -89,7 +106,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 tmp.read_from_slice(src.as_ref());
                 Self::from_be(tmp)
             }
-            
+
             fn from_le_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
