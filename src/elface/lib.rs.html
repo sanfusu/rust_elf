@@ -106,6 +106,12 @@
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright (C) 2020 sanfusu@foxmail.com</span>
 <span class="comment">//</span>
@@ -161,10 +167,16 @@
     <span class="kw">fn</span> <span class="ident">to_ne_bytes</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="macro">todo</span><span class="macro">!</span> {}
     }
-    <span class="kw">fn</span> <span class="ident">from_be_bytes</span>(<span class="kw">_</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="doccomment">/// Read from bytes as if it&#39;s big endianess.</span>
+    <span class="doccomment">/// It&#39;s marked as unsafe since we can not make sure the source&#39;s value is in valid range.</span>
+    <span class="doccomment">/// You should use it as the source from to_be_bytes.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_be_bytes</span>(<span class="kw">_</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">todo</span><span class="macro">!</span> {}
     }
-    <span class="kw">fn</span> <span class="ident">from_le_bytes</span>(<span class="kw">_</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="doccomment">/// Read from bytes as if it&#39;s little endianess.</span>
+    <span class="doccomment">/// It&#39;s marked as unsafe since we can not make sure the source&#39;s value is in valid range.</span>
+    <span class="doccomment">/// You should use it as the source from to_le_bytes.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_le_bytes</span>(<span class="kw">_</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">todo</span><span class="macro">!</span> {}
     }
     <span class="kw">fn</span> <span class="ident">from_ne_bytes</span>(<span class="kw">_</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {

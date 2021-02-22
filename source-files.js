@@ -1,5 +1,5 @@
 var N = null;var sourcesIndex = {};
-sourcesIndex["elf"] = {"name":"","dirs":[{"name":"elf32","dirs":[{"name":"ehdr","dirs":[{"name":"ident","files":["class.rs","encode.rs","machine.rs","version.rs"]}],"files":["e_type.rs","ident.rs"]},{"name":"section","dirs":[{"name":"sym","files":["bind.rs","st_type.rs"]}],"files":["reloc.rs","sh_flags.rs","sh_type.rs","sym.rs"]}],"files":["basic_type.rs","chunk.rs","ehdr.rs","section.rs","segment.rs"]},{"name":"elf64","dirs":[{"name":"section","files":["sh_type.rs"]}],"files":["section.rs"]}],"files":["elf32.rs","elf64.rs","lib.rs"]};
+sourcesIndex["elf"] = {"name":"","dirs":[{"name":"elf32","dirs":[{"name":"ehdr","dirs":[{"name":"ident","files":["class.rs","encode.rs","machine.rs","version.rs"]}],"files":["e_type.rs","ident.rs"]},{"name":"section","dirs":[{"name":"sym","files":["bind.rs","st_type.rs"]}],"files":["reloc.rs","sh_flags.rs","sh_type.rs","sym.rs"]}],"files":["basic_type.rs","chunk.rs","ehdr.rs","section.rs","segment.rs"]},{"name":"elf64","dirs":[{"name":"section","files":["sh_type.rs"]}],"files":["header.rs","section.rs"]}],"files":["elf32.rs","elf64.rs","lib.rs"]};
 sourcesIndex["elf_proc"] = {"name":"","files":["ehdr.rs","lib.rs","metadata.rs","shdr.rs"]};
 sourcesIndex["elface"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["layout"] = {"name":"","files":["lib.rs"]};
