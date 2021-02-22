@@ -37,19 +37,17 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                     panic!("Currently can only support u8 array")
                 }
             },
+            syn::Type::Group(ty) => {
+                fields.push(x.to_owned().ident.expect("need named field"));
+                fields_type.push(ty.to_token_stream());
+            }
             syn::Type::Path(ty) => {
                 fields.push(x.to_owned().ident.expect("need named field"));
                 fields_type.push(ty.to_token_stream());
             }
-            _ => match x.ty.to_token_stream().to_string().as_ref() {
-                "u8" | "u16" | "u32" | "u64" | "Word" => {
-                    fields.push(x.to_owned().ident.expect("need named field"));
-                    fields_type.push(x.ty.to_token_stream());
-                }
-                _ => {
-                    panic!("Unsupport type")
-                }
-            },
+            _ => {
+                panic!("Unsupport type")
+            }
         })
     } else {
         panic!("can only be applied into struct")
