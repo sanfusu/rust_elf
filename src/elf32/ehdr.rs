@@ -53,7 +53,7 @@ pub struct Header {
 impl Default for Header {
     fn default() -> Self {
         let tmp = [0u8; core::mem::size_of::<Header>()];
-        let mut ret = Header::from_le_bytes(tmp);
+        let mut ret = unsafe { Header::from_le_bytes(tmp) };
         ret.e_version = Version::Current.into();
         ret.as_mut_slice()[0..core::mem::size_of_val(&ident::MAGIC)].copy_from_slice(&ident::MAGIC);
         ret
@@ -131,7 +131,6 @@ mod test {
     extern crate std;
     use std::println;
     #[allow(dead_code)]
-
     #[derive(Clone, Copy)]
     struct A {
         a1: u8,

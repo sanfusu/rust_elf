@@ -52,10 +52,16 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     fn to_ne_bytes(self) -> T {
         todo! {}
     }
-    fn from_be_bytes(_: T) -> Self {
+    /// Read from bytes as if it's big endianess.
+    /// It's marked as unsafe since we can not make sure the source's value is in valid range.
+    /// You should use it as the source from to_be_bytes.
+    unsafe fn from_be_bytes(_: T) -> Self {
         todo! {}
     }
-    fn from_le_bytes(_: T) -> Self {
+    /// Read from bytes as if it's little endianess.
+    /// It's marked as unsafe since we can not make sure the source's value is in valid range.
+    /// You should use it as the source from to_le_bytes.
+    unsafe fn from_le_bytes(_: T) -> Self {
         todo! {}
     }
     fn from_ne_bytes(_: T) -> Self {

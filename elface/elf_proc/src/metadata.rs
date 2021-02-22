@@ -98,7 +98,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 (&mut ret[..]).copy_from_slice(self.as_slice());
                 ret
             }
-            fn from_be_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
+            unsafe fn from_be_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
                     #(#fields_other: Default::default(),)*
@@ -107,7 +107,7 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 Self::from_be(tmp)
             }
 
-            fn from_le_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
+            unsafe fn from_le_bytes(src: [u8;core::mem::size_of::<#name>()]) -> Self {
                 let mut tmp : Self = Self {
                     #(#fields: Default::default(),)*
                     #(#fields_other: Default::default(),)*
