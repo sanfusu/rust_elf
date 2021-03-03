@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["ABS","表示相应的引用是绝对值"],["COMMON","表示符号被声明为 common block。（Fortan COMMON 或者 C 中的临时声明）"],["HIOS",""],["HIPROC",""],["LOOS",""],["LOPROC",""],["UNDEF","用于标记一个未定义或无意义的 section"]]});

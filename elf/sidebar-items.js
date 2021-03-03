@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["elf32",""],["elf64",""]],"struct":[["EndWrapper",""],["EndWrapperMut",""],["StrTab","直接通过索引来获取字符串表中的数值"],["Wrapper",""],["WrapperMut",""]]});
+initSidebarItems({"mod":[["elf32",""],["elf64",""]],"struct":[["EndWrapper",""],["EndWrapperMut",""],["MetaDataParseError",""],["StrTab","直接通过索引来获取字符串表中的数值"],["Wrapper",""],["WrapperMut",""]]});

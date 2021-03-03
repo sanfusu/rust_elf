@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["header",""],["section",""]],"struct":[["Phdr",""],["Sym",""]],"type":[["Addr",""],["Half",""],["Off",""],["Sword",""],["Sxword",""],["Word",""],["Xword",""]]});
+initSidebarItems({"mod":[["header",""],["section",""]],"struct":[["Lsb",""],["Msb",""],["Phdr",""],["Sxword",""],["Sym",""]],"trait":[["DataEncode",""]],"type":[["Addr",""],["Half",""],["Off",""],["Sword",""],["Word",""],["Xword",""]]});

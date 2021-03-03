@@ -1,5 +1,5 @@
 (function() {var implementors = {};
-implementors["elf"] = [{"text":"impl PartialOrd&lt;ObjectFileClass&gt; for ObjectFileClass","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;DataEncoding&gt; for DataEncoding","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;ShType&gt; for ShType","synthetic":false,"types":[]}];
+implementors["elf"] = [{"text":"impl PartialOrd&lt;ObjectFileClass&gt; for ObjectFileClass","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;DataEncoding&gt; for DataEncoding","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;IdentVersion&gt; for IdentVersion","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;OsAbiIdentifer&gt; for OsAbiIdentifer","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;ObjectFileType&gt; for ObjectFileType","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;FileVersion&gt; for FileVersion","synthetic":false,"types":[]},{"text":"impl PartialOrd&lt;ShType&gt; for ShType","synthetic":false,"types":[]}];
 implementors["proc_macro2"] = [{"text":"impl PartialOrd&lt;Ident&gt; for Ident","synthetic":false,"types":[]}];
 implementors["syn"] = [{"text":"impl PartialOrd&lt;Lifetime&gt; for Lifetime","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
