@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Encode",""]],"struct":[["Lsb",""],["Msb",""]]});

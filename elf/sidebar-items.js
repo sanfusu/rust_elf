@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["elf32",""],["elf64",""]],"struct":[["EndWrapper",""],["EndWrapperMut",""],["MetaDataParseError",""],["StrTab","直接通过索引来获取字符串表中的数值"],["Wrapper",""],["WrapperMut",""]]});
+initSidebarItems({"mod":[["header",""],["section",""]],"struct":[["Phdr",""],["StrTab","直接通过索引来获取字符串表中的数值"],["Sym",""]],"type":[["Addr",""],["Half",""],["Off",""],["Sword",""],["Sxword",""],["Word",""],["Xword",""]]});
