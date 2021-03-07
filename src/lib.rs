@@ -69,7 +69,7 @@ macro_rules! define_transparent_meta_data {
         }
             impl core::default::Default for $Struct {
                 fn default() -> Self {
-                    if $($defaultValue == $defaultValue)? || false {
+                    if $($defaultValue == $defaultValue ||)?  false {
                         $(return $defaultValue;)?
                     } else {
                         return $Struct::new(Default::default());
