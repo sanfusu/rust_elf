@@ -122,5 +122,10 @@ pub(crate) fn metadata_proc(input: TokenStream2) -> TokenStream2 {
                 tmp
             }
         }
+        impl #name {
+            const fn len() -> usize {
+                core::mem::size_of::<Self>()
+            }
+        }
     }
 }

@@ -1,9 +1,11 @@
 pub mod sh_type;
 
+use elface::{MetaData, MetaDataErr};
+
 use self::sh_type::ShType;
 use super::{Addr, Off, Word, Xword};
 
-#[derive(MetaData)]
+#[derive(Layout, MetaData)]
 #[repr(packed)]
 pub struct Shdr {
     pub sh_name: Word,
@@ -16,4 +18,13 @@ pub struct Shdr {
     pub sh_info: Word,
     pub sh_addralign: Xword,
     pub sh_entsize: Xword,
+}
+
+impl Shdr {
+    pub fn try_from_be_bytes(_: &[u8; Shdr::len()]) -> Result<Self, MetaDataErr> {
+        todo!()
+    }
+    pub fn try_from_le_bytes(_: &[u8; Shdr::len()]) -> Result<Self, MetaDataErr> {
+        todo!()
+    }
 }

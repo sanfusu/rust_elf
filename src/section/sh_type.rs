@@ -1,4 +1,4 @@
-use crate::elf64::Word;
+use crate::Word;
 
 define_transparent_meta_data! {
     pub ShType, Word {

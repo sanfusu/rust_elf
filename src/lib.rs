@@ -22,7 +22,6 @@ extern crate elface;
 extern crate layout;
 
 use core::ops::Index;
-use elf32::ehdr::ident::encode::Encode;
 
 macro_rules! define_transparent_meta_data {
     ($StructVis:vis $Struct:ident, $Vt:ty {
@@ -69,25 +68,41 @@ macro_rules! define_transparent_meta_data {
     };
 }
 
-pub mod elf32;
-pub mod elf64;
+pub mod header;
+pub mod section;
 
-pub struct EndWrapper<'a, T> {
-    pub src: &'a T,
-    pub endiness: Encode,
+pub type Addr = u64;
+pub type Off = u64;
+pub type Half = u16;
+pub type Word = u32;
+pub type Sword = u32;
+pub type Xword = u64;
+pub type Sxword = i64;
+
+#[derive(MetaData)]
+#[repr(packed)]
+pub struct Sym {
+    pub st_name: Word,
+    pub st_info: u8,
+    pub st_other: u8,
+    pub st_shndx: Half,
+    pub st_value: Addr,
+    pub st_size: Xword,
 }
 
-pub struct EndWrapperMut<'a, T> {
-    pub src: &'a mut T,
-    pub endiness: Encode,
+#[derive(MetaData)]
+#[repr(packed)]
+pub struct Phdr {
+    pub p_type: Word,
+    pub p_flags: Word,
+    pub p_offset: Off,
+    pub p_vaddr: Addr,
+    pub p_paddr: Addr,
+    pub p_filesz: Xword,
+    pub p_memsz: Xword,
+    pub p_align: Xword,
 }
 
-pub struct Wrapper<'a, T> {
-    pub src: &'a T,
-}
-pub struct WrapperMut<'a, T> {
-    pub src: &'a mut T,
-}
 
 /// 直接通过索引来获取字符串表中的数值
 /// # Example

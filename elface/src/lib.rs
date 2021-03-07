@@ -43,49 +43,25 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     /// 将 self 转换为大端的字节数组，
     /// 以及类似的字节端转换都会消耗源值，
     /// 这是因为转换前和转换后是两个完全不同的数据表示
-    fn to_be_bytes(self) -> T {
-        todo! {}
-    }
-    fn to_le_bytes(self) -> T {
-        todo! {}
-    }
-    fn to_ne_bytes(self) -> T {
-        todo! {}
-    }
+    fn to_be_bytes(self) -> T;
+    fn to_le_bytes(self) -> T;
+    fn to_ne_bytes(self) -> T;
     /// Read from bytes as if it's big endianess.
     /// It's marked as unsafe since we can not make sure the source's value is in valid range.
     /// You should use it as the source from to_be_bytes.
-    unsafe fn from_be_bytes(_: T) -> Self {
-        todo! {}
-    }
+    unsafe fn from_be_bytes(_: T) -> Self;
     /// Read from bytes as if it's little endianess.
     /// It's marked as unsafe since we can not make sure the source's value is in valid range.
     /// You should use it as the source from to_le_bytes.
-    unsafe fn from_le_bytes(_: T) -> Self {
-        todo! {}
-    }
-    fn from_ne_bytes(_: T) -> Self {
-        todo! {}
-    }
-    fn from_be(_: Self) -> Self {
-        todo! {}
-    }
-    fn from_le(_: Self) -> Self {
-        todo! {}
-    }
-    fn to_be(self) -> Self {
-        todo! {}
-    }
-    fn to_le(self) -> Self {
-        todo! {}
-    }
-    fn len() -> usize {
-        core::mem::size_of::<Self>()
-    }
+    unsafe fn from_le_bytes(v: T) -> Self;
+    fn from_ne_bytes(_: T) -> Self;
+    fn from_be(_: Self) -> Self;
+    fn from_le(_: Self) -> Self;
+    fn to_be(self) -> Self;
+    fn to_le(self) -> Self;
 }
 
 pub trait ElfHeader {
-    
     fn shdr_table_range(&self) -> RangeInclusive<usize>;
     fn phdr_table_range(&self) -> RangeInclusive<usize>;
 }
@@ -109,3 +85,5 @@ pub trait Elf {
     fn sections<T: Section>(&self) -> Vec<T>;
     fn programs(&self);
 }
+
+pub struct MetaDataErr;
