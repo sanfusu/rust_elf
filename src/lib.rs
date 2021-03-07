@@ -51,7 +51,7 @@ macro_rules! define_transparent_meta_data {
             fn try_from_le_bytes(src:&[u8]) -> Result<Self, elface::MetaDataError> {
                 let ret = $Struct::new(<$Vt>::from_le_bytes(<[u8; core::mem::size_of::<$Vt>()] as core::convert::TryFrom<&[u8]>>::try_from(src).map_err(|_| elface::MetaDataError)?));
 
-                if $($($valid_range.contains(&ret)||)+)? true {
+                if $($($valid_range.contains(&ret))||+&&)? true {
                     Ok(ret)
                 } else {
                     Err(elface::MetaDataError)
@@ -60,23 +60,22 @@ macro_rules! define_transparent_meta_data {
             fn try_from_be_bytes(src:&[u8]) -> Result<Self, elface::MetaDataError> {
                 let ret = $Struct::new(<$Vt>::from_be_bytes(<[u8; core::mem::size_of::<$Vt>()] as core::convert::TryFrom<&[u8]>>::try_from(src).map_err(|_| elface::MetaDataError)?));
 
-                if $($($valid_range.contains(&ret)||)+)? true {
+                if $($($valid_range.contains(&ret))||+ &&)? true {
                     Ok(ret)
                 } else {
                     Err(elface::MetaDataError)
                 }
             }
         }
-            impl core::default::Default for $Struct {
-                fn default() -> Self {
-                    if $($defaultValue == $defaultValue ||)?  false {
-                        $(return $defaultValue;)?
-                    } else {
-                        return $Struct::new(Default::default());
-                    }
+        impl core::default::Default for $Struct {
+            fn default() -> Self {
+                $(if  true {
+                    return $defaultValue;
+                } else )?  {
+                    return $Struct::new(Default::default());
                 }
-            })+
-
+            }
+        })+
     };
 }
 
