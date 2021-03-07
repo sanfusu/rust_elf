@@ -46,18 +46,6 @@ macro_rules! define_transparent_meta_data {
         }
         $($($WellknownVis const $Wellknown:$Struct = $Struct::new($value);)*)?
         $($ValidRangeVis const $valid_range:core::ops::RangeInclusive<$Struct> = $range;)+
-        impl core::convert::TryFrom<$Vt> for $Struct {
-            type Error = &'static str;
-            fn try_from(value:$Vt)->Result<Self,Self::Error>{
-                let ret = $Struct::new(value);
-
-                if $($valid_range.contains(&ret))||+ {
-                    Ok(ret)
-                } else {
-                    Err("Out of range")
-                }
-            }
-        }
         $(
             impl core::default::Default for $Struct {
                 fn default() -> Self {
