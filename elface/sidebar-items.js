@@ -1,1 +1,1 @@
-initSidebarItems({"derive":[["Ehdr",""],["MetaData",""],["Shdr",""]],"struct":[["MetaDataErr",""]],"trait":[["Elf",""],["ElfHeader",""],["MetaData",""],["SecHeader",""],["Section",""]]});
+initSidebarItems({"derive":[["Ehdr",""],["MetaData",""],["Shdr",""]],"struct":[["MetaDataError",""]],"trait":[["Elf",""],["ElfHeader",""],["MetaData",""],["MetaDataTryFrom",""],["SecHeader",""],["Section",""]]});

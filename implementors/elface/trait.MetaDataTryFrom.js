@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["elf"] = [{"text":"impl MetaDataTryFrom for ObjectFileClass","synthetic":false,"types":[]},{"text":"impl MetaDataTryFrom for DataEncoding","synthetic":false,"types":[]},{"text":"impl MetaDataTryFrom for ShType","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
