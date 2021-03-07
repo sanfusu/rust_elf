@@ -24,16 +24,16 @@ extern crate layout;
 use core::ops::Index;
 
 macro_rules! define_transparent_meta_data {
-    ($StructVis:vis $Struct:ident, $Vt:ty {
+    ($($StructVis:vis $Struct:ident, $Vt:ty {
         $(Wellknown: {
             $($WellknownVis:vis $Wellknown:ident = $value:literal)*
         })?
-        ValidRange: {
+        $(ValidRange: {
             $($ValidRangeVis:vis $valid_range:ident = $range:expr)+
-        }
+        })?
         $(Default: $defaultValue:expr)?
-    }) => {
-        #[repr(transparent)]
+    })+) => {
+        $(#[repr(transparent)]
         #[derive(MetaData, PartialOrd, PartialEq)]
         $StructVis struct $Struct {
             value: $Vt
@@ -45,14 +45,38 @@ macro_rules! define_transparent_meta_data {
             }
         }
         $($($WellknownVis const $Wellknown:$Struct = $Struct::new($value);)*)?
-        $($ValidRangeVis const $valid_range:core::ops::RangeInclusive<$Struct> = $range;)+
-        $(
-            impl core::default::Default for $Struct {
-                fn default() -> Self {
-                    $defaultValue
+        $($($ValidRangeVis const $valid_range:core::ops::RangeInclusive<$Struct> = $range;)+)?
+
+        impl elface::MetaDataTryFrom for $Struct {
+            fn try_from_le_bytes(src:&[u8]) -> Result<Self, elface::MetaDataError> {
+                let ret = $Struct::new(<$Vt>::from_le_bytes(<[u8; core::mem::size_of::<$Vt>()] as core::convert::TryFrom<&[u8]>>::try_from(src).map_err(|_| elface::MetaDataError)?));
+
+                if $($($valid_range.contains(&ret)||)+)? true {
+                    Ok(ret)
+                } else {
+                    Err(elface::MetaDataError)
                 }
             }
-        )?
+            fn try_from_be_bytes(src:&[u8]) -> Result<Self, elface::MetaDataError> {
+                let ret = $Struct::new(<$Vt>::from_be_bytes(<[u8; core::mem::size_of::<$Vt>()] as core::convert::TryFrom<&[u8]>>::try_from(src).map_err(|_| elface::MetaDataError)?));
+
+                if $($($valid_range.contains(&ret)||)+)? true {
+                    Ok(ret)
+                } else {
+                    Err(elface::MetaDataError)
+                }
+            }
+        }
+            impl core::default::Default for $Struct {
+                fn default() -> Self {
+                    if $($defaultValue == $defaultValue)? || false {
+                        $(return $defaultValue;)?
+                    } else {
+                        return $Struct::new(Default::default());
+                    }
+                }
+            })+
+
     };
 }
 
@@ -90,7 +114,6 @@ pub struct Phdr {
     pub p_memsz: Xword,
     pub p_align: Xword,
 }
-
 
 /// 直接通过索引来获取字符串表中的数值
 /// # Example

@@ -1,6 +1,8 @@
 pub mod sh_type;
 
-use elface::{MetaData, MetaDataErr};
+use core::convert::TryInto;
+
+use elface::{MetaData, MetaDataError};
 
 use self::sh_type::ShType;
 use super::{Addr, Off, Word, Xword};
@@ -21,10 +23,10 @@ pub struct Shdr {
 }
 
 impl Shdr {
-    pub fn try_from_be_bytes(_: &[u8; Shdr::len()]) -> Result<Self, MetaDataErr> {
-        todo!()
+    pub fn try_from_be_bytes(src: &[u8]) -> Result<Self, MetaDataError> {
+        Ok(unsafe { Self::from_be_bytes(src.try_into().map_err(|_| MetaDataError)?) })
     }
-    pub fn try_from_le_bytes(_: &[u8; Shdr::len()]) -> Result<Self, MetaDataErr> {
-        todo!()
+    pub fn try_from_le_bytes(src: &[u8]) -> Result<Self, MetaDataError> {
+        Ok(unsafe { Self::from_le_bytes(src.try_into().map_err(|_| MetaDataError)?) })
     }
 }

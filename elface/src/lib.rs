@@ -61,6 +61,15 @@ pub trait MetaData<T: AsRef<[u8]> + Sized>: Sized {
     fn to_le(self) -> Self;
 }
 
+pub trait MetaDataTryFrom {
+    fn try_from_be_bytes(src: &[u8]) -> Result<Self, MetaDataError>
+    where
+        Self: Sized;
+    fn try_from_le_bytes(src: &[u8]) -> Result<Self, MetaDataError>
+    where
+        Self: Sized;
+}
+
 pub trait ElfHeader {
     fn shdr_table_range(&self) -> RangeInclusive<usize>;
     fn phdr_table_range(&self) -> RangeInclusive<usize>;
@@ -86,4 +95,4 @@ pub trait Elf {
     fn programs(&self);
 }
 
-pub struct MetaDataErr;
+pub struct MetaDataError;
