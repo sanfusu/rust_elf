@@ -232,7 +232,7 @@
         }
             <span class="kw">impl</span> <span class="ident">core</span>::<span class="ident">default</span>::<span class="ident">Default</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">Struct</span> {
                 <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-                    <span class="kw">if</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">defaultValue</span> <span class="op">=</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">defaultValue</span>)<span class="question-mark">?</span> <span class="op">|</span><span class="op">|</span> <span class="bool-val">false</span> {
+                    <span class="kw">if</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">defaultValue</span> <span class="op">=</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">defaultValue</span> <span class="op">|</span><span class="op">|</span>)<span class="question-mark">?</span>  <span class="bool-val">false</span> {
                         $(<span class="kw">return</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">defaultValue</span>;)<span class="question-mark">?</span>
                     } <span class="kw">else</span> {
                         <span class="kw">return</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">Struct</span>::<span class="ident">new</span>(<span class="ident">Default</span>::<span class="ident">default</span>());
