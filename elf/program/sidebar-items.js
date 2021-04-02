@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Header",""]]});
+initSidebarItems({"mod":[["fields",""]],"struct":[["Header",""],["HeaderFlat",""],["HeaderFlatMut",""]]});

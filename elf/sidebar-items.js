@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["header",""],["program",""],["relocation",""],["section",""],["str_tab",""],["symbol",""]],"type":[["Elf64Addr",""],["Elf64Half",""],["Elf64Off",""],["Elf64Sword",""],["Elf64Sxword",""],["Elf64Word",""],["Elf64Xword",""]]});
+initSidebarItems({"mod":[["header",""],["program",""],["section",""]],"type":[["Elf64Addr",""],["Elf64Half",""],["Elf64Off",""],["Elf64Sword",""],["Elf64Sxword",""],["Elf64Word",""],["Elf64Xword",""]]});

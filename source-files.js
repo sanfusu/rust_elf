@@ -1,6 +1,6 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["case"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["elf"] = {"name":"","files":["header.rs","lib.rs","program.rs","relocation.rs","section.rs","str_tab.rs","symbol.rs"]};
+sourcesIndex["elf"] = {"name":"","dirs":[{"name":"section","files":["relocation.rs","str_tab.rs","symbol.rs"]}],"files":["header.rs","lib.rs","program.rs","section.rs"]};
 sourcesIndex["flassor"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["flassor_macro"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["proc_macro2"] = {"name":"","files":["detection.rs","fallback.rs","lib.rs","marker.rs","parse.rs","wrapper.rs"]};

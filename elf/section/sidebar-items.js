@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["SHN_ABS",""],["SHN_COMMON",""],["SHN_OS",""],["SHN_PROC",""],["SHN_UNDEF",""]],"mod":[["header",""]],"struct":[["Section",""],["SectionMut",""]]});
+initSidebarItems({"constant":[["SHN_ABS",""],["SHN_COMMON",""],["SHN_OS",""],["SHN_PROC",""],["SHN_UNDEF",""]],"mod":[["header",""],["relocation",""],["str_tab",""],["symbol",""]],"struct":[["Section",""],["SectionMut",""]]});
