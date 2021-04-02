@@ -1,6 +1,6 @@
-use core::ops::RangeInclusive;
+use core::{ops::RangeInclusive, panic};
 
-use super::{Elf64Addr, Elf64Word, Elf64Xword, Elf64Half};
+use super::{Elf64Addr, Elf64Half, Elf64Word, Elf64Xword};
 
 #[derive(Accessor)]
 #[repr(packed)]
@@ -28,6 +28,24 @@ impl SymBind {
     const fn new(value: u8) -> Self {
         Self { value }
     }
+    /// 创建一个 os 指定的 SymBind。
+    ///
+    /// 该函数只会被显式调用，如果传入的值不在 [`Self::OS`] 范围内，则认定为是 Bug，会导致 Panic.
+    pub fn os(value: u8) -> Self {
+        if Self::OS.contains(&Self::new(value)) {
+            Self::new(value)
+        } else {
+            panic!("The symbind value is not in os specified range")
+        }
+    }
+    /// 类似于 [`Self::os`]，用于创建处理器特定的 SymBind
+    pub fn proc(value: u8) -> Self {
+        if Self::PROC.contains(&Self::new(value)) {
+            Self::new(value)
+        } else {
+            panic!("The symbind value is not in processor specified range")
+        }
+    }
 }
 #[derive(PartialEq, PartialOrd)]
 pub struct SymType {
@@ -43,6 +61,24 @@ impl SymType {
     pub const PROC: RangeInclusive<Self> = Self::new(13)..=Self::new(15);
     const fn new(value: u8) -> Self {
         Self { value }
+    }
+    /// 创建一个 os 指定的 SymType。
+    ///
+    /// 该函数只会被显式调用，如果传入的值不在 [`Self::OS`] 范围内，则认定为是 Bug，会导致 Panic.
+    pub fn os(value: u8) -> Self {
+        if Self::OS.contains(&Self::new(value)) {
+            Self::new(value)
+        } else {
+            panic!("The SymType value is not in os specified range")
+        }
+    }
+    /// 类似于 [`Self::os`]，用于创建处理器特定的 SymType
+    pub fn proc(value: u8) -> Self {
+        if Self::PROC.contains(&Self::new(value)) {
+            Self::new(value)
+        } else {
+            panic!("The SymType value is not in processor specified range")
+        }
     }
 }
 
