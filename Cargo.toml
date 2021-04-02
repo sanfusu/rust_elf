@@ -6,8 +6,11 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-elface = { version = "0.1", path = "elface" }
-layout = { git = "https://github.com/sanfusu/layout" }
+# elface = { version = "0.1", path = "elface" }
+# layout = { git = "https://github.com/sanfusu/layout" }
+# flassor = { git = "https://github.com/sanfusu/flassor.git" }
+# flassor-macro = { path = "../flassor/flassor-macro" }
+flassor = { path = "../flassor" }
 
 [lib]
 crate-type = ["rlib"]

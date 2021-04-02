@@ -1,63 +1,74 @@
-use super::{Addr, Half, Off, Word};
+use flassor::ByteOrder;
+pub mod ident {
+    use flassor::ByteOrder;
 
-define_transparent_meta_data! {
-    pub ObjectFileClass, u8 {
-        Wellknown: {
-            pub ELF_CLASS32 = 1
-            pub ELF_CLASS64 = 2
+    #[derive(Accessor, Debug, Clone, Copy, PartialEq, Eq)]
+    pub struct Ident {
+        pub mag: [u8; 4],
+        pub file_class: u8,
+        pub data_encode: u8,
+        pub file_version: u8,
+        pub osabi: u8,
+        pub abi_version: u8,
+    }
+    pub use ident_accessor::*;
+    impl fields::FileClass {
+        pub const CLSSS32: Self = Self::new(1);
+        pub const CLASS64: Self = Self::new(2);
+    }
+    impl fields::DataEncode {
+        pub const LSB: Self = Self::new(1);
+        pub const MSB: Self = Self::new(2);
+        pub fn is_lsb(&self) -> bool {
+            *self == Self::LSB
         }
-        ValidRange: {
-            ELF_CLASS_RANGE = ELF_CLASS32 ..= ELF_CLASS64
+        pub fn is_msb(&self) -> bool {
+            *self == Self::MSB
         }
-        Default: ELF_CLASS64
+    }
+    impl fields::Osabi {
+        pub const SYSV: Self = Self::new(0);
+        pub const HPUX: Self = Self::new(1);
+        pub const STANDLONE: Self = Self::new(255);
     }
 }
 
-define_transparent_meta_data! {
-    pub DataEncoding, u8 {
-        Wellknown: {
-            pub ELF_LSB = 1
-            pub ELF_MSB = 2
-        }
-        ValidRange:{
-            ELF_DATA_ENCODING_RANGE = ELF_LSB..=ELF_MSB
-        }
-        Default: ELF_LSB
-    }
-}
-
-#[derive(MetaData, Default)]
-pub struct Ident {
-    pub mag: [u8; 4],
-    pub file_class: ObjectFileClass,
-    pub data_encode: DataEncoding,
-    pub file_version: u8,
-    pub osabi: u8,
-    pub abi_version: u8,
-}
-#[derive(MetaData, Ehdr)]
+use super::{Elf64Addr, Half, Elf64Off, Elf64Word};
+#[derive(Accessor)]
 #[repr(packed)]
 pub struct Ehdr {
-    pub e_ident: Ident,
-    _pad: [u8; 16 - core::mem::size_of::<Ident>()],
+    pub ident: ident::Ident,
+    _pad: [u8; 16 - core::mem::size_of::<ident::Ident>()],
+    pub _type: Half,
+    pub machine: Half,
+    pub version: Elf64Word,
+    pub entry: Elf64Addr,
+    pub phoff: Elf64Off,
+    pub shoff: Elf64Off,
+    pub flags: Elf64Word,
+    pub ehsize: Half,
+    pub phentsize: Half,
+    pub phnum: Half,
+    pub shentsize: Half,
+    pub shnum: Half,
+    pub shstrndx: Half,
+}
 
-    pub e_type: Half,
-    pub e_machine: Half,
-    pub e_version: Word,
-    pub e_entry: Addr,
-    #[phoff]
-    pub e_phoff: Off,
-    #[shoff]
-    pub e_shoff: Off,
-    pub e_flags: Word,
-    pub e_ehsize: Half,
-    #[phentsize]
-    pub e_phentsize: Half,
-    #[phnum]
-    pub e_phnum: Half,
-    #[shentsize]
-    pub e_shentsize: Half,
-    #[shnum]
-    pub e_shnum: Half,
-    pub e_shstrndx: Half,
+pub use ehdr_accessor::{EhdrFlat, EhdrFlatMut};
+
+pub mod fields {
+    use core::ops::Range;
+
+    pub use super::ehdr_accessor::fields::*;
+    struct Pad; // 用于隐藏 fields 中的 _pad
+
+    impl Type {
+        pub const NONE: Self = Self::new(0);
+        pub const REL: Self = Self::new(1);
+        pub const EXEC: Self = Self::new(2);
+        pub const DYN: Self = Self::new(3);
+        pub const CORE: Self = Self::new(4);
+        pub const OS: Range<Self> = Self::new(0xfe00)..Self::new(0xfeff);
+        pub const PROC: Range<Self> = Self::new(0xff00)..Self::new(0xffff);
+    }
 }
