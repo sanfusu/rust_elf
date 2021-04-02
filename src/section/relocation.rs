@@ -20,9 +20,10 @@ pub mod rel {
     use crate::{Elf64Addr, Elf64Xword};
 
     #[derive(Accessor)]
+    #[repr(packed)]
     pub struct Rel {
-        offset: Elf64Addr,
-        info: Elf64Xword,
+        pub offset: Elf64Addr,
+        pub info: Elf64Xword,
     }
     pub use rel_accessor::*;
 
@@ -39,10 +40,11 @@ pub mod rela {
     use crate::{Elf64Addr, Elf64Sxword, Elf64Xword};
 
     #[derive(Accessor)]
+    #[repr(packed)]
     pub struct Rela {
-        offset: Elf64Addr,
-        info: Elf64Xword,
-        addend: Elf64Sxword,
+        pub offset: Elf64Addr,
+        pub info: Elf64Xword,
+        pub addend: Elf64Sxword,
     }
     pub use rela_accessor::*;
 
