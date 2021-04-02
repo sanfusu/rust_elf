@@ -64,69 +64,92 @@
 <span id="61">61</span>
 <span id="62">62</span>
 <span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Addr</span>, <span class="ident">Half</span>, <span class="ident">Off</span>, <span class="ident">Word</span>};
+<span class="kw">use</span> <span class="ident">flassor</span>::<span class="ident">ByteOrder</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ident</span> {
+    <span class="kw">use</span> <span class="ident">flassor</span>::<span class="ident">ByteOrder</span>;
 
-<span class="macro">define_transparent_meta_data</span><span class="macro">!</span> {
-    <span class="kw">pub</span> <span class="ident">ObjectFileClass</span>, <span class="ident">u8</span> {
-        <span class="ident">Wellknown</span>: {
-            <span class="kw">pub</span> <span class="ident">ELF_CLASS32</span> <span class="op">=</span> <span class="number">1</span>
-            <span class="kw">pub</span> <span class="ident">ELF_CLASS64</span> <span class="op">=</span> <span class="number">2</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Accessor</span>, <span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ident</span> {
+        <span class="kw">pub</span> <span class="ident">mag</span>: [<span class="ident">u8</span>; <span class="number">4</span>],
+        <span class="kw">pub</span> <span class="ident">file_class</span>: <span class="ident">u8</span>,
+        <span class="kw">pub</span> <span class="ident">data_encode</span>: <span class="ident">u8</span>,
+        <span class="kw">pub</span> <span class="ident">file_version</span>: <span class="ident">u8</span>,
+        <span class="kw">pub</span> <span class="ident">osabi</span>: <span class="ident">u8</span>,
+        <span class="kw">pub</span> <span class="ident">abi_version</span>: <span class="ident">u8</span>,
+    }
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ident_accessor</span>::<span class="kw-2">*</span>;
+    <span class="kw">impl</span> <span class="ident">fields</span>::<span class="ident">FileClass</span> {
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CLSSS32</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">1</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CLASS64</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">2</span>);
+    }
+    <span class="kw">impl</span> <span class="ident">fields</span>::<span class="ident">DataEncode</span> {
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LSB</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">1</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MSB</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">2</span>);
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_lsb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+            <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">LSB</span>
         }
-        <span class="ident">ValidRange</span>: {
-            <span class="ident">ELF_CLASS_RANGE</span> <span class="op">=</span> <span class="ident">ELF_CLASS32</span> ..<span class="op">=</span> <span class="ident">ELF_CLASS64</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_msb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+            <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">MSB</span>
         }
-        <span class="ident">Default</span>: <span class="ident">ELF_CLASS64</span>
+    }
+    <span class="kw">impl</span> <span class="ident">fields</span>::<span class="ident">Osabi</span> {
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYSV</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HPUX</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">1</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STANDLONE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">255</span>);
     }
 }
 
-<span class="macro">define_transparent_meta_data</span><span class="macro">!</span> {
-    <span class="kw">pub</span> <span class="ident">DataEncoding</span>, <span class="ident">u8</span> {
-        <span class="ident">Wellknown</span>: {
-            <span class="kw">pub</span> <span class="ident">ELF_LSB</span> <span class="op">=</span> <span class="number">1</span>
-            <span class="kw">pub</span> <span class="ident">ELF_MSB</span> <span class="op">=</span> <span class="number">2</span>
-        }
-        <span class="ident">ValidRange</span>:{
-            <span class="ident">ELF_DATA_ENCODING_RANGE</span> <span class="op">=</span> <span class="ident">ELF_LSB</span>..<span class="op">=</span><span class="ident">ELF_MSB</span>
-        }
-        <span class="ident">Default</span>: <span class="ident">ELF_LSB</span>
-    }
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>, <span class="ident">Default</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ident</span> {
-    <span class="kw">pub</span> <span class="ident">mag</span>: [<span class="ident">u8</span>; <span class="number">4</span>],
-    <span class="kw">pub</span> <span class="ident">file_class</span>: <span class="ident">ObjectFileClass</span>,
-    <span class="kw">pub</span> <span class="ident">data_encode</span>: <span class="ident">DataEncoding</span>,
-    <span class="kw">pub</span> <span class="ident">file_version</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">osabi</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">abi_version</span>: <span class="ident">u8</span>,
-}
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">MetaData</span>, <span class="ident">Ehdr</span>)]</span>
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Elf64Addr</span>, <span class="ident">Elf64Off</span>, <span class="ident">Elf64Word</span>, <span class="ident">Elf64Half</span>};
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Accessor</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">packed</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ehdr</span> {
-    <span class="kw">pub</span> <span class="ident">e_ident</span>: <span class="ident">Ident</span>,
-    <span class="ident">_pad</span>: [<span class="ident">u8</span>; <span class="number">16</span> <span class="op">-</span> <span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Ident</span><span class="op">&gt;</span>()],
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Header</span> {
+    <span class="kw">pub</span> <span class="ident">ident</span>: <span class="ident">ident</span>::<span class="ident">Ident</span>,
+    <span class="ident">_pad</span>: [<span class="ident">u8</span>; <span class="number">16</span> <span class="op">-</span> <span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">ident</span>::<span class="ident">Ident</span><span class="op">&gt;</span>()],
+    <span class="kw">pub</span> <span class="ident">file_type</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">machine</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">Elf64Word</span>,
+    <span class="kw">pub</span> <span class="ident">entry</span>: <span class="ident">Elf64Addr</span>,
+    <span class="kw">pub</span> <span class="ident">phoff</span>: <span class="ident">Elf64Off</span>,
+    <span class="kw">pub</span> <span class="ident">shoff</span>: <span class="ident">Elf64Off</span>,
+    <span class="kw">pub</span> <span class="ident">flags</span>: <span class="ident">Elf64Word</span>,
+    <span class="kw">pub</span> <span class="ident">ehsize</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">phentsize</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">phnum</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">shentsize</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">shnum</span>: <span class="ident">Elf64Half</span>,
+    <span class="kw">pub</span> <span class="ident">shstrndx</span>: <span class="ident">Elf64Half</span>,
+}
 
-    <span class="kw">pub</span> <span class="ident">e_type</span>: <span class="ident">Half</span>,
-    <span class="kw">pub</span> <span class="ident">e_machine</span>: <span class="ident">Half</span>,
-    <span class="kw">pub</span> <span class="ident">e_version</span>: <span class="ident">Word</span>,
-    <span class="kw">pub</span> <span class="ident">e_entry</span>: <span class="ident">Addr</span>,
-    <span class="attribute">#[<span class="ident">phoff</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_phoff</span>: <span class="ident">Off</span>,
-    <span class="attribute">#[<span class="ident">shoff</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_shoff</span>: <span class="ident">Off</span>,
-    <span class="kw">pub</span> <span class="ident">e_flags</span>: <span class="ident">Word</span>,
-    <span class="kw">pub</span> <span class="ident">e_ehsize</span>: <span class="ident">Half</span>,
-    <span class="attribute">#[<span class="ident">phentsize</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_phentsize</span>: <span class="ident">Half</span>,
-    <span class="attribute">#[<span class="ident">phnum</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_phnum</span>: <span class="ident">Half</span>,
-    <span class="attribute">#[<span class="ident">shentsize</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_shentsize</span>: <span class="ident">Half</span>,
-    <span class="attribute">#[<span class="ident">shnum</span>]</span>
-    <span class="kw">pub</span> <span class="ident">e_shnum</span>: <span class="ident">Half</span>,
-    <span class="kw">pub</span> <span class="ident">e_shstrndx</span>: <span class="ident">Half</span>,
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">header_accessor</span>::{<span class="ident">HeaderFlat</span>, <span class="ident">HeaderFlatMut</span>};
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fields</span> {
+    <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">ops</span>::<span class="ident">Range</span>;
+
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">header_accessor</span>::<span class="ident">fields</span>::<span class="kw-2">*</span>;
+    <span class="kw">struct</span> <span class="ident">Pad</span>; <span class="comment">// 用于隐藏 fields 中的 _pad</span>
+
+    <span class="kw">impl</span> <span class="ident">FileType</span> {
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">NONE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">REL</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">1</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EXEC</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">2</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DYN</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">3</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CORE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">4</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">OS</span>: <span class="ident">Range</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0xfe00</span>)..<span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0xfeff</span>);
+        <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PROC</span>: <span class="ident">Range</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0xff00</span>)..<span class="self">Self</span>::<span class="ident">new</span>(<span class="number">0xffff</span>);
+    }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "elf";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="elf"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

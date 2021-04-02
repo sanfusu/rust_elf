@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["fields",""]],"struct":[["Ident",""],["IdentFlat",""],["IdentFlatMut",""]]});

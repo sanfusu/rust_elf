@@ -1,8 +1,8 @@
 var N = null;var sourcesIndex = {};
-sourcesIndex["elf"] = {"name":"","dirs":[{"name":"section","files":["sh_type.rs"]}],"files":["header.rs","lib.rs","section.rs"]};
-sourcesIndex["elf_proc"] = {"name":"","files":["ehdr.rs","lib.rs","metadata.rs","shdr.rs"]};
-sourcesIndex["elface"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["layout"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["case"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["elf"] = {"name":"","files":["header.rs","lib.rs","program.rs","relocation.rs","section.rs","str_tab.rs","symbol.rs"]};
+sourcesIndex["flassor"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["flassor_macro"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["proc_macro2"] = {"name":"","files":["detection.rs","fallback.rs","lib.rs","marker.rs","parse.rs","wrapper.rs"]};
 sourcesIndex["quote"] = {"name":"","files":["ext.rs","format.rs","ident_fragment.rs","lib.rs","runtime.rs","spanned.rs","to_tokens.rs"]};
 sourcesIndex["readelf"] = {"name":"","files":["elf32.rs","main.rs"]};

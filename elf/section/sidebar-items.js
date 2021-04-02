@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["sh_type",""]],"struct":[["Shdr",""],["ShdrLayout","用于获取 Shdr 每个字段的内存布局，如 `ShdrLayout::sh_name();`"]]});
+initSidebarItems({"constant":[["SHN_ABS",""],["SHN_COMMON",""],["SHN_OS",""],["SHN_PROC",""],["SHN_UNDEF",""]],"mod":[["header",""]],"struct":[["Section",""],["SectionMut",""]]});

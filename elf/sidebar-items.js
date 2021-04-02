@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["header",""],["section",""]],"struct":[["Phdr",""],["StrTab","直接通过索引来获取字符串表中的数值"],["Sym",""]],"type":[["Addr",""],["Half",""],["Off",""],["Sword",""],["Sxword",""],["Word",""],["Xword",""]]});
+initSidebarItems({"mod":[["header",""],["program",""],["relocation",""],["section",""],["str_tab",""],["symbol",""]],"type":[["Elf64Addr",""],["Elf64Half",""],["Elf64Off",""],["Elf64Sword",""],["Elf64Sxword",""],["Elf64Word",""],["Elf64Xword",""]]});
