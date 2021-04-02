@@ -33,12 +33,12 @@ pub mod ident {
     }
 }
 
-use super::{Elf64Addr, Elf64Off, Elf64Word, Elf64Half};
+use super::{Elf64Addr, Elf64Half, Elf64Off, Elf64Word};
 #[derive(Accessor)]
 #[repr(packed)]
 pub struct Header {
     pub ident: ident::Ident,
-    _pad: [u8; 16 - core::mem::size_of::<ident::Ident>()],
+    _pad: [u8; 16 - ident::Ident::flat_size()],
     pub file_type: Elf64Half,
     pub machine: Elf64Half,
     pub version: Elf64Word,
