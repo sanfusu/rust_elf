@@ -33,13 +33,13 @@ pub mod ident {
     }
 }
 
-use super::{Elf64Addr, Half, Elf64Off, Elf64Word};
+use super::{Elf64Addr, Elf64Off, Elf64Word, Half};
 #[derive(Accessor)]
 #[repr(packed)]
-pub struct Ehdr {
+pub struct Header {
     pub ident: ident::Ident,
     _pad: [u8; 16 - core::mem::size_of::<ident::Ident>()],
-    pub _type: Half,
+    pub file_type: Half,
     pub machine: Half,
     pub version: Elf64Word,
     pub entry: Elf64Addr,
@@ -54,15 +54,15 @@ pub struct Ehdr {
     pub shstrndx: Half,
 }
 
-pub use ehdr_accessor::{EhdrFlat, EhdrFlatMut};
+pub use header_accessor::{HeaderFlat, HeaderFlatMut};
 
 pub mod fields {
     use core::ops::Range;
 
-    pub use super::ehdr_accessor::fields::*;
+    pub use super::header_accessor::fields::*;
     struct Pad; // 用于隐藏 fields 中的 _pad
 
-    impl Type {
+    impl FileType {
         pub const NONE: Self = Self::new(0);
         pub const REL: Self = Self::new(1);
         pub const EXEC: Self = Self::new(2);

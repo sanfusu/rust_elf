@@ -2,7 +2,7 @@ use crate::{Elf64Addr, Elf64Off, Elf64Word, Elf64Xword};
 
 #[derive(Accessor)]
 #[repr(packed)]
-pub struct Phdr {
+pub struct Header {
     pub ptype: Elf64Word,
     pub flags: Elf64Word,
     pub offset: Elf64Off,
