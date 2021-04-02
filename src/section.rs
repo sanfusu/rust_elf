@@ -1,4 +1,7 @@
 use core::{marker::PhantomData, ops::RangeInclusive};
+pub mod relocation;
+pub mod str_tab;
+pub mod symbol;
 
 pub mod header {
     use core::ops::RangeInclusive;

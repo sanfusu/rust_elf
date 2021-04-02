@@ -23,9 +23,6 @@ extern crate flassor;
 pub mod header;
 pub mod section;
 pub mod program;
-pub mod str_tab;
-pub mod symbol;
-pub mod relocation;
 
 pub type Elf64Addr = u64;
 pub type Elf64Off = u64;

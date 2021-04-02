@@ -1,6 +1,6 @@
 use core::{ops::RangeInclusive, panic};
 
-use super::{Elf64Addr, Elf64Half, Elf64Word, Elf64Xword};
+use crate::{Elf64Addr, Elf64Half, Elf64Word, Elf64Xword};
 
 #[derive(Accessor)]
 #[repr(packed)]
