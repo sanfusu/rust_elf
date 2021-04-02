@@ -4,7 +4,7 @@ use core::ops::Index;
 /// 直接通过索引来获取字符串表中的数值
 /// # Example
 /// ```
-/// use elf::StrTab;
+/// use elf::str_tab::StrTab;
 ///
 /// let tmp = ['a' as u8,'b' as u8,'c' as u8,'\0' as u8];
 /// let str_tab = StrTab::new(&tmp);
@@ -22,6 +22,7 @@ use core::ops::Index;
 /// let str_tab_split_null = StrTab::new(&tmp_split_null);
 /// assert_eq!(&str_tab_split_null[0], "a");
 /// assert_eq!(&str_tab_split_null[1], "");
+/// assert_eq!(&str_tab_split_null[2], "c");
 /// assert_eq!(&str_tab_split_null[3], "");
 /// ```
 pub struct StrTab<'a> {
