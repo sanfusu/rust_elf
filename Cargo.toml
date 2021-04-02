@@ -8,9 +8,9 @@ edition = "2018"
 [dependencies]
 # elface = { version = "0.1", path = "elface" }
 # layout = { git = "https://github.com/sanfusu/layout" }
-# flassor = { git = "https://github.com/sanfusu/flassor.git" }
+flassor = { git = "https://github.com/sanfusu/flassor.git" }
 # flassor-macro = { path = "../flassor/flassor-macro" }
-flassor = { path = "../flassor" }
+# flassor = { path = "../flassor" }
 
 [lib]
 crate-type = ["rlib"]
