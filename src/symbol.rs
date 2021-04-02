@@ -1,6 +1,6 @@
 use core::ops::RangeInclusive;
 
-use super::{Elf64Addr, Elf64Word, Elf64Xword, Half};
+use super::{Elf64Addr, Elf64Word, Elf64Xword, Elf64Half};
 
 #[derive(Accessor)]
 #[repr(packed)]
@@ -8,7 +8,7 @@ pub struct Sym {
     pub name: Elf64Word,
     pub info: u8,
     pub other: u8,
-    pub shndx: Half,
+    pub shndx: Elf64Half,
     pub value: Elf64Addr,
     pub size: Elf64Xword,
 }

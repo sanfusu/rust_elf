@@ -24,13 +24,14 @@ pub mod header;
 pub mod section;
 pub mod program;
 pub mod str_tab;
-pub mod sym;
+pub mod symbol;
+pub mod relocation;
 
 pub type Elf64Addr = u64;
 pub type Elf64Off = u64;
-pub type Half = u16;
+pub type Elf64Half = u16;
 pub type Elf64Word = u32;
-pub type Sword = u32;
+pub type Elf64Sword = u32;
 pub type Elf64Xword = u64;
-pub type Sxword = i64;
+pub type Elf64Sxword = i64;
 
