@@ -4,7 +4,7 @@ use core::ops::Index;
 /// 直接通过索引来获取字符串表中的数值
 /// # Example
 /// ```
-/// use elf::str_tab::StrTab;
+/// use elf::section::str_tab::StrTab;
 ///
 /// let tmp = ['a' as u8,'b' as u8,'c' as u8,'\0' as u8];
 /// let str_tab = StrTab::new(&tmp);
