@@ -16,6 +16,7 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 #![no_std]
 #![allow(dead_code)]
+#![feature(const_panic)]
 
 #[macro_use]
 extern crate flassor;

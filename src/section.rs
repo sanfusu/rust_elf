@@ -39,13 +39,71 @@ pub mod header {
         pub const DYNSYM: Self = Self::new(11);
         pub const OS: RangeInclusive<Self> = Self::new(0x6000_0000)..=Self::new(0x6fff_ffff);
         pub const PROC: RangeInclusive<Self> = Self::new(0x7000_0000)..=Self::new(0x7fff_ffff);
+        pub const X86_64_UNWIND: Self = Self::proc(0x7000_0001);
+        pub const fn os(value: Elf64Word) -> Self {
+            debug_assert!(0x6000_0000 <= value && value <= 0x6fff_ffff);
+            Self::new(value)
+        }
+        pub const fn proc(value: Elf64Word) -> Self {
+            debug_assert!(0x7000_0000 <= value && value <= 0x7fff_ffff);
+            Self::new(value)
+        }
     }
     impl fields::Flags {
         pub const WRITE: Self = Self::new(1);
         pub const ALLOC: Self = Self::new(2);
         pub const EXECINSTR: Self = Self::new(4);
-        pub const MASKOS: Self = Self::new(0x0f00_0000);
-        pub const MASKPROC: Self = Self::new(0xf000_0000);
+        pub const AMD64_LARGE: Self = Self::empty().set_proc(0x1000_0000);
+
+        const MASKOS: Self = Self::new(0x0f00_0000);
+        const MASKPROC: Self = Self::new(0xf000_0000);
+        pub const fn empty() -> Self {
+            Self::new(0)
+        }
+        pub const fn set_proc(self, value: Elf64Xword) -> Self {
+            debug_assert!(value & Self::MASKPROC.raw() == 0);
+            Self::new(value | self.raw())
+        }
+        pub const fn set_os(self, value: Elf64Xword) -> Self {
+            debug_assert!(value & Self::MASKOS.raw() == 0);
+            Self::new(value | self.raw())
+        }
+        pub const fn execinstr(self, value: bool) -> Self {
+            if value == true {
+                Self::new(self.raw() | Self::EXECINSTR.raw())
+            } else {
+                Self::new(self.raw() & !Self::EXECINSTR.raw())
+            }
+        }
+        pub const fn writeable(self, value: bool) -> Self {
+            if value == true {
+                Self::new(self.raw() | Self::WRITE.raw())
+            } else {
+                Self::new(self.raw() & !Self::WRITE.raw())
+            }
+        }
+        pub const fn allocable(self, value: bool) -> Self {
+            if value == true {
+                Self::new(self.raw() | Self::ALLOC.raw())
+            } else {
+                Self::new(self.raw() & !Self::ALLOC.raw())
+            }
+        }
+        pub const fn is_execinstr(&self) -> bool {
+            self.raw() & Self::EXECINSTR.raw() != 0
+        }
+        pub const fn is_writeable(&self) -> bool {
+            self.raw() & Self::WRITE.raw() != 0
+        }
+        pub const fn is_allocable(&self) -> bool {
+            self.raw() & Self::ALLOC.raw() != 0
+        }
+        pub const fn get_os(&self) -> Self {
+            Self::new(self.raw() & Self::MASKOS.raw())
+        }
+        pub const fn get_proc(&self) -> Self {
+            Self::new(self.raw() & Self::MASKPROC.raw())
+        }
     }
 }
 

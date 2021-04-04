@@ -2,7 +2,7 @@ use flassor::ByteOrder;
 pub mod ident {
     use flassor::ByteOrder;
 
-    #[derive(Accessor, Debug, Clone, Copy, PartialEq, Eq)]
+    #[derive(Accessor, Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
     pub struct Ident {
         pub mag: [u8; 4],
         pub file_class: u8,
@@ -70,5 +70,8 @@ pub mod fields {
         pub const CORE: Self = Self::new(4);
         pub const OS: Range<Self> = Self::new(0xfe00)..Self::new(0xfeff);
         pub const PROC: Range<Self> = Self::new(0xff00)..Self::new(0xffff);
+    }
+    impl Machine {
+        pub const X86_64: Self = Self::new(62);
     }
 }
