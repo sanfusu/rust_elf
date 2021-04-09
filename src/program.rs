@@ -2,8 +2,7 @@ use core::ops::RangeInclusive;
 
 use crate::{Elf64Addr, Elf64Off, Elf64Word, Elf64Xword};
 
-#[derive(Accessor)]
-#[repr(packed)]
+#[accessor]
 pub struct Header {
     pub ptype: Elf64Word,
     pub flags: Elf64Word,

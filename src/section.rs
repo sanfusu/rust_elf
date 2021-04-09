@@ -8,8 +8,7 @@ pub mod header {
 
     use super::super::{Elf64Addr, Elf64Off, Elf64Word, Elf64Xword};
 
-    #[derive(Accessor)]
-    #[repr(packed)]
+    #[accessor]
     pub struct Header {
         pub name: Elf64Word,
         pub sec_type: Elf64Word,

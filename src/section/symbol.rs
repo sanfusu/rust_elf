@@ -2,8 +2,7 @@ use core::{ops::RangeInclusive, panic};
 
 use crate::{Elf64Addr, Elf64Half, Elf64Word, Elf64Xword};
 
-#[derive(Accessor)]
-#[repr(packed)]
+#[accessor]
 pub struct Sym {
     pub name: Elf64Word,
     pub info: u8,

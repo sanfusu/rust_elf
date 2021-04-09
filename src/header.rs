@@ -2,7 +2,7 @@ use flassor::ByteOrder;
 pub mod ident {
     use flassor::ByteOrder;
 
-    #[derive(Accessor, Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
+    #[accessor]
     pub struct Ident {
         pub mag: [u8; 4],
         pub file_class: u8,
@@ -34,8 +34,7 @@ pub mod ident {
 }
 
 use super::{Elf64Addr, Elf64Half, Elf64Off, Elf64Word};
-#[derive(Accessor)]
-#[repr(packed)]
+#[accessor]
 pub struct Header {
     pub ident: ident::Ident,
     _pad: [u8; 16 - ident::Ident::flat_size()],

@@ -19,14 +19,13 @@ impl ReloType {
 pub mod rel {
     use crate::{Elf64Addr, Elf64Xword};
 
-    #[derive(Accessor)]
-    #[repr(packed)]
+    #[accessor]
     pub struct Rel {
         pub offset: Elf64Addr,
         pub info: Elf64Xword,
     }
     pub use rel_accessor::*;
-
+    
     impl fields::Info {
         pub fn sym_idx(&self) -> usize {
             (self.raw() >> 32) as usize
@@ -39,8 +38,7 @@ pub mod rel {
 pub mod rela {
     use crate::{Elf64Addr, Elf64Sxword, Elf64Xword};
 
-    #[derive(Accessor)]
-    #[repr(packed)]
+    #[accessor]
     pub struct Rela {
         pub offset: Elf64Addr,
         pub info: Elf64Xword,
