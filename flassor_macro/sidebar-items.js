@@ -1,1 +1,1 @@
-initSidebarItems({"derive":[["Accessor",""]]});
+initSidebarItems({"attr":[["accessor",""]]});

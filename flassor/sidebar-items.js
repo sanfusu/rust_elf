@@ -1,1 +1,1 @@
-initSidebarItems({"derive":[["Accessor",""]],"struct":[["Be",""],["Le",""],["Ne",""]],"trait":[["ByteOrder",""],["Endianess",""],["Field",""],["RawField",""]]});
+initSidebarItems({"attr":[["accessor",""]],"struct":[["Be",""],["Le",""],["Ne",""]],"trait":[["ByteOrder",""],["Endianess",""],["Field",""],["RawField",""]]});
