@@ -16,14 +16,28 @@
 // along with rust_elf.  If not, see <http://www.gnu.org/licenses/>.
 #![no_std]
 #![allow(dead_code)]
-#![feature(const_panic)]
 
-#[macro_use]
-extern crate flassor;
+macro_rules! impl_borrow {
+    ($($Type:ty),+) => {
+        $(impl core::borrow::Borrow<[u8; core::mem::size_of::<$Type>()]> for $Type {
+            fn borrow(&self) -> &[u8; core::mem::size_of::<$Type>()] {
+                use core::{convert::TryInto, ptr::slice_from_raw_parts};
+                unsafe {
+                    &*slice_from_raw_parts(
+                        self as *const $Type as *const u8,
+                        core::mem::size_of::<$Type>(),
+                    )
+                }
+                .try_into()
+                .unwrap() // 不会 panic，因为长度一致。
+            }
+        })+
+    };
+}
 
 pub mod header;
-pub mod section;
 pub mod program;
+pub mod section;
 
 pub type Elf64Addr = u64;
 pub type Elf64Off = u64;
@@ -32,4 +46,3 @@ pub type Elf64Word = u32;
 pub type Elf64Sword = u32;
 pub type Elf64Xword = u64;
 pub type Elf64Sxword = i64;
-
