@@ -2,7 +2,7 @@ use super::{Elf64Addr, Elf64Half, Elf64Off, Elf64Word};
 
 #[repr(C)]
 pub struct Ident {
-    pub mag: [u8; 4],
+    pub magic: [u8; 4],
     pub file_class: u8,
     pub data_encode: u8,
     pub file_version: u8,
