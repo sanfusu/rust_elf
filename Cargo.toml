@@ -6,9 +6,9 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-
+const_enum = { path = "../const_enum" }
 
 [lib]
-crate-type = ["rlib"]
+# crate-type = ["rlib"]
 
 [workspace]

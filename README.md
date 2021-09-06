@@ -2,6 +2,6 @@
 
 rust 实现的 elf 库
 
-[Documentation](https://sanfusu.github.io/rust_elf/elf/)
+## 关于解析
 
-![Default](https://github.com/sanfusu/rust_elf/workflows/Rust/badge.svg)
+配合使用 https://gitee.com/sanfusu/align 使用。

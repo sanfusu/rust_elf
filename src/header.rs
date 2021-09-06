@@ -1,20 +1,12 @@
-use super::{Elf64Addr, Elf64Half, Elf64Off, Elf64Word};
+use crate::ident::Ident;
 
-#[repr(C)]
-pub struct Ident {
-    pub magic: [u8; 4],
-    pub file_class: u8,
-    pub data_encode: u8,
-    pub file_version: u8,
-    pub osabi: u8,
-    pub abi_version: u8,
-}
+use super::{Elf64Addr, Elf64Half, Elf64Off, Elf64Word};
 
 #[repr(C)]
 pub struct Header {
     pub ident: Ident,
     _pad: [u8; 16 - core::mem::size_of::<Ident>()],
-    pub file_type: Elf64Half,
+    pub obj_file_type: ObjectFileType,
     pub machine: Elf64Half,
     pub version: Elf64Word,
     pub entry: Elf64Addr,
@@ -30,3 +22,41 @@ pub struct Header {
 }
 
 impl_borrow!(Header, Ident);
+
+#[derive(PartialEq, Eq)]
+#[repr(transparent)]
+pub struct ObjectFileType {
+    data: u16,
+}
+
+const_enum::const_enum! {
+    pub ObjectFileTypeBasic [ObjectFileType::data: u16] {
+        NONE: 0,
+        /// 可重定位的对象文件
+        REL: 1,
+        /// 可执行文件
+        EXEC: 2,
+        /// 可共享的对象文件
+        DYN: 3,
+        /// 核心文件
+        CORE: 4
+    }
+}
+
+impl ObjectFileType {
+    pub fn is_env_spec(&self) -> bool {
+        match self.data {
+            0xFE00..=0xFEFF => true,
+            _ => false,
+        }
+    }
+    pub fn is_processor_spec(&self) -> bool {
+        match self.data {
+            0xFF00..=0xFFFF => true,
+            _ => false,
+        }
+    }
+    pub fn raw(&self) -> u16 {
+        self.data
+    }
+}

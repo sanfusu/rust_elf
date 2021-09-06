@@ -35,6 +35,7 @@ macro_rules! impl_borrow {
     };
 }
 
+pub mod ident;
 pub mod header;
 pub mod program;
 pub mod section;
