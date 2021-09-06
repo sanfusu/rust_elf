@@ -35,8 +35,31 @@ macro_rules! impl_borrow {
     };
 }
 
-pub mod ident;
+/// 定义透明结构体，并定义一些基本方法。
+macro_rules! def_trans {
+    ($($Struct:ident:$FieldType:ty),+) => {
+        $(
+            #[repr(transparent)]
+            #[derive(PartialEq, Eq)]
+            pub struct $Struct {
+                data: $FieldType,
+            }
+            impl $Struct {
+                pub unsafe fn from_raw(data: $FieldType) -> $Struct {
+                    $Struct {
+                        data
+                    }
+                }
+                pub fn raw(&self) -> $FieldType {
+                    self.data
+                }
+            }
+        )+
+    };
+}
+
 pub mod header;
+pub mod ident;
 pub mod program;
 pub mod section;
 

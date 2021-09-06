@@ -21,12 +21,10 @@ pub struct Header {
     pub shstrndx: Elf64Half,
 }
 
-impl_borrow!(Header, Ident);
+impl_borrow!(Header);
 
-#[derive(PartialEq, Eq)]
-#[repr(transparent)]
-pub struct ObjectFileType {
-    data: u16,
+def_trans! {
+    ObjectFileType: u16
 }
 
 const_enum::const_enum! {
@@ -55,8 +53,5 @@ impl ObjectFileType {
             0xFF00..=0xFFFF => true,
             _ => false,
         }
-    }
-    pub fn raw(&self) -> u16 {
-        self.data
     }
 }

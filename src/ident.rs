@@ -7,10 +7,13 @@ pub struct Ident {
     pub osabi: Osabi,
     pub abi_version: u8,
 }
-#[repr(transparent)]
-#[derive(PartialEq, Eq)]
-pub struct ObjectFileClass {
-    data: u8,
+
+impl_borrow!(Ident);
+
+def_trans! {
+    DataEncode: u8,
+    ObjectFileClass:u8,
+    Osabi:u8
 }
 
 const_enum::const_enum! {
@@ -18,28 +21,10 @@ const_enum::const_enum! {
         ELFCLASS32: 1,
         ELFCLASS64: 2
     }
-}
-
-#[repr(transparent)]
-#[derive(PartialEq, Eq)]
-pub struct DataEncode {
-    data: u8,
-}
-
-const_enum::const_enum! {
     pub DataEncodeEnum [DataEncode::data: u8] {
         LSB: 1,
         MSB: 2
     }
-}
-
-#[repr(transparent)]
-#[derive(PartialEq, Eq)]
-pub struct Osabi {
-    data: u8,
-}
-
-const_enum::const_enum! {
     pub OsabiEnum [Osabi::data: u8] {
         /// System V ABI
         SYSV: 0,
